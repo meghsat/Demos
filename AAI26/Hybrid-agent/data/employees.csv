@@ -1,0 +1,13 @@
+employee_id,name,role,start_date,salary,equity_pct,ssn,email,status,onboarded_by,created_at
+EMP0001,Alex Rivera,CEO & Co-Founder,2024-01-15,200000,0.35,111-11-1111,alex.rivera@scudfer.rc,active,manual,2024-01-15T00:00:00Z
+EMP0002,Priya Sharma,CFO,2024-01-15,180000,0.08,222-22-2222,priya.sharma@scudfer.rc,active,manual,2024-01-15T00:00:00Z
+EMP0003,Marcus Webb,CTO & Co-Founder,2024-01-15,195000,0.30,333-33-3333,marcus.webb@scudfer.rc,active,manual,2024-01-15T00:00:00Z
+EMP0004,Jordan Lee,VP Sales,2024-02-01,165000,0.04,444-44-4444,jordan.lee@scudfer.rc,active,manual,2024-02-01T00:00:00Z
+EMP0005,Sam Chen,VP Product,2024-02-15,170000,0.045,555-55-5555,sam.chen@scudfer.rc,active,manual,2024-02-15T00:00:00Z
+EMP0006,Sarah Kim,Senior Backend Engineer,2024-03-01,180000,0.005,666-66-6666,sarah.kim@scudfer.rc,active,manual,2024-03-01T00:00:00Z
+EMP0007,David Park,Senior Frontend Engineer,2024-03-15,172000,0.004,777-77-7777,david.park@scudfer.rc,active,manual,2024-03-15T00:00:00Z
+EMP0008,Emily Zhang,Product Manager,2024-04-01,158000,0.003,888-88-8888,emily.zhang@scudfer.rc,active,manual,2024-04-01T00:00:00Z
+EMP0009,Chris Martinez,Sales Manager,2024-04-15,145000,0.0025,999-99-9999,chris.martinez@scudfer.rc,active,manual,2024-04-15T00:00:00Z
+EMP0010,Lisa Wong,UX Designer,2024-05-01,135000,0.002,101-01-0101,lisa.wong@scudfer.rc,active,manual,2024-05-01T00:00:00Z
+EMP0011,Kevin Patel,Backend Engineer,2024-05-15,165000,0.003,102-02-0202,kevin.patel@scudfer.rc,active,manual,2024-05-15T00:00:00Z
+EMP0012,Rachel Green,Sales Development Rep,2024-06-01,95000,0.001,103-03-0303,rachel.green@scudfer.rc,active,manual,2024-06-01T00:00:00Z

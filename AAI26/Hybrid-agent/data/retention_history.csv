@@ -1,0 +1,8 @@
+year,quarter,employees_left,total_employees,retention_intervention,success_rate,avg_tenure_years,notes
+2024,Q1,2,8,none,0.35,1.2,Baseline - no retention efforts
+2024,Q2,1,9,salary_increase_15pct,0.55,1.4,One employee given 15% raise
+2024,Q3,2,10,equity_refresh_0.2pct,0.68,1.5,Two employees given equity refresh
+2024,Q4,1,11,promotion,0.72,1.7,One employee promoted to senior
+2025,Q1,1,12,salary_increase_20pct,0.68,1.8,20% salary increase
+2025,Q2,0,12,promotion_plus_equity,0.89,2.0,Promotion + salary + equity combined
+2026,Q1,1,12,none,0.35,2.1,Flight risk - competitor offer
