@@ -1,13 +1,13 @@
 # Startup AI Router Workshop - Agent Skills
 
-This directory contains **high-level skill definitions** for the Semantic Router startup workshop. Each skill provides **rules and constraints** that guide the Hermes agent's behavior
+This directory contains **high-level skill definitions** for the Semantic Router startup workshop. Each skill provides **rules and constraints** that guide the Openclaw agent's behavior
 
 1. **Semantic Router** handles:
    - PII detection (SSN, names, emails)
    - Input classification (simple vs complex)
    - Initial routing decision
 
-2. **Hermes Agent** handles:
+2. **Openclaw Agent** handles:
    - Reading/writing CSV files
    - Calculations and data analysis
    - Generating responses
