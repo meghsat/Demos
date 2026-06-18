@@ -1,0 +1,443 @@
+version: v0.3
+listeners:
+    - name: http-8899
+      address: 0.0.0.0
+      port: 8899
+      timeout: 2400s
+
+providers:
+    defaults:
+        default_model: Qwen3.5-9B-NoThinking
+    models:
+        - name: Qwen3.5-9B-NoThinking
+          pricing:
+              currency: USD
+              prompt_per_1m: 0.10
+              completion_per_1m: 0.20
+          backend_refs:
+            - name: lemonade-small
+              protocol: http
+              weight: 100
+              base_url: http://host.docker.internal:13305/v1
+              provider: openai
+              api_key: lemonade
+        - name: accounts/fireworks/models/kimi-k2p6
+          pricing:
+              currency: USD
+              prompt_per_1m: 3.00
+              completion_per_1m: 9.00
+          backend_refs:
+            - name: fireworks-kimi
+              protocol: http
+              weight: 100
+              base_url: https://api.fireworks.ai/inference/v1
+              provider: openai
+              api_key: YOUR_FIREWORKS_API_KEY_HERE  # REQUIRED: Add your Fireworks API key
+
+routing:
+    modelCards:
+        - name: Qwen3.5-9B-NoThinking
+          param_size: 9B
+          context_window_size: 256000
+          description: Fast local 9B model for PII-sensitive, simple, and multimodal queries
+          capabilities: [chat, audio, vision]
+          quality_score: 0.75
+          modality: ar
+          tags: [local, fast, secure]
+        - name: accounts/fireworks/models/kimi-k2p6
+          param_size: 1028B
+          context_window_size: 262000
+          description: Cloud model for complex reasoning, legal research, and R&D system design
+          capabilities: [chat, reasoning, long-context, vision]
+          quality_score: 0.99
+          modality: ar
+          tags: [cloud, frontier, powerful]
+
+    signals:
+        keywords:
+            # Workshop-specific: R&D system design keywords
+            - name: rnd_design_keywords
+              operator: OR
+              method: bm25
+              keywords:
+                  - "design"
+                  - "architecture"
+                  - "system design"
+                  - "ML pipeline"
+                  - "fraud detection"
+                  - "recommendation engine"
+                  - "infrastructure"
+                  - "implement"
+                  - "scalability"
+                  - "microservices"
+                  - "real-time"
+                  - "stream processing"
+                  - "machine learning"
+                  - "neural network"
+                  - "propose architecture"
+              case_sensitive: false
+              bm25_threshold: 0.20
+
+            # Workshop-specific: Legal research keywords
+            - name: legal_research_keywords
+              operator: OR
+              method: bm25
+              keywords:
+                  - "GDPR"
+                  - "CCPA"
+                  - "regulation"
+                  - "compliance"
+                  - "legal"
+                  - "contract"
+                  - "NDA"
+                  - "terms"
+                  - "DPA"
+                  - "privacy law"
+                  - "data protection"
+                  - "regulatory"
+                  - "case law"
+              case_sensitive: false
+              bm25_threshold: 0.20
+
+            # Workshop-specific: Finance complex modeling keywords
+            - name: finance_modeling_keywords
+              operator: OR
+              method: bm25
+              keywords:
+                  - "equity dilution"
+                  - "waterfall"
+                  - "Series A"
+                  - "Series B"
+                  - "pre-money"
+                  - "post-money"
+                  - "valuation"
+                  - "cap table"
+                  - "dilution modeling"
+                  - "model dilution"
+                  - "equity grant"
+                  - "retention analysis"
+                  - "NPV"
+                  - "Monte Carlo"
+              case_sensitive: false
+              bm25_threshold: 0.22
+
+            # Workshop-specific: Simple finance queries (burn rate, runway)
+            - name: finance_simple_keywords
+              operator: OR
+              method: bm25
+              keywords:
+                  - "burn rate"
+                  - "runway"
+                  - "monthly expenses"
+                  - "cash flow"
+              case_sensitive: false
+              bm25_threshold: 0.25
+
+            # Workshop-specific: HR benefits/policy queries (non-PII)
+            - name: hr_policy_keywords
+              operator: OR
+              method: bm25
+              keywords:
+                  - "benefits"
+                  - "parental leave"
+                  - "vacation"
+                  - "PTO"
+                  - "policy"
+                  - "handbook"
+                  - "401k"
+                  - "health insurance"
+              case_sensitive: false
+              bm25_threshold: 0.20
+
+        # Workshop-specific: Modality detection for ops agents
+        modality:
+            - name: audio_file
+              description: Audio attachments for ops-audio agent (meeting transcription)
+              file_extensions: [mp3, wav, m4a, ogg]
+
+            - name: vision_file
+              description: Image attachments for ops-vision agent (dashboard analysis)
+              file_extensions: [png, jpg, jpeg, webp]
+
+        # Workshop-specific: Multi-step structure detection
+        structure:
+            - name: multi_step_analysis
+              description: Queries with multiple analysis steps or scenario modeling
+              feature:
+                  type: exists
+                  source:
+                      type: regex
+                      pattern: '(?i)(waterfall scenarios|1x.*2x|compare.*vs|option A.*option B)'
+
+        # Security: PII detection (names, emails, salaries, SSN)
+        pii:
+            - name: employee_pii
+              threshold: 0.65  # Slightly lower to catch workshop employee names
+              description: Detects employee names, salaries, emails, SSN
+
+        # Security: Jailbreak detection
+        jailbreak:
+            - name: prompt_injection
+              method: hybrid
+              threshold: 0.85
+              description: Detects jailbreak attempts
+
+    decisions:
+        # PRIORITY 1000: Security - PII or jailbreak → LOCAL ONLY
+        - name: workshop_security_local
+          description: "Workshop Rule 1: PII-sensitive HR/Finance queries stay local (employee names, salaries, emails)"
+          priority: 1000
+          rules:
+              operator: OR
+              conditions:
+                  - type: pii
+                    name: employee_pii
+                  - type: jailbreak
+                    name: prompt_injection
+          modelRefs:
+              - model: Qwen3.5-9B-NoThinking
+                use_reasoning: false
+          algorithm:
+              type: static
+
+        # PRIORITY 900: Multimodal - Audio/Vision files → LOCAL ONLY
+        - name: workshop_multimodal_local
+          description: "Workshop Rule 2: ops-audio and ops-vision files stay local (meeting audio, dashboards)"
+          priority: 900
+          rules:
+              operator: OR
+              conditions:
+                  - type: modality
+                    name: audio_file
+                  - type: modality
+                    name: vision_file
+          modelRefs:
+              - model: Qwen3.5-9B-NoThinking
+                use_reasoning: false
+          algorithm:
+              type: static
+
+        # PRIORITY 800: Legal research → CLOUD
+        - name: workshop_legal_cloud
+          description: "Workshop Rule 3: Legal regulatory research uses cloud (GDPR, compliance, contracts)"
+          priority: 800
+          rules:
+              operator: AND
+              conditions:
+                  - type: keyword
+                    name: legal_research_keywords
+          modelRefs:
+              - model: accounts/fireworks/models/kimi-k2p6
+                use_reasoning: false
+          algorithm:
+              type: static
+
+        # PRIORITY 700: R&D system design → CLOUD
+        - name: workshop_rnd_cloud
+          description: "Workshop Rule 4: R&D system design and ML architecture uses cloud"
+          priority: 700
+          rules:
+              operator: AND
+              conditions:
+                  - type: keyword
+                    name: rnd_design_keywords
+          modelRefs:
+              - model: accounts/fireworks/models/kimi-k2p6
+                use_reasoning: false
+          algorithm:
+              type: static
+
+        # PRIORITY 600: Finance complex modeling → CLOUD (if no PII detected)
+        - name: workshop_finance_complex_cloud
+          description: "Workshop Rule 5: Complex finance modeling (equity dilution, waterfall) uses cloud when no PII"
+          priority: 600
+          rules:
+              operator: OR
+              conditions:
+                  - type: keyword
+                    name: finance_modeling_keywords
+                  - type: structure
+                    name: multi_step_analysis
+          modelRefs:
+              - model: accounts/fireworks/models/kimi-k2p6
+                use_reasoning: false
+          algorithm:
+              type: static
+
+        # PRIORITY 500: Simple finance and HR policy queries → LOCAL
+        - name: workshop_simple_local
+          description: "Workshop Rule 6: Simple finance (burn rate) and HR policy queries stay local"
+          priority: 500
+          rules:
+              operator: OR
+              conditions:
+                  - type: keyword
+                    name: finance_simple_keywords
+                  - type: keyword
+                    name: hr_policy_keywords
+          modelRefs:
+              - model: Qwen3.5-9B-NoThinking
+                use_reasoning: false
+          algorithm:
+              type: static
+
+        # PRIORITY 100: Default fallback → LOCAL
+        - name: workshop_default_local
+          description: "Workshop Rule 7: All other queries default to local model"
+          priority: 100
+          rules:
+              operator: AND
+              conditions:
+                  - type: pii
+                    name: employee_pii
+                    negate: true  # Match if no PII
+          modelRefs:
+              - model: Qwen3.5-9B-NoThinking
+                use_reasoning: false
+          algorithm:
+              type: static
+
+global:
+    router:
+        config_source: file
+        auto_model_name: MoM
+        include_config_models_in_list: false
+        clear_route_cache: true
+        streamed_body:
+            enabled: false
+        skip_processing:
+            enabled: false
+        model_selection:
+            method: static
+            enabled: true
+
+    services:
+        api:
+            batch_classification: {}
+        response_api:
+            enabled: true
+            store_backend: redis
+            ttl_seconds: 86400
+            max_responses: 1000
+        observability:
+            tracing:
+                enabled: true
+                provider: opentelemetry
+                exporter:
+                    type: otlp
+                    endpoint: vllm-sr-jaeger:4317
+                    insecure: true
+                sampling:
+                    type: always_on
+                    rate: 1
+                resource:
+                    service_name: vllm-sr-workshop
+                    service_version: v0.3.0
+                    deployment_environment: workshop
+            metrics:
+                enabled: true
+                windowed_metrics:
+                    enabled: false
+                    model_metrics: false
+                    queue_depth_estimation: false
+        authz: {}
+        ratelimit: {}
+        router_replay:
+            enabled: true
+            store_backend: postgres
+            ttl_seconds: 2592000
+        startup_status:
+            store_backend: file
+
+    stores:
+        semantic_cache:
+            backend_type: memory
+            enabled: true
+            max_entries: 500  # Reduced for workshop
+            ttl_seconds: 1800  # 30 min cache
+            eviction_policy: fifo
+        memory:
+            milvus:
+                address: ""
+                collection: agentic_memory
+                dimension: 384
+            extraction_batch_size: 10
+            default_retrieval_limit: 5
+            default_similarity_threshold: 0.7
+
+    integrations:
+        tools:
+            enabled: false
+        looper:
+            endpoint: http://vllm-sr-envoy-container:8899/v1/chat/completions
+            timeout_seconds: 1200
+
+    model_catalog:
+        embeddings:
+            semantic:
+                qwen3_model_path: ""
+                gemma_model_path: ""
+                mmbert_model_path: models/mmbert-embed-32k-2d-matryoshka
+                bert_model_path: ""
+                use_cpu: true
+                embedding_config:
+                    model_type: mmbert
+                    preload_embeddings: true
+                    target_dimension: 768
+                    target_layer: 22
+                    enable_soft_matching: true
+                    top_k: 1
+                    min_score_threshold: 0.5
+
+        system:
+            prompt_guard: models/mmbert32k-jailbreak-detector-merged
+            domain_classifier: models/mmbert32k-intent-classifier-merged
+            pii_classifier: models/mmbert32k-pii-detector-merged
+            fact_check_classifier: models/mmbert32k-factcheck-classifier-merged
+            feedback_detector: models/mmbert32k-feedback-detector-merged
+
+        modules:
+            prompt_compression:
+                enabled: false
+                max_tokens: 0
+
+            prompt_guard:
+                enabled: true
+                model_id: ""
+                threshold: 0.7
+                use_cpu: true
+                use_modernbert: false
+                use_mmbert_32k: true
+                jailbreak_mapping_path: models/mmbert32k-jailbreak-detector-merged/jailbreak_type_mapping.json
+                model_ref: prompt_guard
+
+            classifier:
+                domain:
+                    model_id: ""
+                    threshold: 0.5
+                    use_cpu: true
+                    use_modernbert: false
+                    use_mmbert_32k: true
+                    category_mapping_path: models/mmbert32k-intent-classifier-merged/category_mapping.json
+                    model_ref: domain_classifier
+                mcp:
+                    enabled: false
+                pii:
+                    model_id: ""
+                    threshold: 0.65  # Slightly lower to catch workshop employee names
+                    use_cpu: true
+                    use_mmbert_32k: true
+                    pii_mapping_path: models/mmbert32k-pii-detector-merged/pii_type_mapping.json
+                    model_ref: pii_classifier
+                preference:
+                    use_contrastive: true
+
+            complexity:
+                prototype_scoring:
+                    enabled: false  # Disabled - not needed for workshop
+
+            feedback_detector:
+                enabled: false  # Disabled - not needed for workshop
+
+            modality_detector:
+                enabled: true  # Required for ops-audio and ops-vision
