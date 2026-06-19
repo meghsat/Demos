@@ -25,3 +25,5 @@ lemonade pull Qwen3.5-9B-GGUF
 ```bash
 lemonade load Qwen3.6-35B-A3B-GGUF --ctx-size 262144 --save-options
 ```
+
+## Non-Thinking Models

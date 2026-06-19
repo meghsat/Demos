@@ -41,6 +41,9 @@ openclaw onboard --install-daemon
 | Model ID | `MoM` |
 | Endpoint ID | `SemanticRouter` |
 
+## Skills
+Move the custom skill files to `/home/amd-user/.openclaw/skills` and make sure to name each skill as skill.md and place it in a dedicated folder
+
 ## Launch TUI
 
 ```bash
@@ -49,6 +52,8 @@ openclaw tui
 # Start a named session
 openclaw tui --session test1
 ```
+
+
 
 ---
 

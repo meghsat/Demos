@@ -21,6 +21,18 @@ providers:
               base_url: http://host.docker.internal:13305/v1
               provider: openai
               api_key: lemonade
+        - name: Whisper-Medium
+          pricing:
+              currency: USD
+              prompt_per_1m: 0.00
+              completion_per_1m: 0.00
+          backend_refs:
+            - name: lemonade-whisper
+              protocol: http
+              weight: 100
+              base_url: http://host.docker.internal:13306/v1
+              provider: openai
+              api_key: lemonade
         - name: accounts/fireworks/models/kimi-k2p6
           pricing:
               currency: USD
@@ -32,7 +44,7 @@ providers:
               weight: 100
               base_url: https://api.fireworks.ai/inference/v1
               provider: openai
-              api_key: YOUR_FIREWORKS_API_KEY_HERE  # REQUIRED: Add your Fireworks API key
+              api_key: fw_Y38edgg8ZxvHa7MpGD99ng  # REQUIRED: Add your Fireworks API key
 
 routing:
     modelCards:
@@ -44,6 +56,14 @@ routing:
           quality_score: 0.75
           modality: ar
           tags: [local, fast, secure]
+        - name: Whisper-Medium
+          param_size: 300M
+          context_window_size: 1
+          description: Local Whisper model for audio transcription (speech-to-text)
+          capabilities: [audio]
+          quality_score: 0.90
+          modality: ar
+          tags: [local, fast, audio, secure]
         - name: accounts/fireworks/models/kimi-k2p6
           param_size: 1028B
           context_window_size: 262000
@@ -153,30 +173,41 @@ routing:
         domains:
             - name: "finance"
               description: Finance, economics, accounting, financial modeling
-              mmlu_categories: ["econometrics", "business_ethics", "microeconomics", "macroeconomics"]
+              mmlu_categories: ["business", "economics"]
 
             - name: "law"
               description: Legal regulations, compliance, contracts, jurisprudence
-              mmlu_categories: ["jurisprudence", "professional_law", "international_law"]
+              mmlu_categories: ["law"]
 
             - name: "computer_science"
               description: System design, software architecture, ML engineering
-              mmlu_categories: ["computer_security", "machine_learning", "college_computer_science"]
+              mmlu_categories: ["math", "engineering", "computer science"]
 
             - name: "general"
               description: General knowledge, HR, operations, business
-              mmlu_categories: ["other", "business_ethics", "management"]
+              mmlu_categories: ["other"]
 
         modality:
-            - name: audio_file
-              description: Audio attachments for ops-audio agent (meeting transcription)
-              file_extensions: [mp3, wav, m4a, ogg]
-
-            - name: vision_file
-              description: Image attachments for ops-vision agent (dashboard analysis)
-              file_extensions: [png, jpg, jpeg, webp]
+            - name: AR
+              description: Multimodal attachments (audio or image) detected by file extension keywords
 
         structure:
+            - name: audio_attachment
+              description: Detects audio file attachments (mp3, wav, m4a, ogg)
+              feature:
+                  type: exists
+                  source:
+                      type: regex
+                      pattern: '(?i)\.(mp3|wav|m4a|ogg)\b'
+
+            - name: vision_attachment
+              description: Detects image file attachments (png, jpg, jpeg, webp)
+              feature:
+                  type: exists
+                  source:
+                      type: regex
+                      pattern: '(?i)\.(png|jpg|jpeg|webp)\b'
+
             - name: multi_step_analysis
               description: Queries with multiple analysis steps or scenario modeling
               feature:
@@ -195,13 +226,6 @@ routing:
                       pattern: '\S+'
               predicate:
                   gte: 400
-
-        # ENHANCED: Context-based routing for large context queries
-        context:
-            - name: large_context
-              min_tokens: 8K
-              max_tokens: 262K
-              description: Large context requests (e.g., long meeting transcripts) routed to Kimi K2 cloud
 
         complexity:
             - name: needs_reasoning
@@ -235,7 +259,11 @@ routing:
             - name: employee_pii
               threshold: 0.65
               description: Detects employee names, salaries, emails, SSN
-
+              pii_types_allowed:
+                  - DATE_TIME    
+                  - ORGANIZATION 
+                  - GPE         
+                  - NRP          
         # Security: Jailbreak detection
         jailbreak:
             - name: prompt_injection
@@ -261,73 +289,83 @@ routing:
           algorithm:
               type: static
 
-        # PRIORITY 900: Multimodal - Audio/Vision files → LOCAL ONLY
-        - name: workshop_multimodal_local
-          description: "Workshop Rule 2: ops-audio and ops-vision files stay local (meeting audio, dashboards)"
+        # PRIORITY 910: Audio files → Whisper-Medium (local speech-to-text)
+        - name: workshop_audio_whisper
+          description: "Workshop Rule 2a: Audio attachments (mp3, wav, m4a, ogg) route to local Whisper-Medium"
+          priority: 910
+          rules:
+              operator: AND
+              conditions:
+                  - type: structure
+                    name: audio_attachment
+          modelRefs:
+              - model: Whisper-Medium
+                use_reasoning: false
+          algorithm:
+              type: static
+
+        # PRIORITY 900: Vision/image files → Qwen (local multimodal)
+        - name: workshop_vision_local
+          description: "Workshop Rule 2b: Image attachments (png, jpg, jpeg, webp) route to local Qwen for vision analysis"
           priority: 900
           rules:
-              operator: OR
+              operator: AND
               conditions:
-                  - type: modality
-                    name: audio_file
-                  - type: modality
-                    name: vision_file
+                  - type: structure
+                    name: vision_attachment
           modelRefs:
               - model: Qwen3.5-9B-NoThinking
                 use_reasoning: false
           algorithm:
               type: static
 
-        # PRIORITY 850: ENHANCED - Large context queries → CLOUD
-        - name: workshop_large_context_cloud
-          description: "ADVANCED: Large context queries (8K+ tokens) routed to cloud for capacity"
-          priority: 850
-          rules:
-              operator: AND
-              conditions:
-                  - type: context
-                    name: large_context
-          modelRefs:
-              - model: accounts/fireworks/models/kimi-k2p6
-                use_reasoning: false
-          algorithm:
-              type: static
-
-        # PRIORITY 800: Legal research → CLOUD
+        # PRIORITY 800: Legal research → CLOUD (no PII)
         - name: workshop_legal_cloud
           description: "Workshop Rule 3: Legal regulatory research uses cloud (GDPR, compliance, contracts)"
           priority: 800
           rules:
-              operator: OR
+              operator: AND
               conditions:
-                  - type: keyword
-                    name: legal_research_keywords
-                  - type: domain  # ENHANCED: Domain-based routing
-                    name: law
+                  - operator: NOT
+                    conditions:
+                        - type: pii
+                          name: employee_pii
+                  - operator: OR
+                    conditions:
+                        - type: keyword
+                          name: legal_research_keywords
+                        - type: domain
+                          name: law
           modelRefs:
               - model: accounts/fireworks/models/kimi-k2p6
                 use_reasoning: false
           algorithm:
               type: static
 
-        # PRIORITY 700: R&D system design → CLOUD
+        # PRIORITY 700: R&D system design → CLOUD (no PII)
         - name: workshop_rnd_cloud
           description: "Workshop Rule 4: R&D system design and ML architecture uses cloud"
           priority: 700
           rules:
-              operator: OR
+              operator: AND
               conditions:
-                  - type: keyword
-                    name: rnd_design_keywords
-                  - type: domain  # ENHANCED: Domain-based routing
-                    name: computer_science
+                  - operator: NOT
+                    conditions:
+                        - type: pii
+                          name: employee_pii
+                  - operator: OR
+                    conditions:
+                        - type: keyword
+                          name: rnd_design_keywords
+                        - type: domain
+                          name: computer_science
           modelRefs:
               - model: accounts/fireworks/models/kimi-k2p6
                 use_reasoning: false
           algorithm:
               type: static
 
-        # PRIORITY 650: ENHANCED - Long queries (400+ words) → CLOUD
+        # PRIORITY 650: ENHANCED - Long queries (400+ words) → CLOUD (no PII)
         - name: workshop_long_query_cloud
           description: "ADVANCED: Very long queries (400+ words) likely need cloud capacity"
           priority: 650
@@ -336,36 +374,46 @@ routing:
               conditions:
                   - type: structure
                     name: long_query
+                  - operator: NOT
+                    conditions:
+                        - type: pii
+                          name: employee_pii
           modelRefs:
               - model: accounts/fireworks/models/kimi-k2p6
                 use_reasoning: false
           algorithm:
               type: static
 
-        # PRIORITY 600: Finance complex modeling → CLOUD (if no PII detected)
+        # PRIORITY 600: Finance complex modeling → CLOUD (no PII)
         - name: workshop_finance_complex_cloud
           description: "Workshop Rule 5: Complex finance modeling (equity dilution, waterfall) uses cloud when no PII"
           priority: 600
           rules:
-              operator: OR
+              operator: AND
               conditions:
-                  - type: keyword
-                    name: finance_modeling_keywords
-                  - type: structure
-                    name: multi_step_analysis
-                  - operator: AND  # ENHANCED: Domain + complexity
+                  - operator: NOT
                     conditions:
-                        - type: domain
-                          name: finance
-                        - type: complexity
-                          name: needs_reasoning:high
+                        - type: pii
+                          name: employee_pii
+                  - operator: OR
+                    conditions:
+                        - type: keyword
+                          name: finance_modeling_keywords
+                        - type: structure
+                          name: multi_step_analysis
+                        - operator: AND
+                          conditions:
+                              - type: domain
+                                name: finance
+                              - type: complexity
+                                name: needs_reasoning:high
           modelRefs:
               - model: accounts/fireworks/models/kimi-k2p6
                 use_reasoning: false
           algorithm:
               type: static
 
-        # PRIORITY 550: ENHANCED - Confidence Loop for medium complexity
+        # PRIORITY 550: ENHANCED - Confidence Loop for medium complexity (no PII)
         - name: workshop_confidence_loop
           description: "ADVANCED: Medium-complexity queries → try local first, escalate to cloud if low confidence"
           priority: 550
@@ -374,6 +422,10 @@ routing:
               conditions:
                   - type: complexity
                     name: needs_reasoning:medium
+                  - operator: NOT
+                    conditions:
+                        - type: pii
+                          name: employee_pii
           modelRefs:
               - model: Qwen3.5-9B-NoThinking
                 use_reasoning: false
@@ -538,7 +590,6 @@ global:
 
             classifier:
                 domain:
-                    enabled: true  # ENHANCED: Enable domain classification
                     model_id: ""
                     threshold: 0.5
                     use_cpu: true
@@ -578,3 +629,13 @@ global:
 
             modality_detector:
                 enabled: true
+                method: keyword
+                keywords:
+                    - mp3
+                    - wav
+                    - m4a
+                    - ogg
+                    - png
+                    - jpg
+                    - jpeg
+                    - webp

@@ -59,14 +59,14 @@ Routing Decision
 
 **Basic Example:**
 ```
-@hr onboard Maya Chen, Senior AI Engineer, starts July 1, 
+/skill hr onboard Maya Chen, Senior AI Engineer, starts July 1, 
 salary $175K, equity 0.8%, email maya.chen@startup.ai
 ```
 **Router:** PII detected (name, salary, email) → **Local 9B**
 
 **Advanced Example:**
 ```
-@hr What's our parental leave policy compared to industry standard?
+/skill hr What's our parental leave policy compared to industry standard?
 ```
 **Router:**
 - Keywords: No HR keywords
@@ -82,20 +82,20 @@ salary $175K, equity 0.8%, email maya.chen@startup.ai
 
 **Basic Example (Simple):**
 ```
-@finance what's our current burn rate and runway?
+/skill finance what's our current burn rate and runway?
 ```
 **Router:** Simple keywords ("burn rate") → **Local 9B**
 
 **Basic Example (Complex):**
 ```
-@finance Model equity dilution in Series B at $40M raise on $160M pre-money. 
+/skill finance Model equity dilution in Series B at $40M raise on $160M pre-money. 
 Include waterfall scenarios for 1x, 1.5x, 2x liquidation preferences.
 ```
 **Router:** Finance modeling keywords + multi-step → **Cloud Kimi K2**
 
 **Advanced Example (Confidence Loop):**
 ```
-@finance Estimate runway if we reduce burn by 15% and delay 2 hires
+/skill finance Estimate runway if we reduce burn by 15% and delay 2 hires
 ```
 **Router:**
 - Complexity: Medium (0.39 score)
@@ -106,7 +106,7 @@ Include waterfall scenarios for 1x, 1.5x, 2x liquidation preferences.
 
 **Advanced Example (PII Redaction - Multi-Pass):**
 ```
-@finance For Sarah Kim's retention, compare Option A (20% raise) vs 
+/skill finance For Sarah Kim's retention, compare Option A (20% raise) vs 
 Option B (0.5% equity refresh). Model 4-year NPV.
 ```
 **Router:** PII detected (name) → **Local 9B** (priority 1000)
@@ -124,13 +124,13 @@ Option B (0.5% equity refresh). Model 4-year NPV.
 
 **Basic Example:**
 ```
-@legal What are latest GDPR requirements for AI products processing EU user data?
+/skill legal What are latest GDPR requirements for AI products processing EU user data?
 ```
 **Router:** Legal keywords ("GDPR") → **Cloud Kimi K2**
 
 **Advanced Example (Domain Classification):**
 ```
-@legal Can we enforce non-compete clauses for engineers in California?
+/skill legal Can we enforce non-compete clauses for engineers in California?
 ```
 **Router:**
 - Keywords: No explicit legal terms
@@ -146,14 +146,14 @@ Option B (0.5% equity refresh). Model 4-year NPV.
 
 **Basic Example:**
 ```
-@rnd Design a fraud detection ML pipeline for fintech transactions. 
+/skill rnd Design a fraud detection ML pipeline for fintech transactions. 
 Propose architecture, models, and infrastructure.
 ```
 **Router:** R&D keywords ("design", "ML pipeline", "fraud detection") → **Cloud Kimi K2**
 
 **Advanced Example (Domain + Complexity):**
 ```
-@rnd How would you build a recommendation system for 100M users with <100ms latency?
+/skill rnd How would you build a recommendation system for 100M users with <100ms latency?
 ```
 **Router:**
 - Keywords: Partial ("recommendation system")
@@ -170,7 +170,7 @@ Propose architecture, models, and infrastructure.
 
 **Basic Example:**
 ```
-@ops-audio Transcribe this exec meeting and extract key decisions, 
+/skill ops-audio Transcribe this exec meeting and extract key decisions, 
 action items, and budget concerns.
 [Attach: exec_meeting.mp3 - 47 minutes]
 ```
@@ -178,7 +178,7 @@ action items, and budget concerns.
 
 **Advanced Example (Context Escalation):**
 ```
-@ops-audio Transcribe this 2-hour board meeting, then:
+/skill ops-audio Transcribe this 2-hour board meeting, then:
 1. Summarize strategic decisions
 2. Extract all financial commitments
 3. Identify compliance risks
@@ -201,14 +201,14 @@ action items, and budget concerns.
 
 **Basic Example:**
 ```
-@ops-vision Analyze this metrics dashboard and identify concerning trends
+/skill ops-vision Analyze this metrics dashboard and identify concerning trends
 [Attach: dashboard.png]
 ```
 **Router:** Vision file detected → **Local 9B** (modality priority 900)
 
 **Advanced Example (Long Query):**
 ```
-@ops-vision Analyze this Q4 dashboard. For each metric:
+/skill ops-vision Analyze this Q4 dashboard. For each metric:
 1. Calculate quarter-over-quarter % change
 2. Flag if >2σ from historical average
 3. Identify correlated metrics (e.g., churn ↑ when engagement ↓)
@@ -257,7 +257,7 @@ Query: "What's our burn rate?"
 
 **Example Flow:**
 ```
-Query: @finance Estimate runway if we reduce burn by 15%
+Query: /skill finance Estimate runway if we reduce burn by 15%
 
 Pass 1 (Local 9B):
   Response: "With 15% reduction, runway extends from 18 to 21 months"
@@ -279,7 +279,7 @@ Cost: $0.31 (local attempt + cloud escalation)
 
 **Example:**
 ```
-Query: @legal Can we require engineers to sign non-competes during hiring?
+Query: /skill legal Can we require engineers to sign non-competes during hiring?
 ```
 - Keywords: No "GDPR", "compliance", "regulation"
 - Domain: **Law** (95% confidence)
@@ -299,7 +299,7 @@ Query: @legal Can we require engineers to sign non-competes during hiring?
 
 **Example:**
 ```
-@legal Review this 45-page vendor contract for GDPR compliance
+/skill legal Review this 45-page vendor contract for GDPR compliance
 [Attach: vendor_agreement.pdf]
 → PDF OCR: 12,847 tokens
 ```
@@ -315,7 +315,7 @@ Query: @legal Can we require engineers to sign non-competes during hiring?
 **Example:**
 ```
 Turn 1:
-User: @finance estimate Series B dilution
+User: /skill finance estimate Series B dilution
 Router: Medium complexity → Confidence loop → Local 9B (conf 0.76)
 Response: "Typically 15-25% dilution in Series B"
 
@@ -333,7 +333,7 @@ Response: "Based on cap_table.csv: 20% dilution (40M/200M), your 8% → 6.4%"
 ### Challenge 1: Multi-Signal Priority
 **Query:**
 ```
-@finance For Sarah Kim (sarah@company.com, $180K salary), model equity 
+/skill finance For Sarah Kim (sarah@company.com, $180K salary), model equity 
 dilution in Series B with 1x vs 2x liquidation preferences and waterfall analysis.
 ```
 
@@ -404,7 +404,7 @@ dilution in Series B with 1x vs 2x liquidation preferences and waterfall analysi
 <summary>Example Answer</summary>
 
 ```
-@finance How much runway do we lose if headcount grows 30% next quarter?
+/skill finance How much runway do we lose if headcount grows 30% next quarter?
 ```
 
 - Keywords: ❌ No "burn rate", "runway", "dilution"
