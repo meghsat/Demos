@@ -1,4 +1,4 @@
-# Startup AI Router Workshop - Hybrid Agent System
+# Managing a Startup using Openclaw powered by a hybrid vLLM Semantic Router
 
 This workshop demonstrates a **hybrid local/cloud agent system** powered by vLLM Semantic Router and Openclaw. Learn how to build cost-efficient, privacy-aware AI agents that intelligently route queries between local and cloud models.
 
@@ -29,6 +29,7 @@ This workshop demonstrates a **hybrid local/cloud agent system** powered by vLLM
 
 ## System Architecture
 
+-----> Put the Claude design graphic here
 ```
 User Query
     ↓
@@ -53,31 +54,32 @@ Routing Decision
 
 ## Workshop Agents (6 Skills)
 
-### 1. **HR Agent**
+### 1. **HR Admin Agent**
 **Routing:** Local (PII-sensitive)  
-**Data:** `employees.csv`, `benefits_handbook.md`
+**Data:** `employees.csv`
 
 **Basic Example:**
 ```
-/skill hr onboard Maya Chen, Senior AI Engineer, starts July 1, 
+/skill hr-admin onboard Maya Chen, Senior AI Engineer, starts July 1, 
 salary $175K, equity 0.8%, email maya.chen@startup.ai
 ```
 **Router:** PII detected (name, salary, email) → **Local 9B**
 
-**Advanced Example:**
+---
+
+### 2. **Benefits Agent**
+**Data:** `benefits_handbook.md`
+
 ```
-/skill hr What's our parental leave policy compared to industry standard?
+/skill benefits What's our parental leave policy compared to industry standard?
 ```
 **Router:**
-- Keywords: No HR keywords
-- Domain: General/Business
 - Complexity: Medium
-- Decision: **Confidence loop** → Local tries first → escalates if uncertain
+- Decision: hr_policy_keywords → simple query → **Local 9B**
 
 ---
 
 ### 2. **Finance Agent**
-**Routing:** Hybrid (simple → local, complex → cloud, PII → local)  
 **Data:** `financials.csv`, `cap_table.csv`, `employees.csv`, `retention_history.csv`
 
 **Basic Example (Simple):**
@@ -95,14 +97,12 @@ Include waterfall scenarios for 1x, 1.5x, 2x liquidation preferences.
 
 **Advanced Example (Confidence Loop):**
 ```
-/skill finance Estimate runway if we reduce burn by 15% and delay 2 hires
+/skill finance One of our employees got a competitor offer in Q1 2026 and we took no action — based on what worked best historically, what intervention should we make now, and what does it cost us through year end?   
 ```
 **Router:**
-- Complexity: Medium (0.39 score)
 - Decision: **Confidence loop**
-  - Pass 1: Local 9B tries → confidence 0.71
-  - Pass 2: Escalates to Cloud → confidence 0.93
-- Cost: $0.31 (vs $0.01 local-only, $0.30 cloud-only)
+  - Pass 1: Local 9B tries → confidence < Threshold
+  - Pass 2: Escalates to Cloud
 
 **Advanced Example (PII Redaction - Multi-Pass):**
 ```

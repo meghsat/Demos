@@ -1,9 +1,8 @@
 ---
 name: hr-admin
 description: |
-  HR administrator skill for managing employee records. Restricted to HR staff.
-  Handles onboarding, salary updates, and terminations. Always operates on
-  employee data locally — never sends records to cloud.
+  HR administrator skill for managing employee records.
+  Handles onboarding, salary updates, and terminations.
 ---
 
 # HR Admin Agent
@@ -31,32 +30,32 @@ description: |
 ## Examples
 
 ```
-User: @hr-admin onboard Maya Chen, Senior AI Engineer, starts July 1,
-      salary $175K, equity 0.8%, email maya.chen@startup.ai
+User: @hr-admin onboard Priya Nair, Staff Platform Engineer, starts Aug 15,
+      salary $195K, equity 1.1%, email priya.nair@startup.ai
 
 Actions:
 - Read ${HOME}/Downloads/projects/router-configs/data/employees.csv to get last ID
-- Generate EMP0048
-- Append: EMP0048, Maya Chen, Senior AI Engineer, 2026-07-01, 175000, 0.008, maya.chen@startup.ai, active
-- Confirm onboarding initiated, list downstream tasks
+- Generate EMP0049
+- Append: EMP0049, Priya Nair, Staff Platform Engineer, 2026-08-15, 195000, 0.011, priya.nair@startup.ai, active
+- Confirm onboarding initiated, list downstream tasks (IT setup, Slack, equipment, benefits enrollment)
 ```
 
 ```
-User: @hr-admin update Sarah Kim's salary to $195K
-
-Actions:
-- Find Sarah Kim in employees.csv
-- Update salary field: 180000 → 195000
-- Confirm change
-```
-
-```
-User: @hr-admin terminate Jordan Lee
+User: @hr-admin equity refresh for Daniel Reyes — grant an additional 0.3%
 
 Actions:
-- Find Jordan Lee in employees.csv
-- Set status: active → inactive
-- Confirm soft delete, note offboarding tasks
+- Find Daniel Reyes in employees.csv
+- Update equity_pct field: current_value → current_value + 0.003
+- Confirm change, note cliff/vesting schedule reminder
+```
+
+```
+User: @hr-admin record departure for Keiko Tanaka, last day June 30, voluntary
+
+Actions:
+- Find Keiko Tanaka in employees.csv
+- Set status: active → inactive, record departure_date: 2026-06-30
+- Confirm soft delete, note offboarding tasks (access revocation, final payroll, equipment return)
 ```
 
 ---

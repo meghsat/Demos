@@ -24,33 +24,33 @@ description: |
 ## Examples
 
 ```
-User: @benefits what's our parental leave policy?
+User: @benefits does our health plan cover therapy and mental health visits?
 
 Actions:
 - Read ${HOME}/Downloads/projects/router-configs/data/benefits_handbook.md
-- Search for "parental leave" → Section 4
-- Summarize: 16 weeks primary caregiver (fully paid), 6 weeks secondary
-- Cite: Section 4.1–4.2
+- Search for "mental health" / "behavioral health" → Section 6
+- Summarize: 20 covered sessions/year, $20 copay, telehealth included
+- Cite: Section 6.2
 ```
 
 ```
-User: @benefits how does our 401k match work?
-
-Actions:
-- Read ${HOME}/Downloads/projects/router-configs/data/benefits_handbook.md
-- Search for "401k" → Section 5.1
-- Summarize: 50% match up to 6% of salary, immediate vesting
-- Cite: Section 5.1
-```
-
-```
-User: @benefits how many PTO days do I get in year 2?
+User: @benefits I'm getting married next month — can I add a domestic partner to insurance mid-year?
 
 Actions:
 - Read ${HOME}/Downloads/projects/router-configs/data/benefits_handbook.md
-- Search for "PTO" / "Time Off" → Section 3.1
-- Summarize: 20 days/year (years 2–3 accrual rate)
-- Cite: Section 3.1
+- Search for "qualifying life event" / "domestic partner" → Section 2.4
+- Summarize: Marriage is a QLE; 30-day window to add dependent, forms required
+- Cite: Section 2.4–2.5
+```
+
+```
+User: @benefits when do my ISOs expire if I leave the company?
+
+Actions:
+- Read ${HOME}/Downloads/projects/router-configs/data/benefits_handbook.md
+- Search for "stock options" / "ISO" / "exercise window" → Section 8
+- Summarize: 90-day post-termination exercise window for ISOs; early-exercise elections noted
+- Cite: Section 8.3
 ```
 
 ---

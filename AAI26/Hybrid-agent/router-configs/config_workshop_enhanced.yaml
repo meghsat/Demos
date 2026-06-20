@@ -167,7 +167,7 @@ routing:
                   - "401k"
                   - "health insurance"
               case_sensitive: false
-              bm25_threshold: 0.20
+              bm25_threshold: 0.15
 
         # ENHANCED: Domain classification for MMLU-style categorization
         domains:
@@ -263,7 +263,7 @@ routing:
                   - DATE_TIME    
                   - ORGANIZATION 
                   - GPE         
-                  - NRP          
+                  - NRP
         # Security: Jailbreak detection
         jailbreak:
             - name: prompt_injection
@@ -413,10 +413,29 @@ routing:
           algorithm:
               type: static
 
-        # PRIORITY 550: ENHANCED - Confidence Loop for medium complexity (no PII)
+        # PRIORITY 550: Simple finance and HR policy queries → LOCAL
+        - name: workshop_simple_local
+          description: "Workshop Rule 6: Simple finance (burn rate) and HR policy queries stay local"
+          priority: 550
+          rules:
+              operator: OR
+              conditions:
+                  - type: keyword
+                    name: finance_simple_keywords
+                  - type: keyword
+                    name: hr_policy_keywords
+                  - type: complexity  # ENHANCED: Low complexity → local
+                    name: needs_reasoning:low
+          modelRefs:
+              - model: Qwen3.5-9B-NoThinking
+                use_reasoning: false
+          algorithm:
+              type: static
+
+        # PRIORITY 500: ENHANCED - Confidence Loop for medium complexity (no PII)
         - name: workshop_confidence_loop
           description: "ADVANCED: Medium-complexity queries → try local first, escalate to cloud if low confidence"
-          priority: 550
+          priority: 500
           rules:
               operator: AND
               conditions:
@@ -435,28 +454,9 @@ routing:
               type: confidence
               confidence:
                   confidence_method: self_verify
-                  threshold: 0.8
+                  threshold: 0.97
                   escalation_order: cost
                   cost_quality_tradeoff: 0.3
-
-        # PRIORITY 500: Simple finance and HR policy queries → LOCAL
-        - name: workshop_simple_local
-          description: "Workshop Rule 6: Simple finance (burn rate) and HR policy queries stay local"
-          priority: 500
-          rules:
-              operator: OR
-              conditions:
-                  - type: keyword
-                    name: finance_simple_keywords
-                  - type: keyword
-                    name: hr_policy_keywords
-                  - type: complexity  # ENHANCED: Low complexity → local
-                    name: needs_reasoning:low
-          modelRefs:
-              - model: Qwen3.5-9B-NoThinking
-                use_reasoning: false
-          algorithm:
-              type: static
 
         # PRIORITY 100: Default fallback → LOCAL
         - name: workshop_default_local
@@ -548,6 +548,8 @@ global:
         looper:
             endpoint: http://vllm-sr-envoy-container:8899/v1/chat/completions
             timeout_seconds: 1200
+            model_endpoints:
+                accounts/fireworks/models/kimi-k2p6: https://api.fireworks.ai/inference/v1/chat/completions
 
     model_catalog:
         embeddings:

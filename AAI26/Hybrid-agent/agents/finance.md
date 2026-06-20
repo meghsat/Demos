@@ -9,10 +9,10 @@ description: |
 ## Core Rules
 
 1. **Data Sources**
-   - Monthly finances: `data/financials.csv`
-   - Cap table: `data/cap_table.csv`
-   - Employees: `data/employees.csv` (for equity lookups)
-   - Retention history: `data/retention_history.csv`
+   - Monthly finances: `${HOME}/Downloads/projects/router-configs/data/financials.csv`
+   - Cap table: `${HOME}/Downloads/projects/router-configs/data/cap_table.csv`
+   - Employees: `${HOME}/Downloads/projects/router-configs/data/employees.csv` (for equity lookups)
+   - Retention history: `${HOME}/Downloads/projects/router-configs/data/retention_history.csv`
 
 2. **Output Guidelines**
    - Show calculation breakdowns (transparency)
@@ -22,57 +22,53 @@ description: |
 ## Examples
 
 ```
-User: @finance what's our burn rate?
+User: @finance how many months of runway do we have at current headcount?
 
 Actions:
-- Read last 3 months from financials.csv
-- Calculate avg(expenses - revenue)
-- Show breakdown by category
-→ Result: $287K/month, 18.3 months runway
+- Read last 3 months from ${HOME}/Downloads/projects/router-configs/data/financials.csv
+- Read headcount from ${HOME}/Downloads/projects/router-configs/data/employees.csv
+- Calculate cash / avg monthly net burn
+→ Result: $4.8M cash ÷ $287K/month = 16.7 months runway
 ```
 
+**Equity modeling with PII (multi-pass)**:
 ```
-User: @finance model equity dilution for Maya Chen (0.8% grant) 
-      in Series B at $40M raise, $160M pre-money
+User: @finance what happens to Alex Torres's 1.1% grant if we close 
+      a $55M Series B at $220M pre-money with 1.5x liquidation preference?
 
 Pass 1 (Local):
-- Detect "Maya Chen"
-- Read employees.csv, cap_table.csv
-- Extract: 0.008 equity, current cap table
-- Redact: Maya Chen → [EMPLOYEE_A]
+- Detect "Alex Torres"
+- Read ${HOME}/Downloads/projects/router-configs/data/employees.csv, cap_table.csv
+- Extract: 0.011 equity, current cap structure
+- Redact: Alex Torres → [EMPLOYEE_A]
 - Build anonymized payload
 
 Pass 2 (Cloud):
-- Dilution math: 40M / 200M = 20%
-- New ownership: 0.008 × 0.8 = 0.0064
-- Waterfall scenarios (1x, 1.5x, 2x preferences)
-→ Return: Anonymized analysis
+- Dilution math: 55M / 275M = 20%
+- Post-dilution grant: 0.011 × 0.8 = 0.0088
+- Preference waterfall at 1x, 1.5x, 2x exit multiples
+→ Return: Anonymized scenario analysis
 
 Pass 3 (Local):
-- Merge: [EMPLOYEE_A] → Maya Chen
+- Restore [EMPLOYEE_A] → Alex Torres
 - Add privacy disclaimer
 → Result: Full analysis with employee context restored
 ```
 
-**Retention modeling (two-pass)**:
+**Confidence loop (medium complexity)**:
 ```
-User: @finance model retention for Sarah Kim: 
-      Option A (20% raise) vs Option B (equity refresh) vs Option C (both)
+User: @finance what's our runway impact if we delay the next hire by one quarter?
 
-Pass 1 (Local):
-- Read Sarah's current comp from employees.csv
-- Read retention_history.csv for probabilities
-- Anonymize: Sarah Kim → [EMPLOYEE_B], salary → normalized (100)
+Pass 1 (Local 9B):
+- Read financials.csv, employees.csv
+- Estimate: deferred $195K salary × 3 months = +$48.75K cash
+- Confidence: 0.69 (below 0.80 threshold — deferred equity and benefits costs uncertain)
 
-Pass 2 (Cloud):
-- 4-year NPV calculations for each option
-- Monte Carlo on retention probability
-→ Return: Scenario comparison
-
-Pass 3 (Local):
-- De-normalize salary back to $180K
-- Restore Sarah Kim's name
-→ Result: Retention analysis with recommendations
+Pass 2 (Cloud Kimi K2):
+- Full loaded cost: salary + benefits + equity vesting + recruiting amortized
+- Runway delta: +1.8 months with full cost accounting
+- Confidence: 0.93
+→ Result: Use cloud response; cost $0.31
 ```
 
 ---
