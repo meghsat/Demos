@@ -30,7 +30,7 @@ providers:
             - name: lemonade-whisper
               protocol: http
               weight: 100
-              base_url: http://host.docker.internal:13306/v1
+              base_url: http://host.docker.internal:13305/v1
               provider: openai
               api_key: lemonade
         - name: accounts/fireworks/models/kimi-k2p6
@@ -45,6 +45,18 @@ providers:
               base_url: https://api.fireworks.ai/inference/v1
               provider: openai
               api_key: fw_Y38edgg8ZxvHa7MpGD99ng  # REQUIRED: Add your Fireworks API key
+        - name: Qwen3.6-35B-A3B-NoThinking
+          pricing:
+              currency: USD
+              prompt_per_1m: 0.40
+              completion_per_1m: 0.80
+          backend_refs:
+            - name: lemonade-large
+              protocol: http
+              weight: 100
+              base_url: http://host.docker.internal:13305/v1
+              provider: openai
+              api_key: lemonade
 
 routing:
     modelCards:
@@ -67,11 +79,19 @@ routing:
         - name: accounts/fireworks/models/kimi-k2p6
           param_size: 1028B
           context_window_size: 262000
-          description: Cloud model for complex reasoning, legal research, and R&D system design
+          description: Cloud model for complex reasoning and legal research
           capabilities: [chat, reasoning, long-context, vision]
           quality_score: 0.99
           modality: ar
           tags: [cloud, frontier, powerful]
+        - name: Qwen3.6-35B-A3B-NoThinking
+          param_size: 35B
+          context_window_size: 128000
+          description: Big local 35B model for R&D
+          capabilities: [chat, reasoning]
+          quality_score: 0.88
+          modality: ar
+          tags: [local, complex, private, rnd]
 
     signals:
         keywords:
@@ -95,6 +115,10 @@ routing:
                   - "machine learning"
                   - "neural network"
                   - "propose architecture"
+                  - "predict stock"
+                  - "stock prediction"
+                  - "time series forecast"
+                  - "ensemble model"
               case_sensitive: false
               bm25_threshold: 0.20
 
@@ -342,9 +366,9 @@ routing:
           algorithm:
               type: static
 
-        # PRIORITY 700: R&D system design → CLOUD (no PII)
-        - name: workshop_rnd_cloud
-          description: "Workshop Rule 4: R&D system design and ML architecture uses cloud"
+        # PRIORITY 700: R&D system design → LOCAL 35B (no PII)
+        - name: workshop_rnd_local_strong
+          description: "Workshop Rule 4: R&D system design and ML pipeline uses local strong model"
           priority: 700
           rules:
               operator: AND
@@ -360,7 +384,7 @@ routing:
                         - type: domain
                           name: computer_science
           modelRefs:
-              - model: accounts/fireworks/models/kimi-k2p6
+              - model: Qwen3.6-35B-A3B-NoThinking
                 use_reasoning: false
           algorithm:
               type: static

@@ -1,0 +1,52 @@
+SCUDFER — WEEKLY EXEC SYNC
+Date: June 20, 2026
+Duration: ~7 minutes
+Attendees: Alex Rivera (CEO), Priya Sharma (CFO), Marcus Webb (CTO), Jordan Lee (VP Sales), Sam Chen (VP Product)
+
+────────────────────────────────────────────────────────────────────────────────
+
+ALEX RIVERA:
+Alright, let's get started. It's June 20th, weekly exec sync. Priya, kick us off with the financials.
+
+PRIYA SHARMA:
+Sure. As of end of May we're sitting at four point four eight five million in cash. Monthly burn came in at two eighty seven thousand five hundred on the expense side, revenue was forty four thousand, so net burn is two forty three thousand five hundred. That gives us roughly eighteen months of runway at current pace.
+
+ALEX RIVERA:
+Eighteen months. That's tighter than I'd like going into Series B discussions. Marcus, how are we tracking on infrastructure costs? We've been at forty-two thousand a month for three months straight.
+
+MARCUS WEBB:
+Yeah, that's basically steady state. We're running twelve services on AWS and we're probably twenty percent over-provisioned because Sarah Kim and Kevin Patel are building out the new inference pipeline. Once that's in production we right-size and drop infra to maybe thirty-five thousand — but that's Q3 at the earliest.
+
+ALEX RIVERA:
+Right. Jordan, what's the sales picture? We were at forty-seven customers end of May.
+
+JORDAN LEE:
+Forty-seven customers, forty-four K MRR. Chris Martinez closed two new deals in May — both SMB, one's a fintech in Austin, one's a healthcare analytics company. Pipeline's strong. Six enterprise prospects in late-stage conversations. Close even three of those and that's another sixty to ninety K MRR, which changes the runway conversation significantly.
+
+ALEX RIVERA:
+What are the close probabilities?
+
+JORDAN LEE:
+Two are high — I'd say eighty percent. The other four are fifty-fifty. We've got a demo with Meridian Capital next Tuesday. That one alone is a forty K ARR deal.
+
+SAM CHEN:
+The Meridian demo needs the new reporting dashboard Emily Zhang's been building. Emily told me yesterday it's on track for a soft launch Monday. It'll look solid for the demo.
+
+ALEX RIVERA:
+Good. Main agenda item — we need to make a call on the two open headcount requests. Priya, walk us through the budget impact.
+
+PRIYA SHARMA:
+We have twelve employees, total payroll two fifteen thousand a month. The two open reqs are a Senior ML Engineer and an Enterprise Account Executive. ML Engineer is one sixty-five to one eighty base. AE is one twenty base plus commission, OTE around one ninety. Fill both and payroll goes to roughly two sixty, monthly burn increases by forty-five thousand, runway drops from eighteen months to about fifteen.
+
+MARCUS WEBB:
+I really need that ML Engineer. We're blocked on model optimization. David Park has been pulled off frontend to help Sarah Kim, which is creating tech debt. We need someone who owns the ML pipeline full time.
+
+PRIYA SHARMA:
+If we hire just the ML Engineer now and defer the AE, the impact is about twelve to fifteen thousand a month additional burn. Keeps us at sixteen and a half months runway, which feels safer.
+
+ALEX RIVERA:
+Agreed. Let's approve the ML Engineer req now. Marcus, JD by end of week, post it Monday through Greenhouse. Jordan, the AE req goes back to the July board agenda — we revisit once Q2 closes.
+
+
+────────────────────────────────────────────────────────────────────────────────
+END OF MEETING

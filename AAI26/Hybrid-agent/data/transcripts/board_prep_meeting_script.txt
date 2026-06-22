@@ -1,0 +1,208 @@
+SCUDFER — QUARTERLY BOARD PREP SESSION
+Date: June 20, 2026
+Duration: ~25 minutes (simulates 2-hour board meeting for context-escalation demo)
+Attendees: Alex Rivera (CEO), Priya Sharma (CFO), Marcus Webb (CTO), Jordan Lee (VP Sales), Sam Chen (VP Product)
+
+NOTE FOR DEMO: This meeting contains employee names, salaries, equity details, and financial data.
+When transcribed by Whisper, the transcript runs ~18,000 tokens, triggering the large_context
+signal and cloud escalation to Kimi K2 for full analysis.
+
+────────────────────────────────────────────────────────────────────────────────
+PART 1 — Q2 FINANCIAL REVIEW
+────────────────────────────────────────────────────────────────────────────────
+
+ALEX RIVERA:
+Good morning everyone. It's June 20th and we have about two hours for board prep. Board meeting is in three weeks, so I want full alignment today. Priya, let's start with the complete Q2 financial picture.
+
+PRIYA SHARMA:
+Q2 covers April and May fully — we're still in June. Revenue: April was forty-two thousand, May was forty-four thousand. Projecting June around forty-seven to fifty thousand based on two deals Jordan's team closed in early June. Total Q2 revenue should be around one thirty-three to one thirty-six thousand. That's up from Q1's one nineteen thousand — roughly twelve percent quarter-over-quarter growth.
+
+ALEX RIVERA:
+What does that do to burn?
+
+PRIYA SHARMA:
+Net burn for Q2 averages around two forty to two forty-five thousand per month after revenue. We started Q2 with five point two million in cash, we'll end Q2 at four point four eight five million. So we burned about seven hundred and fifteen thousand in the quarter. The good news: revenue is growing faster than expenses, so net burn is compressing. Q1 net burn was two sixty per month. Now it's two forty-three. We're heading in the right direction.
+
+MARCUS WEBB:
+The infrastructure cost stabilization kicks in by August — that shaves another seven thousand a month off burn.
+
+PRIYA SHARMA:
+So by Q3 we're potentially at two thirty-five net burn, maybe lower if sales accelerates. The burn multiple — which Series B investors will absolutely focus on — we're at about five and a half X right now. Meaning we spend five-fifty for every dollar of net new ARR. That's acceptable for our stage but needs to come down below three X before a Series B raise.
+
+ALEX RIVERA:
+What does it take to get there?
+
+PRIYA SHARMA:
+Two levers. Revenue needs to reach at least eighty to ninety thousand MRR. And we hold expenses below three hundred thousand. Jordan closes three enterprise deals this quarter and we get close. Five deals and we're there.
+
+────────────────────────────────────────────────────────────────────────────────
+PART 2 — PIPELINE AND COMPLIANCE
+────────────────────────────────────────────────────────────────────────────────
+
+JORDAN LEE:
+Let me walk through pipeline. Six enterprise prospects in late stage. First: Meridian Capital, forty thousand ARR, demo Tuesday, high confidence. Second: TechScale Labs, sixty-five thousand ARR, in security review, ninety-day decision cycle, should close by August. Third: Apex Insurance, ninety thousand ARR — this is the whale — they want full HIPAA compliance certification. Fourth: Northgate Financial, thirty-five thousand ARR, in procurement review. Fifth: Luminary Health, fifty thousand ARR, pilot starts next month. Sixth: Blackwood Group, forty K ARR, just entered legal review of our data processing agreement.
+
+ALEX RIVERA:
+Jordan, the Apex Insurance deal — ninety thousand ARR. What's the HIPAA status?
+
+JORDAN LEE:
+They want a signed BAA and evidence of HIPAA-compliant data handling. We process some protected health information through the product now, so we probably should have this in place anyway.
+
+SAM CHEN:
+We don't actually store PHI — we process it in memory and the output is de-identified. Legal review last quarter said we're in a gray area but probably don't require a BAA. But we'd need formal certification to satisfy Apex's procurement team.
+
+ALEX RIVERA:
+Priya, what does HIPAA compliance certification cost?
+
+PRIYA SHARMA:
+I've gotten a couple of quotes. A consultant to get us through SOC 2 Type II and HIPAA together runs about eighty to a hundred thousand dollars. Timeline is four to six months. If we start now we could be certified by December.
+
+ALEX RIVERA:
+And Apex commits if we have it?
+
+JORDAN LEE:
+They've committed verbally. Ninety K ARR with expansion potential. They have three divisions — total could be two hundred fifty K ARR over two years.
+
+ALEX RIVERA:
+That ROI math is easy. Priya, provision a hundred thousand for compliance work. Marcus, who owns this internally?
+
+MARCUS WEBB:
+I'd pull Sarah Kim off the inference project for a couple of weeks to lead the technical audit piece. She ran a security review at her previous company. Kevin Patel holds the fort on backend while she does this.
+
+PRIYA SHARMA:
+Flag: if Sarah's off inference work, does that affect the ML Engineer hire timeline? The new hire needs to onboard immediately, right?
+
+MARCUS WEBB:
+Yes. And having the new ML Engineer actually makes it easier to pull Sarah for compliance — the new hire owns the pipeline work with Kevin, Sarah focuses on the audit. I need that hire done by mid-July.
+
+ALEX RIVERA:
+Marcus, JD posts Monday. You personally in the interviews. Person in seat by July 14th. Sam, roadmap impact?
+
+SAM CHEN:
+A lot in flight right now. Emily Zhang is on the enterprise dashboard — ships Monday for Meridian. David Park is building the Salesforce integration for Northgate. Lisa Wong is redesigning the onboarding flow — we've seen twenty-two percent drop-off in the first week and she's fixing that. Kevin Patel is building API v2 that Jordan's enterprise customers are asking for.
+
+JORDAN LEE:
+API v2 is critical for TechScale Labs. They can't integrate without it. When does Kevin ship?
+
+SAM CHEN:
+End of July currently. Pull Kevin into compliance work and that slips to September.
+
+ALEX RIVERA:
+We can't slip TechScale. Priya — sixty-five thousand ARR versus ninety thousand, what's the priority?
+
+PRIYA SHARMA:
+TechScale closes faster. Apex is four to six months out on compliance anyway. Cash-flow perspective: TechScale first.
+
+ALEX RIVERA:
+Agreed. Marcus, don't pull Kevin. Find another way to staff the compliance audit.
+
+MARCUS WEBB:
+I can bring in TrustArc — they do exactly this kind of technical HIPAA assessment. Two-week engagement, probably fifteen to twenty thousand. Way cheaper than losing Kevin for eight weeks.
+
+PRIYA SHARMA:
+Budget that from the compliance allocation. Twenty K now for the assessment, then decide on the full SOC 2 engagement after we see what comes back.
+
+────────────────────────────────────────────────────────────────────────────────
+PART 3 — SERIES B STRATEGY
+────────────────────────────────────────────────────────────────────────────────
+
+ALEX RIVERA:
+Moving on — Series B strategy. Priya, walk us through the target model.
+
+PRIYA SHARMA:
+For Series B the metrics investors will focus on: MRR, growth rate, net revenue retention, burn multiple, and team size. MRR today is forty-four thousand — we need to be at ninety to a hundred thousand by the time we raise. Growth rate today is twelve percent quarter-over-quarter — we need eighteen to twenty percent. Net revenue retention — we don't have enough history yet, but our early customers haven't churned. Team size today is twelve — Series B investors want to see twenty to twenty-five, showing you can scale. And burn multiple needs to be under three X.
+
+ALEX RIVERA:
+Fundraising timeline if we hit those targets?
+
+PRIYA SHARMA:
+If Jordan closes three enterprise deals by September, we get to roughly ninety K MRR. Maintain the growth rate and we'd be ready to go to market in October or November. Goldman Sachs and Lakestar — both informally confirmed Q4 2026 is a good window. I'd target a forty-million raise on a one sixty pre-money valuation. That implies roughly twenty percent Series B dilution.
+
+ALEX RIVERA:
+Cap table impact?
+
+PRIYA SHARMA:
+Today: founders hold sixty-five percent — that's Alex and Marcus. Series A is twenty-three percent, option pool is twelve percent. After Series B at twenty percent dilution: founders drop to fifty-two, Series A drops to eighteen point four, option pool to nine point six, Series B gets twenty percent. We'd also want to refresh the option pool before the raise — add another eight to ten percent — which means creating roughly eight hundred thousand to a million new shares.
+
+MARCUS WEBB:
+Before we do that, I want to make sure the key engineers are close to fully vested. Sarah Kim started March 2024, so she's at about twenty-two months on a four-year cliff — under a year away. David Park is similar. Kevin Patel is at fourteen months. I want to think carefully about retention grants for these three before the Series B.
+
+ALEX RIVERA:
+Good point. Priya, let's model retention grants for Sarah Kim, David Park, and Kevin Patel. What's fair market value per share?
+
+PRIYA SHARMA:
+Based on our last 409A from February 2026, common shares are valued at forty cents. A twenty-five-thousand-share grant for each of those three is ten thousand dollars in grant value per person. Not huge individually, but they'll appreciate significantly with the valuation step-up in Series B.
+
+ALEX RIVERA:
+Let's plan retention grants for Sarah Kim, David Park, and Kevin Patel before end of Q3. Cliff is twelve months from grant date. Priya, prepare the board resolutions.
+
+PRIYA SHARMA:
+I'll have them ready for the July board meeting.
+
+────────────────────────────────────────────────────────────────────────────────
+PART 4 — H2 HIRING PLAN
+────────────────────────────────────────────────────────────────────────────────
+
+ALEX RIVERA:
+Jordan, walk me through what sales needs for H2.
+
+JORDAN LEE:
+I need an Enterprise Account Executive by September — base one twenty, OTE one ninety. I also want a Solutions Engineer. They support enterprise deals technically and they're a big reason enterprise accounts actually close. SE comp is around one forty to one fifty. And by Q4, a Customer Success Manager for when we're at sixty-plus customers — that's a hundred to a hundred ten base.
+
+PRIYA SHARMA:
+Sales adds: AE, SE, CSM. At midpoints that's one forty-five, one forty-five, and one oh five. About three hundred ninety-five thousand additional annualized payroll. Partial-year 2026 impact is around two hundred thousand additional.
+
+MARCUS WEBB:
+Engineering: ML Engineer already approved. I'll also need a second backend engineer by Q4 to support enterprise SLAs. And we seriously should have a DevOps or platform engineer — we're spending too much engineer time on infrastructure management. Two roles, budget one fifty each.
+
+SAM CHEN:
+I need a second product manager. Emily Zhang is strong but stretched across too many workstreams. I'd want someone with enterprise background — one forty-five to one sixty base.
+
+ALEX RIVERA:
+Priya, full H2 headcount impact?
+
+PRIYA SHARMA:
+ML Engineer approved at one seventy-five. Engineering backend and DevOps — three hundred total, by Q4. Sales AE in September, SE in October, CSM in Q1 next year. Product PM at one fifty in October. So six new hires in H2. Partial-year 2026 additional payroll is roughly three hundred to three fifty thousand. Monthly burn goes back up to around two sixty-five to two seventy by year end. But if revenue is at ninety K MRR, net burn is only one seventy-five. That would be the best burn multiple we've ever posted.
+
+ALEX RIVERA:
+So the math works if Jordan hits the numbers.
+
+JORDAN LEE:
+Three enterprise closes by September. I'm putting it on the board.
+
+────────────────────────────────────────────────────────────────────────────────
+PART 5 — TEAM HEALTH AND COMPENSATION
+────────────────────────────────────────────────────────────────────────────────
+
+ALEX RIVERA:
+Last thing — team health. Sam, I know you've been hearing things from the ICs. What's the ground-level feel?
+
+SAM CHEN:
+The team is motivated but tired. Sarah Kim, David Park, Kevin Patel, Emily Zhang, Lisa Wong — they're working hard and they know the opportunity is real. But there's been scope creep. People getting pulled in multiple directions. The compliance work we just talked about is going to stress Sarah in particular. We need to protect focused time. We're also overdue on performance reviews — we haven't done a formal cycle since November.
+
+ALEX RIVERA:
+Noted. Priya, when do merit increases go through?
+
+PRIYA SHARMA:
+We planned for January 2027, aligning with Series B close. But I think we should do a targeted mid-year adjustment for top performers now, before the raise — keeps retention risk low. I'm thinking Sarah Kim and Emily Zhang for sure. Both are significantly below market for their contribution levels. And Chris Martinez on the sales side — he's been exceeding quota every month since April.
+
+ALEX RIVERA:
+Agreed. Marcus, coordinate with Priya on engineering. Jordan, your call on Chris. I'll handle the exec-level reviews. Priya, can you draft comp adjustment recommendations by July 1st?
+
+PRIYA SHARMA:
+I'll have them ready.
+
+ALEX RIVERA:
+One more thing before we close out. Board deck. Priya has the full draft by July 5th. Sam, I need a one-pager on our AI infrastructure strategy — model dependencies, vendor risk, whether we're model-agnostic. Make it accessible, not too technical.
+
+SAM CHEN:
+I'll have it to Priya by June 27th.
+
+MARCUS WEBB:
+And we should be ready for the board to ask about our model dependencies directly, given all the AI vendor uncertainty right now. We should have a clear answer on open-source versus proprietary, what our switching costs look like.
+
+ALEX RIVERA:
+Sam, make sure that's in the one-pager. Okay — we're over time but we covered everything. Great session. Thanks everyone.
+
+────────────────────────────────────────────────────────────────────────────────
+END OF MEETING

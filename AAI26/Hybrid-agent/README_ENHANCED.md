@@ -52,13 +52,12 @@ Routing Decision
 
 ---
 
-## Workshop Agents (6 Skills)
+## Workshop Agents
 
 ### 1. **HR Admin Agent**
 **Routing:** Local (PII-sensitive)  
 **Data:** `employees.csv`
 
-**Basic Example:**
 ```
 /skill hr-admin onboard Maya Chen, Senior AI Engineer, starts July 1, 
 salary $175K, equity 0.8%, email maya.chen@startup.ai
@@ -82,20 +81,20 @@ salary $175K, equity 0.8%, email maya.chen@startup.ai
 ### 2. **Finance Agent**
 **Data:** `financials.csv`, `cap_table.csv`, `employees.csv`, `retention_history.csv`
 
-**Basic Example (Simple):**
+**Simple Query:**
 ```
 /skill finance what's our current burn rate and runway?
 ```
 **Router:** Simple keywords ("burn rate") → **Local 9B**
 
-**Basic Example (Complex):**
+**Complex Query:**
 ```
 /skill finance Model equity dilution in Series B at $40M raise on $160M pre-money. 
 Include waterfall scenarios for 1x, 1.5x, 2x liquidation preferences.
 ```
 **Router:** Finance modeling keywords + multi-step → **Cloud Kimi K2**
 
-**Advanced Example (Confidence Loop):**
+**Complex Query (Confidence Loop)**
 ```
 /skill finance One of our employees got a competitor offer in Q1 2026 and we took no action — based on what worked best historically, what intervention should we make now, and what does it cost us through year end?   
 ```
@@ -119,39 +118,35 @@ Option B (0.5% equity refresh). Model 4-year NPV.
 ---
 
 ### 3. **Legal Agent**
-**Routing:** Cloud (regulatory research)  
 **Data:** Web search, uploaded contracts
 
-**Basic Example:**
+**Simple Query (Web Search):**
 ```
-/skill legal What are latest GDPR requirements for AI products processing EU user data?
+/skill legal What GDPR compliance and data protection regulatory requirements apply to an AI vendor under EU privacy law?
 ```
-**Router:** Legal keywords ("GDPR") → **Cloud Kimi K2**
+**Router:** Legal keywords → **Cloud Kimi K2**
 
 **Advanced Example (Domain Classification):**
 ```
-/skill legal Can we enforce non-compete clauses for engineers in California?
+/skill legal Can we enforce non-compete clauses for employees in California under state contract law?
 ```
 **Router:**
-- Keywords: No explicit legal terms
 - Domain: **Law** (93% confidence via MMLU classifier)
 - Decision: `workshop_legal_cloud` → **Cloud Kimi K2**
-- Why: Semantic understanding caught legal topic despite no buzzwords
+- Why: Semantic understanding caught legal topic
 
 ---
 
 ### 4. **R&D Agent**
-**Routing:** Cloud (system design, greenfield architecture)  
 **Data:** None (novel design, no existing codebase)
 
-**Basic Example:**
 ```
-/skill rnd Design a fraud detection ML pipeline for fintech transactions. 
-Propose architecture, models, and infrastructure.
-```
-**Router:** R&D keywords ("design", "ML pipeline", "fraud detection") → **Cloud Kimi K2**
+/skill rnd-stock build a stock prediction model from the startup data and visualize it  
 
-**Advanced Example (Domain + Complexity):**
+```
+**Router:** R&D keywords ("design", "ML pipeline", "fraud detection") → **Local Strong 35B Model**
+
+**Advanced Query:**
 ```
 /skill rnd How would you build a recommendation system for 100M users with <100ms latency?
 ```
