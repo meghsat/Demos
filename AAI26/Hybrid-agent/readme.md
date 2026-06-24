@@ -22,11 +22,7 @@ This workshop demonstrates a **hybrid local/cloud agent system** powered by vLLM
 
 ## System Architecture
 
-<p align="center">
-  <img src="https://github.com/user-attachments/assets/46b4bf51-2b16-4771-bac2-7471cde2aad9"
-       width="600"
-       alt="Image">
-</p>
+https://github.com/user-attachments/assets/46b4bf51-2b16-4771-bac2-7471cde2aad9
      
 ---
 
