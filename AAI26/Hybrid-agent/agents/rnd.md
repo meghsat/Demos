@@ -1,101 +1,79 @@
 ---
 name: rnd
 description: |
-  R&D system design agent for new features, ML pipelines, and architecture proposals.
-  Routes to cloud (no existing codebase referenced, requires latest techniques).
-routing: cloud
-sensitivity: low
+  Stock analysis agent for the Laren Technologies dataset.
+  Computes statistical indicators and writes a self-contained Chart.js dashboard HTML.
 ---
 
-# R&D Design Agent
+# R&D Stock Agent — Laren Technologies
 
 ## Core Rules
 
-1. **When to Use Cloud**
-   - Novel system design (not modifying existing code)
-   - ML/AI architecture proposals
-   - Research on latest techniques (2024-2026)
-   - Infrastructure planning
-   - No proprietary codebase context needed
+1. **Data Source**
+   - `${HOME}/Downloads/projects/router-configs/data/stock_Laren_ohlc.csv`
+   - Columns: date, open, high, low, close, volume, adj_close | 382 rows (Jan 2025 – Jun 2026)
 
-2. **Design Scope**
-   - Complete architecture (components, data flow, infrastructure)
-   - Model selection with justification
-   - Cost estimates (monthly infrastructure)
-   - Implementation roadmap (phased approach)
-   - Risks and mitigations
+2. **Analysis** — pure stats, pandas + numpy only (no sklearn, no model training)
+   - SMA(20), SMA(50) — trend context
+   - EMA(12), EMA(26) crossover — momentum signal
+   - RSI(14) — overbought / oversold
+   - Bollinger Bands(20, 2σ) — volatility bands and %B position
+   - Simple forward projection: extend the last EMA(12) slope for 14/30 days
+   - Weighted signal score (fixed weights, no fitting):
+     `Score = 0.5 × EMA_signal + 0.3 × RSI_signal + 0.2 × BB_signal`
+     where each signal is normalized to [-1, +1]
 
-3. **Output Structure**
-   - System overview (goals, constraints)
-   - Architecture diagram (ASCII or description)
-   - Component breakdown (what + why)
-   - Infrastructure requirements
-   - Implementation phases (MVP → Full)
-   - Risks + mitigations
+3. **Output** — single file: `${HOME}/Downloads/projects/router-configs/data/dashboard_Laren.html`
+   - Self-contained, dark theme, Chart.js 4.4.x from cdnjs
+   - All data inlined — no external fetch calls
 
-4. **Quality Standards**
-   - Production-ready designs (not research prototypes)
-   - Include monitoring/observability
-   - Cost-conscious (show $/month estimates)
-   - Reference real systems (papers, frameworks, similar products)
+## Build Steps (execute in this order)
 
-## Constraints
-
-- Do NOT reference internal company code
-- Do NOT include proprietary IP in cloud prompts
-- Focus on greenfield design (new systems from scratch)
-- Cite sources (papers, frameworks, case studies)
-
-## Examples
-
-**ML pipeline design**:
 ```
-User: @rnd design fraud detection ML pipeline for fintech
+1. DATA_DIR = os.path.expanduser("~/Downloads/projects/router-configs/data/")
+   # Never use $HOME — always expanduser
 
-Actions:
-- Research latest fraud detection approaches
-- Propose multi-layer architecture:
-  L1: Rules engine (velocity checks)
-  L2: ML ensemble (XGBoost + GNN + Isolation Forest)
-  L3: Deep analysis (Transformer for sequences)
-- Infrastructure: Redis, K8s, TF Serving
-- Cost: $7K/month for 10K TPS
-- Roadmap: 14 weeks (MVP → Ensemble → Advanced)
-→ Result: Full architecture proposal
-```
+2. df = read_csv(DATA_DIR + "stock_Laren_ohlc.csv", parse_dates=["date"]), sort by date
 
-**System architecture**:
-```
-User: @rnd design real-time recommendation engine for marketplace
+3. Compute on df["close"] series:
+   sma20, sma50          → rolling(20/50).mean()
+   ema12, ema26          → ewm(span=12/26, adjust=False).mean()
+   rsi14                 → 14-period RSI via avg_gain / avg_loss
+   bb_upper, bb_lower    → sma20 ± 2 * rolling(20).std()
+   bb_pct                → (close - bb_lower) / (bb_upper - bb_lower)
 
-Actions:
-- Propose collaborative filtering + content-based hybrid
-- Architecture: Feature store (Redis), model serving, A/B testing
-- Latency target: <100ms p99
-- Cold start handling, model retraining pipeline
-→ Result: Complete system design
+4. Signals from LAST valid row (clip each to [-1, 1]):
+   ema_sig  = (ema12[-1] - ema26[-1]) / close[-1]
+   rsi_sig  = (50 - rsi14[-1]) / 50
+   bb_sig   = 0.5 - bb_pct[-1]
+   score    = 0.5*ema_sig + 0.3*rsi_sig + 0.2*bb_sig
+
+5. Forward projection (14 and 30 days):
+   slope        = ema12[-1] - ema12[-2]
+   proj_14/30   = [close[-1] + slope*(i+1) for i in range(N)]
+   future_dates = pd.date_range(last_date + 1 day, periods=30, freq="B")
+
+6. Replace NaN in all arrays before JSON: fillna("") or slice from first valid index
+   DATA = { "dates": [...], "close": [...], "sma20": [...], ... all arrays ... }
+
+7. data_script  = f'<script>const DATA={json.dumps(DATA)};</script>'
+   HTML_BODY    = """..."""   # plain string, use {{ }} for every JS brace
+   output       = (data_script + HTML_BODY).replace("{{","{").replace("}}","}")
+   write output to DATA_DIR + "dashboard_Laren.html"
 ```
 
-**Infrastructure planning**:
-```
-User: @rnd plan infrastructure for 100K users scaling to 1M
+## Key Reminders
 
-Actions:
-- Current: Monolith on single server
-- Proposed: Microservices on K8s
-- Database: PostgreSQL → sharded
-- Caching: Redis cluster
-- CDN: CloudFront
-- Cost trajectory: $2K → $15K/month
-→ Result: Migration plan with cost projections
-```
+- **Never f-string JS blocks** — inject all data via `json.dumps()` in Step 7, then plain string for HTML
+- **NaN breaks json.dumps** — call `.fillna(None).tolist()` on every pandas Series before packing DATA
+- **`{{ }}`** in HTML_BODY → real `{ }` after the replace at save time
+
+## Dashboard Layout (dark theme)
+- Colors: bg `#0d1117`, cards `#161b22`, borders `#21262d`, accent `#58a6ff`, green `#3fb950`, orange `#f0883e`, purple `#bc8cff`
+- Header: company name, current price, bullish/bearish/neutral badge from score, horizon toggle [14d / 30d]
+- Main chart: close + SMA20 + SMA50 + Bollinger Bands (upper/lower shaded) + EMA projection
+- Side panel: signal score + direction, RSI reading, BB %B position, signal weights bar chart
+- Bottom row: RSI chart (with 70/30 lines) + EMA(12)/EMA(26) crossover chart
+- Controls: horizon toggle buttons + keyboard `1`/`2` for 14d/30d
 
 ---
-
-## Workshop Challenges
-
-- Design recommendation engine with real-time personalization
-- Build stream processing for clickstream analytics
-- Plan federated learning for privacy-preserving ML
-- Architect A/B testing platform with statistical rigor
-- Design anomaly detection for IoT sensor data at scale

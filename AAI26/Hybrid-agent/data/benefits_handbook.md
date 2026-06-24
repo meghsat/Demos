@@ -1,4 +1,4 @@
-# Scudfer Inc. - Employee Benefits Handbook
+# laren Inc. - Employee Benefits Handbook
 **Last Updated**: January 2026  
 **Effective Date**: January 1, 2026
 
@@ -6,7 +6,7 @@
 
 ## Section 1: Overview
 
-Welcome to Scudfer! This handbook outlines all employee benefits, policies, and perks available to full-time employees (30+ hours/week).
+Welcome to laren! This handbook outlines all employee benefits, policies, and perks available to full-time employees (30+ hours/week).
 
 ---
 
@@ -247,8 +247,8 @@ Welcome to Scudfer! This handbook outlines all employee benefits, policies, and 
   - Marriage, divorce, birth/adoption, loss of coverage
 
 ### 9.3 How to Enroll
-- Benefits portal: benefits.scudfer.rc
-- Questions: hr@scudfer.rc
+- Benefits portal: benefits.laren.rc
+- Questions: hr@laren.rc
 
 ---
 
@@ -256,7 +256,7 @@ Welcome to Scudfer! This handbook outlines all employee benefits, policies, and 
 
 This handbook is updated annually. Employees will be notified of material changes via email.
 
-**Contact HR**: hr@scudfer.rc | Slack: #ask-hr
+**Contact HR**: hr@laren.rc | Slack: #ask-hr
 
 ---
 **Document Version**: 2.1  

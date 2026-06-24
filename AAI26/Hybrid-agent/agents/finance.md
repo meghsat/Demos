@@ -22,7 +22,7 @@ description: |
 ## Examples
 
 ```
-User: @finance how many months of runway do we have at current headcount?
+User: /skill finance how many months of runway do we have at current headcount?
 
 Actions:
 - Read last 3 months from ${HOME}/Downloads/projects/router-configs/data/financials.csv
@@ -31,33 +31,9 @@ Actions:
 → Result: $4.8M cash ÷ $287K/month = 16.7 months runway
 ```
 
-**Equity modeling with PII (multi-pass)**:
-```
-User: @finance what happens to Alex Torres's 1.1% grant if we close 
-      a $55M Series B at $220M pre-money with 1.5x liquidation preference?
-
-Pass 1 (Local):
-- Detect "Alex Torres"
-- Read ${HOME}/Downloads/projects/router-configs/data/employees.csv, cap_table.csv
-- Extract: 0.011 equity, current cap structure
-- Redact: Alex Torres → [EMPLOYEE_A]
-- Build anonymized payload
-
-Pass 2 (Cloud):
-- Dilution math: 55M / 275M = 20%
-- Post-dilution grant: 0.011 × 0.8 = 0.0088
-- Preference waterfall at 1x, 1.5x, 2x exit multiples
-→ Return: Anonymized scenario analysis
-
-Pass 3 (Local):
-- Restore [EMPLOYEE_A] → Alex Torres
-- Add privacy disclaimer
-→ Result: Full analysis with employee context restored
-```
-
 **Confidence loop (medium complexity)**:
 ```
-User: @finance what's our runway impact if we delay the next hire by one quarter?
+User: /skill finance what's our runway impact if we delay the next hire by one quarter?
 
 Pass 1 (Local 9B):
 - Read financials.csv, employees.csv

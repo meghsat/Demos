@@ -1,0 +1,86 @@
+{
+  "agents": {
+    "defaults": {
+      "contextInjection": "never",
+      "workspace": "/home/amd-user/.openclaw/workspace",
+      "model": {
+        "primary": "semanticrouter/MoM"
+      },
+      "models": {
+        "semanticrouter/MoM": {}
+      }
+    }
+  },
+  "gateway": {
+    "mode": "local",
+    "auth": {
+      "mode": "token",
+      "token": ""
+    },
+    "port": 18789,
+    "bind": "loopback",
+    "tailscale": {
+      "mode": "off",
+      "resetOnExit": false
+    },
+    "controlUi": {
+      "allowInsecureAuth": true
+    },
+    "nodes": {
+      "denyCommands": [
+        "camera.snap",
+        "camera.clip",
+        "screen.record",
+        "contacts.add",
+        "calendar.add",
+        "reminders.add",
+        "sms.send",
+        "sms.search"
+      ]
+    }
+  },
+  "session": {
+    "dmScope": "per-channel-peer"
+  },
+  "tools": {
+    "profile": "coding"
+  },
+  "models": {
+    "mode": "merge",
+    "providers": {
+      "semanticrouter": {
+        "baseUrl": "http://localhost:8899/v1",
+        "api": "openai-completions",
+        "models": [
+          {
+            "id": "MoM",
+            "name": "MoM (Custom Provider)",
+            "contextWindow": 262000,
+            "maxTokens": 32768,
+            "input": [
+              "text",
+              "image"
+            ],
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            },
+            "reasoning": false
+          }
+        ]
+      }
+    }
+  },
+  "wizard": {
+    "lastRunAt": "2026-06-16T04:31:08.466Z",
+    "lastRunVersion": "2026.6.2",
+    "lastRunCommand": "onboard",
+    "lastRunMode": "local"
+  },
+  "meta": {
+    "lastTouchedVersion": "2026.6.2",
+    "lastTouchedAt": "2026-06-16T04:31:08.538Z"
+  }
+}

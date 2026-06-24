@@ -21,18 +21,6 @@ providers:
               base_url: http://host.docker.internal:13305/v1
               provider: openai
               api_key: lemonade
-        - name: Whisper-Medium
-          pricing:
-              currency: USD
-              prompt_per_1m: 0.00
-              completion_per_1m: 0.00
-          backend_refs:
-            - name: lemonade-whisper
-              protocol: http
-              weight: 100
-              base_url: http://host.docker.internal:13305/v1
-              provider: openai
-              api_key: lemonade
         - name: accounts/fireworks/models/kimi-k2p6
           pricing:
               currency: USD
@@ -44,7 +32,7 @@ providers:
               weight: 100
               base_url: https://api.fireworks.ai/inference/v1
               provider: openai
-              api_key: fw_Y38edgg8ZxvHa7MpGD99ng  # REQUIRED: Add your Fireworks API key
+              api_key: fw_Y38edgg9ng  # REQUIRED: Add your Fireworks API key
         - name: Qwen3.6-35B-A3B-NoThinking
           pricing:
               currency: USD
@@ -68,14 +56,6 @@ routing:
           quality_score: 0.75
           modality: ar
           tags: [local, fast, secure]
-        - name: Whisper-Medium
-          param_size: 300M
-          context_window_size: 1
-          description: Local Whisper model for audio transcription (speech-to-text)
-          capabilities: [audio]
-          quality_score: 0.90
-          modality: ar
-          tags: [local, fast, audio, secure]
         - name: accounts/fireworks/models/kimi-k2p6
           param_size: 1028B
           context_window_size: 262000
@@ -313,9 +293,8 @@ routing:
           algorithm:
               type: static
 
-        # PRIORITY 910: Audio files → Whisper-Medium (local speech-to-text)
-        - name: workshop_audio_whisper
-          description: "Workshop Rule 2a: Audio attachments (mp3, wav, m4a, ogg) route to local Whisper-Medium"
+        - name: workshop_audio_gemma
+          description: "Workshop Rule 2a: Audio attachments (mp3, wav, m4a, ogg) route to local gemma4-e4b-qat-gguf-NoThinking for native multimodal processing"
           priority: 910
           rules:
               operator: AND
@@ -323,7 +302,7 @@ routing:
                   - type: structure
                     name: audio_attachment
           modelRefs:
-              - model: Whisper-Medium
+              - model: Qwen3.6-35B-A3B-NoThinking
                 use_reasoning: false
           algorithm:
               type: static

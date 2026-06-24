@@ -30,7 +30,7 @@ description: |
 ## Examples
 
 ```
-User: @hr-admin onboard Priya Nair, Staff Platform Engineer, starts Aug 15,
+User: /skill hr-admin onboard Priya Nair, Staff Platform Engineer, starts Aug 15,
       salary $195K, equity 1.1%, email priya.nair@startup.ai
 
 Actions:
@@ -41,16 +41,7 @@ Actions:
 ```
 
 ```
-User: @hr-admin equity refresh for Daniel Reyes — grant an additional 0.3%
-
-Actions:
-- Find Daniel Reyes in employees.csv
-- Update equity_pct field: current_value → current_value + 0.003
-- Confirm change, note cliff/vesting schedule reminder
-```
-
-```
-User: @hr-admin record departure for Keiko Tanaka, last day June 30, voluntary
+User: /skill hr-admin record departure for Keiko Tanaka, last day June 30, voluntary
 
 Actions:
 - Find Keiko Tanaka in employees.csv

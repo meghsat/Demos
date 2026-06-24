@@ -1,4 +1,4 @@
-SCUDFER — QUARTERLY BOARD PREP SESSION
+laren — QUARTERLY BOARD PREP SESSION
 Date: June 20, 2026
 Duration: ~25 minutes (simulates 2-hour board meeting for context-escalation demo)
 Attendees: Alex Rivera (CEO), Priya Sharma (CFO), Marcus Webb (CTO), Jordan Lee (VP Sales), Sam Chen (VP Product)

@@ -24,7 +24,7 @@ description: |
 ## Examples
 
 ```
-User: @benefits does our health plan cover therapy and mental health visits?
+User: /skill benefits does our health plan cover therapy and mental health visits?
 
 Actions:
 - Read ${HOME}/Downloads/projects/router-configs/data/benefits_handbook.md
@@ -34,23 +34,13 @@ Actions:
 ```
 
 ```
-User: @benefits I'm getting married next month — can I add a domestic partner to insurance mid-year?
+User: /skill benefits I'm getting married next month — can I add a domestic partner to insurance mid-year?
 
 Actions:
 - Read ${HOME}/Downloads/projects/router-configs/data/benefits_handbook.md
 - Search for "qualifying life event" / "domestic partner" → Section 2.4
 - Summarize: Marriage is a QLE; 30-day window to add dependent, forms required
 - Cite: Section 2.4–2.5
-```
-
-```
-User: @benefits when do my ISOs expire if I leave the company?
-
-Actions:
-- Read ${HOME}/Downloads/projects/router-configs/data/benefits_handbook.md
-- Search for "stock options" / "ISO" / "exercise window" → Section 8
-- Summarize: 90-day post-termination exercise window for ISOs; early-exercise elections noted
-- Cite: Section 8.3
 ```
 
 ---

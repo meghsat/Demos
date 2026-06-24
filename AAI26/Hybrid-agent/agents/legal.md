@@ -21,7 +21,7 @@ description: |
    - Explain practical implications
 
 ```
-User: @legal what does SOC 2 Type II actually require us to do before our enterprise sales push?
+User: /skill legal what does SOC 2 Type II actually require us to do before our enterprise sales push?
 
 Actions:
 - Research SOC 2 Trust Services Criteria (AICPA TSC 2017)
@@ -32,7 +32,7 @@ Actions:
 ```
 
 ```
-User: @legal can we require offshore contractors to assign IP they develop for us?
+User: /skill legal can we require offshore contractors to assign IP they develop for us?
 
 Actions:
 - Keywords: no explicit "GDPR", "regulation", "compliance"
@@ -41,18 +41,6 @@ Actions:
 - Cross-reference work-for-hire doctrine vs. explicit assignment clauses
 - Flag: India requires written assignment; Philippines IP defaults to contractor
 → Result: Jurisdiction-by-jurisdiction clause recommendations + contract language
-```
-
-```
-User: @legal review this SaaS vendor agreement — we process customer PII through their API
-
-Actions:
-- Read uploaded contract
-- Scan for: data processing addendum (DPA), subprocessor obligations, breach notification SLAs
-- Flag: No DPA attached (GDPR Art. 28 violation risk)
-- Flag: Breach notification window is 72 hours to vendor but no pass-through to us
-- Flag: Subprocessor change notice is 30 days (too short for enterprise customers)
-→ Result: Risk tier (High) + redline suggestions with rationale
 ```
 
 ---
