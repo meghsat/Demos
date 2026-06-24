@@ -1,0 +1,19 @@
+{
+    "checkpoints": {
+        "main": "unsloth/Qwen3.5-9B-GGUF:Qwen3.5-9B-UD-Q4_K_XL.gguf",
+        "mmproj": "unsloth/Qwen3.5-9B-GGUF:mmproj-F16.gguf"
+    },
+    "model_name": "Qwen3.5-9B-NoThinking",
+    "labels": [
+        "vision",
+        "hot",
+        "tool-calling"
+    ],
+    "recipe": "llamacpp",
+    "recipe_options": {
+        "ctx_size": 0,
+        "llamacpp_args": "--chat-template-kwargs '{\"enable_thinking\": false}'",
+        "llamacpp_backend": "auto"
+    },
+    "size": 6
+}

@@ -1,0 +1,21 @@
+{
+    "checkpoints": {
+        "main": "unsloth/gemma-4-E4B-it-qat-GGUF:gemma-4-E4B-it-qat-UD-Q4_K_XL.gguf",
+        "mmproj": "unsloth/gemma-4-E4B-it-qat-GGUF:mmproj-F16.gguf"
+    },
+    "model_name": "Gemma4-E4B-QAT-GGUF-NoThinking",
+    "hf_load": true,
+    "labels": [
+        "vision",
+        "hot",
+        "tool-calling",
+        "chat-transcription"
+    ],
+    "recipe": "llamacpp",
+    "recipe_options": {
+        "llamacpp_args": "--chat-template-kwargs '{\"enable_thinking\": false}'",
+        "llamacpp_backend": "auto"
+    },
+    "size": 6
+}
+
