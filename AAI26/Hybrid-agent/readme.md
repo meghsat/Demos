@@ -23,12 +23,11 @@ This workshop demonstrates a **hybrid local/cloud agent system** powered by vLLM
 ## System Architecture
 
 <p align="center">
-  <video width="800" height="450" controls>
-    <source src="assets/architecture.mp4" type="video/mp4">
-    Your browser does not support the video tag.
-  </video>
+  <img src="https://github.com/user-attachments/assets/46b4bf51-2b16-4771-bac2-7471cde2aad9"
+       width="600"
+       alt="Image">
 </p>
-
+     
 ---
 
 ## Workshop Agents
