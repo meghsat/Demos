@@ -13,6 +13,7 @@ pip install huggingface_hub hf_transfer --break-system-packages
 hf download llm-semantic-router/mmbert32k-pii-detector-merged       --local-dir models/mmbert32k-pii-detector-merged/
 hf download llm-semantic-router/mmbert32k-intent-classifier-merged   --local-dir models/mmbert32k-intent-classifier-merged/
 hf download llm-semantic-router/mmbert32k-jailbreak-detector-merged  --local-dir models/mmbert32k-jailbreak-detector-merged/
+hf download llm-semantic-router/mmbert-embed-32k-2d-matryoshka  --local-dir models/mmbert-embed-32k-2d-matryoshka/
 ```
 
 ## Configure
