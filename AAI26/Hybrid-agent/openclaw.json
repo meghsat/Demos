@@ -1,0 +1,31 @@
+{
+  "gateway": {
+    "host": "127.0.0.1",
+    "port": 18789,
+    "bind": "127.0.0.1",
+    "auth": {
+      "type": "token"
+    }
+  },
+  "providers": {
+    "semanticrouter": {
+      "type": "openai",
+      "baseUrl": "http://localhost:8899/v1",
+      "apiKey": "",
+      "model": "MoM",
+      "supportsImages": true
+    }
+  },
+  "defaultProvider": "semanticrouter",
+  "endpointId": "SemanticRouter",
+  "search": {
+    "provider": null
+  },
+  "channels": [],
+  "hooks": {
+    "enabled": false
+  },
+  "skills": {
+    "configureOnStartup": false
+  }
+}
