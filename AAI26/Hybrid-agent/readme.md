@@ -36,8 +36,11 @@ https://github.com/user-attachments/assets/46b4bf51-2b16-4771-bac2-7471cde2aad9
 ```
 /skill hr-admin onboard Maya Chen, Senior AI Engineer, starts July 1, salary $175K, equity 0.8%, email maya.chen@startup.ai
 ```
-**Router:** 
+**Expected Router Flow:** 
 - PII detected (name, salary, email) → **Local Qwen3.5 9B**
+
+**Expected Output:** 
+- Maya Chen gets added to ${HOME}/Downloads/projects/router-configs/data/employee.csv
 
 **Additional Examples:**
 - /skill hr-admin equity refresh for Kevin Patel — grant an additional 0.3%
@@ -51,8 +54,11 @@ https://github.com/user-attachments/assets/46b4bf51-2b16-4771-bac2-7471cde2aad9
 ```
 /skill benefits What's our parental leave policy compared to industry standard?
 ```
-**Router:**
+**Expected Router Flow:**
 - hr_policy_keywords → simple query → **Local Qwen3.5 9B**
+
+**Expected Output:** 
+- Output summarizing the parental leave policy
 
 **Additional Examples:**
 - /skill benefits when do my ISOs expire if I leave the company?
@@ -63,18 +69,17 @@ https://github.com/user-attachments/assets/46b4bf51-2b16-4771-bac2-7471cde2aad9
 **Handles**: Burn rate, equity modeling, retention analysis, and runway analysis
 **Data:** `financials.csv`, `cap_table.csv`, `employees.csv`, `retention_history.csv`
 
-
 ```
 /skill finance Calculate equity dilution in a B-round at $40M raise on $160M pre-money. Include waterfall scenarios for 1x, 1.5x, 2x liquidation preferences. 
 ```
-**Router:**
+**Expected Router Flow:**
 - Finance modeling keywords + multi-step → **Cloud Kimi K2.6**
 
 **Complex Query (Confidence Loop)**
 ```
 /skill finance One of our employees got a competitor offer in Q1 2026 and we took no action — based on what worked best historically, what intervention should we make now, and what does it cost us through year end?   
 ```
-**Router:**
+**Expected Router Flow:**
 - Decision: **Confidence loop**
   - Pass 1: Local 9B tries → confidence < Threshold
   - Pass 2: Escalates to Cloud
@@ -92,14 +97,14 @@ https://github.com/user-attachments/assets/46b4bf51-2b16-4771-bac2-7471cde2aad9
 ```
 /skill legal What GDPR compliance and data protection regulatory requirements apply to an AI vendor under EU privacy law?
 ```
-**Router:** 
+**Expected Router Flow:**
 - Legal keywords → **Cloud Kimi K2**
 
 **Advanced Example (Domain Classification):**
 ```
 /skill legal Can we enforce non-compete clauses for employees in California under state contract law?
 ```
-**Router:**
+**Expected Router Flow:**
 - Decision: `workshop_legal_cloud` → **Cloud Kimi K2**
 
 **Additional Examples:**
@@ -115,7 +120,7 @@ https://github.com/user-attachments/assets/46b4bf51-2b16-4771-bac2-7471cde2aad9
 /skill rnd build a stock prediction model from the startup data and visualize it  
 
 ```
-**Router:** 
+**Expected Router Flow:**
 - R&D keywords → **Local Qwen3.6 35B**
 
 **Additional Examples:**
@@ -131,7 +136,7 @@ https://github.com/user-attachments/assets/46b4bf51-2b16-4771-bac2-7471cde2aad9
 /skill ops-audio Transcribe this exec meeting and extract key decisions, action items, and budget concerns.
 ```
 
-**Router:**
+**Expected Router Flow:**
 - Audio file detected → **Local Qwen3.5 9B** → **Local Gemma4-E4B**
 
 ---
