@@ -409,7 +409,7 @@ routing:
                               - type: domain
                                 name: finance
                               - type: complexity
-                                name: needs_reasoning:high
+                                name: needs_reasoning:hard
           modelRefs:
               - model: accounts/fireworks/models/kimi-k2p6
                 use_reasoning: false
@@ -428,7 +428,7 @@ routing:
                   - type: keyword
                     name: hr_policy_keywords
                   - type: complexity  # ENHANCED: Low complexity → local
-                    name: needs_reasoning:low
+                    name: needs_reasoning:easy
           modelRefs:
               - model: Qwen3.5-9B-NoThinking
                 use_reasoning: false
@@ -468,9 +468,10 @@ routing:
           rules:
               operator: AND
               conditions:
-                  - type: pii
-                    name: employee_pii
-                    negate: true  # Match if no PII
+                  - operator: NOT
+                    conditions:
+                        - type: pii
+                          name: employee_pii
           modelRefs:
               - model: Qwen3.5-9B-NoThinking
                 use_reasoning: false
