@@ -41,7 +41,7 @@ cat > "$PATCH" <<EOF_OC_PATCH
 {
   agents: {
     defaults: {
-      contextInjection: "never",
+      contextInjection: "always",
       models: {
         "semanticrouter/MoM": {},
         "lemonade/Qwen3.6-35B-A3B-NoThinking": {},
@@ -119,15 +119,20 @@ openclaw agents add smart-router \
   && echo "  smart-router: created" \
   || echo "  smart-router: already exists"
 
-echo "==> Removing onboarding files from agent workspaces..."
-rm -f \
-  "$OC_DIR/workspace-local-brain/BOOTSTRAP.md" \
-  "$OC_DIR/workspace-cloud-brain/BOOTSTRAP.md" \
-  "$OC_DIR/workspace-smart-router/BOOTSTRAP.md"
+echo "==> Cleaning all agent workspaces (keep only SOUL.md, remove everything else)..."
+for WS in "$OC_DIR/workspace" "$OC_DIR/workspace-local-brain" "$OC_DIR/workspace-cloud-brain" "$OC_DIR/workspace-smart-router"; do
+  [ -d "$WS" ] && find "$WS" -maxdepth 1 -type f ! -name "SOUL.md" -delete 2>/dev/null || true
+done
 
-echo "==> Writing smart-router routing rules (SOUL.md)..."
+echo "==> Writing smart-router routing rules (prepended to SOUL.md)..."
 mkdir -p "$OC_DIR/workspace-smart-router"
-cat > "$OC_DIR/workspace-smart-router/SOUL.md" << 'SOUL'
+SMART_SOUL="$OC_DIR/workspace-smart-router/SOUL.md"
+
+# Save any existing SOUL.md content (e.g. devlab base identity) to append after routing rules
+EXISTING_SOUL=""
+[ -f "$SMART_SOUL" ] && EXISTING_SOUL=$(cat "$SMART_SOUL")
+
+cat > "$SMART_SOUL" << 'ROUTING'
 FORMAT RULE -- MANDATORY, NO EXCEPTIONS:
 Every single response MUST begin with exactly one of these two lines:
   Classification: LOCAL -- [reason]
@@ -173,8 +178,12 @@ Classification: CLOUD -- code generation. Delegating to kimi-k2p6.
 ### Escalation protocol (CLOUD only):
 
 1. First line: Classification: CLOUD -- [reason]. Delegating to kimi-k2p6.
-2. Call sessions_spawn with model=fireworks/accounts/fireworks/models/kimi-k2p6
-3. Use sessions_yield to return the result
+2. Call sessions_spawn. You MUST pass model="fireworks/accounts/fireworks/models/kimi-k2p6" as a parameter. Without this exact model string the wrong model runs.
+3. Call sessions_yield to return the result.
+
+sessions_spawn required parameters:
+  task: <the user request verbatim>
+  model: "fireworks/accounts/fireworks/models/kimi-k2p6"
 
 **Default is LOCAL. CLOUD is triggered only by the explicit list above.**
 
@@ -185,11 +194,16 @@ Classification: CLOUD -- code generation. Delegating to kimi-k2p6.
 You are smart-router: a hybrid agent that handles simple tasks locally
 and delegates complex tasks to cloud when needed.
 Be concise. Every response starts with the Classification line.
-SOUL
+ROUTING
 
-echo "  smart-router SOUL.md: written ($(wc -l < "$OC_DIR/workspace-smart-router/SOUL.md") lines)"
+# Append any pre-existing SOUL.md content (devlab base identity) after the routing rules
+if [ -n "$EXISTING_SOUL" ]; then
+  printf '\n---\n\n%s\n' "$EXISTING_SOUL" >> "$SMART_SOUL"
+fi
 
-echo "==> Restarting the gateway to pick up agents and SOUL.md..."
+echo "  smart-router SOUL.md: written ($(wc -l < "$SMART_SOUL") lines)"
+
+echo "==> Restarting gateway to pick up SOUL.md..."
 openclaw gateway restart
 
 cat <<'EOF_DONE'
