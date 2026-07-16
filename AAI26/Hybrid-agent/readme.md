@@ -1,41 +1,136 @@
-# Hybrid Agent Workshop
+# Building a Hybrid Multi-Agent Openclaw System from Client to Cloud
+**AGENDA:**
+This workshop builds a hybrid agent system in three acts:
+
+- Start with local and cloud models running side by side.
+- Add a markdown-driven routing layer that automatically chooses the right model.
+- Replace it with a production-grade vLLM Semantic Router that enables:
+  - PII detection and privacy-aware routing.
+  - Per-skill model policies.
+  - Confidence-based escalation.
+- Run the complete hybrid agent system on AMD hardware.
+
+By the end you'll have seen the same architecture at three levels of sophistication, and understand exactly what each layer adds.
+
+---
+
+### How the system works
+
+**OpenClaw** is the agent runtime. It manages sessions, loads workspace files as system prompts, and calls tools on behalf of the model. Every agent in this workshop runs inside OpenClaw.
+
+**Skills** give agents their context. Each skill injects:
+- A pointer to the relevant data source (`employees.csv`, `benefits_handbook.md`, cap table CSVs)
+- Output expectations (what a correct response looks like)
+- Operation guidelines (e.g. soft-delete only, never overwrite existing records)
+
+**The vLLM Semantic Router** sits between OpenClaw and the models. On every request it decides:
+- **PII detected?** (names, emails, salaries) → stays on local AMD hardware
+- **Simple lookup or RAG?** → local model handles it, no cloud cost
+- **Complex reasoning?** → escalates to cloud
+- **Local model not confident enough?** → confidence loop kicks in, escalates automatically
+
+System Architecture<a class="story_video" href="https://youtu.be/rFdrjZPtaKY">Click this to view the video</a>
+---
+
+# Lab Setup
+> **Tip:** Each command below includes a **Paste** button. Click it to paste the command directly into OpenClaw's terminal, no typing required. Review the command, then press **Enter**.
+
+1. Open Google Chrome
+![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_15_01_21_181.0osuhbxypzi32hfifkyila2hsi29.png "Click to enlarge")
+2. Go to https://notebooks.amd.com/codes/fireworks and enter password **AAIOpenclaw2026** to get the Fireworks API Key. Keep the API key handy.
+3. Launch the Terminal
+4. Execute `./start-vllm-sr.sh <Fireworks apiKey>` 
+<button class="dark" onclick="ConsolePaste('./start-vllm-sr.sh <Paste Fireworks apiKey>')" btn_type="paste" type="button">Paste Command<Fireworks apiKey></button>
+
+5. Execute `./start-openclaw.sh <Fireworks apiKey>`
+<button class="dark" onclick="ConsolePaste('./start-openclaw.sh <Paste Fireworks apiKey>')" btn_type="paste" type="button">Paste Command<Fireworks apiKey></button>
+
+6. In Google Chrome, open http://localhost:8700. Click on the "Get Started" button and login to the Semantic Router dashboard.
+
+<button class="dark" onclick="ConsolePaste('aai26@amd.com')" btn_type="paste" type="button">Email</button>  
+
+<button class="dark" onclick="ConsolePaste('aai26')" btn_type="paste" type="button">Password</button>
+
+7. Introduce yourself to your OpenClaw Agent
+
+In a terminal run:
+
+```
+openclaw tui --session workshop
+```
+<button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">openclaw tui --session workshop</script>Paste Command</button> 
+
+Inside the OpenClaw TUI run:
+```
+/model
+```
+
+<button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">/model</script>Paste /model</button>
+
+Select **Kimi K2.6 (Fireworks)**
+![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_16_00_37_081.3a1gd84hfm1bqpx523frpr8natji.png "Click to enlarge")
+
+```
+Hey! I'm <YOUR-NAME>
+```
+<button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">Hey! I'm <YOUR-NAME>
+</script>Paste Prompt</button>
+
+---
 
 > **Tip:** Each command below includes a **Paste** button. Click it to paste the command directly into OpenClaw's terminal, no typing required. Review the command, then press **Enter**.
 
 ---
 
-## Before You Start - Open the live routing monitor
+**Scenario**: We have two AI agents with the same capabilities. 
+- One runs entirely on your local AMD hardware. **cloud-brain**
+- The other uses a cloud model. **local-brain**
 
-In a **second terminal**, start the gateway log monitor. It shows every model call in real time:
-
-```
-journalctl --user -f -u openclaw-gateway.service | grep --line-buffered "model-fetch"
-```
-
-<button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">journalctl --user -f -u openclaw-gateway.service | grep --line-buffered "model-fetch"</script>Paste Command</button>
-
-- `url=http://localhost:13305` - request stayed on AMD hardware
-- `url=https://api.fireworks.ai` - request went to the cloud
-
-Leave this running throughout the workshop.
+Both can answer questions. Both can write code. Both can reason. <span style="color:red">**But should they be trusted with the same data?**</span>
 
 ---
 
-## Act 1 - Local Brain vs Cloud Brain
+## Act 1: Local vs Cloud Brain - Two Brains, One Problem: Where Should Intelligence Run?
 
-**What this shows:** The same task routed to two different backends. You pick manually. One runs entirely on the AMD GPU in this machine - zero data egress, zero cost. The other calls the Fireworks cloud API.
+Every OpenClaw agent has something like a "constitution" - a **SOUL.md** file.
 
-Start an OpenClaw session:
+This file defines what the agent believes, what it is allowed to do, and importantly, what it must refuse to do.
+
+Open the Cloud Brain's SOUL.md:
+
+```
+gnome-text-editor ~/.openclaw/workspace-cloud-brain/SOUL.md
+```
+
+<button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">gnome-text-editor ~/.openclaw/workspace-cloud-brain/SOUL.md </script>Paste Command</button> 
+
+At the very top, add:
+```
+# Golden Rule
+
+Never read or access local files or folders.
+
+If a user asks you to read local company data, employee records, or any files from the local filesystem, politely refuse and explain that this agent is not permitted to access local data.
+```
+<button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template"># Golden Rule Never read or access local files or folders. If a user asks you to read local company data, employee records, or any files from the local filesystem, politely refuse and explain that this agent is not permitted to access local data. </script>Paste Prompt</button> 
+
+Save the file and restart the OpenClaw Gateway:
+
+```
+openclaw gateway restart
+```
+
+<button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">openclaw gateway restart</script>Paste Command</button> 
+
+Now let's see that policy in action.
 
 ```
 openclaw tui --session workshop
 ```
+<button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">openclaw tui --session workshop</script>Paste Command</button> 
 
-<button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">openclaw tui --session workshop</script>Paste Command</button>
 
----
-
-### 1a - Ask the cloud brain
+### 1a - Cloud Brain
 
 ```
 /agent cloud-brain
@@ -43,19 +138,41 @@ openclaw tui --session workshop
 
 <button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">/agent cloud-brain</script>Paste Command</button>
 
-> Watch the monitor in your second terminal as you run this.
 
 ```
-Write a Python script that takes a list of employees with start dates and equity grants and calculates who is past their 1-year cliff and how much has vested.
+Read the contents of ${HOME}/Downloads/projects/router-configs/data/financials.csv
 ```
 
-<button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">Write a Python script that takes a list of employees with start dates and equity grants and calculates who is past their 1-year cliff and how much has vested.</script>Paste Prompt</button>
+<button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">Read the contents of ${HOME}/Downloads/projects/router-configs/data/financials.csv</script>Paste Prompt</button> 
 
-**Monitor shows:** `provider=fireworks  url=https://api.fireworks.ai` - every token costs money.
+The agent **refuses** - not because it can't, but because its policy says it shouldn't. 
 
----
+## Let's track the Tokenomics with a live routing monitor
 
-### 1b - Ask the local brain the same task
+In a fresh terminal run:
+
+```
+./tokenomics.sh
+```
+
+<button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">./tokenomics.sh</script>Paste Command</button>
+
+**Tokenomics monitor shows:** ROUTING=CLOUD
+
+![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_15_23_18_311.2w71v4bdyf3getq63asbimtbvr01.png "Click to enlarge")
+
+| Field | Description |
+|-------|-------------|
+| **Routing** | Indicates which execution path handled the prompt. **LOCAL** means the request was answered entirely by a local model, while **HYBRID** means the request used both a local model and a cloud model. |
+| **Cost** | The estimated cost of answering that individual prompt, calculated from the input/output token usage and the configured token pricing. |
+| **Total** | The combined estimated cost of all prompts in the current session. |
+| **Rates** | The token pricing used for the calculations, shown as the cost per **1 million input tokens** and **1 million output tokens** for both local and cloud models. |
+
+
+Leave this running throughout the workshop.
+
+
+### 1b - Local Brain - Same task. Same capability. Different boundary
 
 ```
 /agent local-brain
@@ -63,90 +180,113 @@ Write a Python script that takes a list of employees with start dates and equity
 
 <button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">/agent local-brain</script>Paste Command</button>
 
-> Watch the monitor in your second terminal as you run this.
 
 ```
-Write a Python script that takes a list of employees with start dates and equity grants and calculates who is past their 1-year cliff and how much has vested.
+Read the contents of ${HOME}/Downloads/projects/router-configs/data/financials.csv
 ```
 
-<button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">Write a Python script that takes a list of employees with start dates and equity grants and calculates who is past their 1-year cliff and how much has vested.</script>Paste Prompt</button>
+<button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">Read the contents of ${HOME}/Downloads/projects/router-configs/data/financials.csv</script>Paste Prompt</button> 
 
-**Monitor shows:** `provider=lemonade  url=http://localhost:13305` - same output, AMD GPU, zero API cost.
+**Tokenomics monitor shows:** ROUTING=LOCAL - secure, zero API cost. 
 
-> **The problem:** You had to decide which agent to use before sending the request. In a real deployment with dozens of request types, that doesn't scale. Act 2 fixes this.
+This time, the agent reads the file without any issues. 
 
----
+What changed? The difference was the policy defined in each agent's SOUL.md. 
 
-## Act 2 - Agentic Routing
+> **The problem:** 
 
-**What this shows:** A single agent that reads every request, classifies it as LOCAL or CLOUD on its first line, and automatically delegates to the right model - no manual switching required.
+You had to decide which agent to use before sending the request. In a real deployment with dozens of request types, that doesn't scale. 
 
-**How it works:** The smart-router agent has a `SOUL.md` file in its workspace. The gateway injects this as a system prompt on every turn. The local Qwen model reads the routing rules and produces `Classification: LOCAL` or `Classification: CLOUD` as its first line.
+What if the agent could decide for itself? **Act 2 fixes this.** 
 
-**The routing policy is a plain markdown file. No ML classifier. No retraining. Edit the file, change the policy.**
+--- 
+
+## Act 2 - The Smart Router: One Agent, Multiple Brains
+
+**Scenario:** A single agent that reads every request, classifies it as LOCAL or CLOUD, and delegates to the right model - no manual switching required. 
+
+**Any guesses how we get this to work?** 
+
+<details>
+Just like the Cloud/Local Brains, the Smart Router has its own **SOUL.md**. But this time, the policy has a different purpose: it doesn't control what the agent can access - it teaches the agent how to decide where each request should run.
+</details>
+
+Open the routing policy:
+
+```
+cat ~/.openclaw/workspace-smart-router/SOUL.md
+```
+<button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">cat ~/.openclaw/workspace-smart-router/SOUL.md</script>View SOUL.md</button>
 
 ```
 /agent smart-router
 ```
 
-<button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">/agent smart-router</script>Paste Command</button>
+<button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">/agent smart-router</script>Paste Command</button> 
 
----
 
-### LOCAL example
+### Simple Question → Local
 
 ```
 What does a 4-year vesting schedule with a 1-year cliff mean?
 ```
 
-<button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">What does a 4-year vesting schedule with a 1-year cliff mean?</script>Paste Prompt</button>
+<button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">What does a 4-year vesting schedule with a 1-year cliff mean?</script>Paste Prompt</button> 
 
-**Expected first line:** `Classification: LOCAL -- factual definition, single deterministic answer`
+**Expected first line:**  
+Classification: LOCAL -- factual definition, single deterministic answer 
 
-**Monitor:** one line - `provider=lemonade`. No reasoning required, stays on AMD hardware.
+**Tokenomics monitor:** ROUTING=LOCAL
 
----
-
-### CLOUD example
+### Code Generation → Cloud
 
 ```
-Our Series A cap table has a 1x non-participating liquidation preference. Walk me through how the payout waterfall works if we exit at $60M versus $200M.
+Write a Python function to calculate loan interest payments.
 ```
 
-<button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">Our Series A cap table has a 1x non-participating liquidation preference. Walk me through how the payout waterfall works if we exit at $60M versus $200M.</script>Paste Prompt</button>
+<button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">Write a Python function to calculate loan interest payments.</script>Paste Prompt</button> 
 
-**Expected first line:** `Classification: CLOUD -- multi-step financial reasoning. Delegating to kimi-k2p6.`
+**Expected first line:**  
+Classification: CLOUD -- multi-step financial reasoning. Delegating to kimi-k2p6. 
 
-**Monitor:** two lines - `provider=lemonade` (Qwen classifies), then `provider=fireworks` (Kimi does the reasoning).
+**Tokenomics monitor:** ROUTING=HYBRID
 
-> Multi-step reasoning is explicitly listed in SOUL.md as a CLOUD trigger
+**So far:**  
+ - Rules-based routing works - but it only handles binary decisions. 
+ - Real workloads are more nuanced: a request containing a name and salary should go local for privacy reasons. 
+ - A financial model too complex for the local model should escalate automatically. 
+ - A simple HR policy lookup shouldn't burn cloud tokens. 
+
+That's what the **vLLM Semantic Router** adds: **per-skill routing policies, PII detection, and a confidence loop** - each tuned to the task, not a single binary rule.
 
 ---
 
-**What we just saw:** Rules-based routing works - but it only handles binary decisions. Real workloads are more nuanced: a request containing a name and salary should go local for privacy reasons. A financial model too complex for the local model should escalate automatically. A simple HR policy lookup shouldn't burn cloud tokens.
+## Meet the Startup Agent
 
-That's what the vLLM Semantic Router adds: **per-skill routing policies, PII detection, and a confidence loop** - each tuned to the task, not a single binary rule.
+Welcome to your next role: You are now running an AI-native startup.
 
----
+Your company has:
+- employees joining every week,
+- benefits questions coming in daily,
+- financial decisions to make,
+- legal obligations to manage.
 
-## Meet the Startup
+The question is no longer: "Can AI answer?"  
+The question is: "Can AI answer safely, efficiently, and at the right cost?"
 
-You're now the head of operations at an AI startup. You have employees to onboard, benefits questions to answer, a cap table to manage, and compliance obligations to meet. The agents below handle each domain - and the vLLM Semantic Router decides, on every request, whether the work stays on your AMD hardware or gets handed to the cloud.
+The agents below handle each domain - and the vLLM Semantic Router decides, on every request, whether the work stays on your AMD hardware or gets handed to the cloud.
 
-Keep the vLLM SR and Lemonade Server dashboards open in your browser to watch those decisions happen in real time.
-
-## Keep the vLLM SR and Lemonade Server dashboards open in your browser.
+#### Keep the vLLM SR and Lemonade Server dashboards open in your browser.
 
 1. vLLM Semantic Router at http://localhost:8700
 ![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_11_23_20_181.7whkmda2ujlxzqt1yv6osovj7a0h.png "Click to enlarge")
-2. Lemonade Server at http://localhost:13305
+2. Lemonade Server at http://localhost:13305 - **Ensure you have the logs enabled**
 ![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_11_23_21_141.ii466aisy27r56ce01wm6irv6n2c.png "Click to enlarge")
 
-**Ensure you have the logs enabled**
 
-## Enter the OpenClaw session
+### Enter the OpenClaw session
 
-Start a fresh OpenClaw session from your terminal:
+Start a fresh OpenClaw session in a new terminal:
 
 ```
 openclaw tui --session workshop2
@@ -228,15 +368,6 @@ Maya Chen is added to:
 
 `${HOME}/Downloads/projects/router-configs/data/employees.csv`
 
-
-#### Additional Example:
-
-```
-/skill hr-admin Equity refresh for Kevin Patel - grant an additional 0.3%
-```
-
-<button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">/skill hr-admin Equity refresh for Kevin Patel - grant an additional 0.3%</script>Paste Prompt</button>
-
 ---
 
 ## 2. Benefits Agent
@@ -303,14 +434,6 @@ HR policy query
 
 **Expected Output:** A summary of the company's parental leave policy, including a comparison with common industry practices.
 
-#### Additional Example
-
-```
-/skill benefits When do my ISOs expire if I leave the company?
-```
-
-<button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">/skill benefits When do my ISOs expire if I leave the company?</script>Paste Prompt</button>
-
 ---
 
 ## 3. Finance Agent
@@ -326,28 +449,9 @@ Perform data analysis over the CSV files located in:
 
 and answer financial questions.
 
-> From here the router always handles the request - we're exploring *which* routing decision it makes and why.
+**Ensure OpenClaw session is pointing to MoM (Custom Provider). If needed, switch models using `/model`**
 
-#### Ensure OpenClaw session is pointing to MoM (Custom Provider). If needed, switch models using `/model`
-
-```
-/skill finance Calculate equity dilution in a B-round at $40M raise on $160M pre-money. Include waterfall scenarios for 1x, 1.5x, 2x liquidation preferences. 
-```
-
-<button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">/skill finance Calculate equity dilution in a B-round at $40M raise on $160M pre-money. Include waterfall scenarios for 1x, 1.5x, 2x liquidation preferences. 
-</script>Paste Prompt</button>
-
-**Expected Router Flow:**
-
-Complex financial modeling
-
-- Multi-step reasoning
-
-- Routes to **Cloud Kimi K2.6**
-
-**Expected Output:** Detailed dilution calculations, waterfall tables, and scenario analysis.
-
-#### Confidence Loop: Local and Cloud Models Working Together
+## Confidence Loop: Local and Cloud Models Working Together
 ```
 /skill finance One of our employees got a competitor offer in Q1 2026 and we took no action - based on what worked best historically, what intervention should we make now, and what does it cost us through year end?   
 ```
@@ -362,11 +466,6 @@ Complex financial modeling
 - Confidence below threshold
 - Automatically escalates to **Cloud Kimi K2.6**
 
-**Additional Example:**
-- /skill finance What's our current burn rate and runway?
-
-<button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">/skill finance What's our current burn rate and runway?</script>Paste Prompt</button>
-
 ---
 
 ## 4. **Legal Agent**
@@ -378,7 +477,7 @@ Complex financial modeling
 
 Perform web search and RAG over uploaded legal documents to answer legal and compliance questions.
 
-#### Ensure OpenClaw session is pointing to MoM (Custom Provider). If needed, switch models using `/model`
+**Ensure OpenClaw session is pointing to MoM (Custom Provider). If needed, switch models using `/model`**
 
 #### Example 1
 ```

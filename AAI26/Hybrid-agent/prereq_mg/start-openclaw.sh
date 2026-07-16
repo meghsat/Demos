@@ -119,11 +119,6 @@ openclaw agents add smart-router \
   && echo "  smart-router: created" \
   || echo "  smart-router: already exists"
 
-echo "==> Cleaning all agent workspaces (keep only SOUL.md, remove everything else)..."
-for WS in "$OC_DIR/workspace" "$OC_DIR/workspace-local-brain" "$OC_DIR/workspace-cloud-brain" "$OC_DIR/workspace-smart-router"; do
-  [ -d "$WS" ] && find "$WS" -maxdepth 1 -type f ! -name "SOUL.md" -delete 2>/dev/null || true
-done
-
 echo "==> Writing smart-router routing rules (prepended to SOUL.md)..."
 mkdir -p "$OC_DIR/workspace-smart-router"
 SMART_SOUL="$OC_DIR/workspace-smart-router/SOUL.md"
@@ -205,6 +200,13 @@ echo "  smart-router SOUL.md: written ($(wc -l < "$SMART_SOUL") lines)"
 
 echo "==> Restarting gateway to pick up SOUL.md..."
 openclaw gateway restart
+
+echo "==> Truncating all workspace files except SOUL.md..."
+for WS in "$OC_DIR/workspace" "$OC_DIR/workspace-local-brain" "$OC_DIR/workspace-cloud-brain" "$OC_DIR/workspace-smart-router"; do
+  [ -d "$WS" ] || continue
+  find "$WS" -maxdepth 1 -type f ! -name "SOUL.md" | while read -r f; do : > "$f"; done
+done
+echo "  done"
 
 cat <<'EOF_DONE'
 
