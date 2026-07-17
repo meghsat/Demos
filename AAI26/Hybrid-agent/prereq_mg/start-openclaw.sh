@@ -23,6 +23,28 @@ fi
 
 command -v openclaw >/dev/null || { echo "openclaw not on PATH" >&2; exit 1; }
 
+# ---------------------------------------------------------------------------
+# Back up existing skills so the install step doesn't wipe them
+# ---------------------------------------------------------------------------
+OC_DIR="$HOME/.openclaw"
+SKILLS_BACKUP="$HOME/.openclaw_backup/skills"
+SKILLS_BACKED_UP=0
+if [ -d "$OC_DIR/skills" ]; then
+  echo "==> Backing up existing skills to $SKILLS_BACKUP..."
+  mkdir -p "$HOME/.openclaw_backup"
+  SKILLS_TMP_BACKUP="$HOME/.openclaw_backup/skills.tmp"
+  rm -rf "$SKILLS_TMP_BACKUP"
+  if cp -a "$OC_DIR/skills" "$SKILLS_TMP_BACKUP"; then
+    rm -rf "$SKILLS_BACKUP"
+    mv "$SKILLS_TMP_BACKUP" "$SKILLS_BACKUP"
+    SKILLS_BACKED_UP=1
+    echo "  done ($(ls "$SKILLS_BACKUP" | wc -l) skills backed up)"
+  else
+    echo "  WARNING: backup failed -- skills will not be restored after install" >&2
+    rm -rf "$SKILLS_TMP_BACKUP"
+  fi
+fi
+
 echo "==> Onboarding OpenClaw against the Semantic Router (:8899)..."
 openclaw onboard --non-interactive \
   --mode local --auth-choice custom-api-key \
@@ -95,8 +117,6 @@ openclaw gateway restart
 # Idempotent: silently skips if the agent already exists.
 # ---------------------------------------------------------------------------
 echo "==> Creating hybrid routing agents..."
-
-OC_DIR="$HOME/.openclaw"
 
 openclaw agents add local-brain \
   --model "lemonade/Qwen3.6-35B-A3B-NoThinking" \
@@ -207,6 +227,19 @@ for WS in "$OC_DIR/workspace" "$OC_DIR/workspace-local-brain" "$OC_DIR/workspace
   find "$WS" -maxdepth 1 -type f ! -name "SOUL.md" | while read -r f; do : > "$f"; done
 done
 echo "  done"
+
+# ---------------------------------------------------------------------------
+# Restore skills from backup (preserves any pre-installed skills)
+# ---------------------------------------------------------------------------
+if [ "$SKILLS_BACKED_UP" = "1" ] && [ -d "$SKILLS_BACKUP" ]; then
+  echo "==> Restoring skills from backup..."
+  rm -rf "$OC_DIR/skills"
+  if cp -a "$SKILLS_BACKUP" "$OC_DIR/skills"; then
+    echo "  done ($(ls "$OC_DIR/skills" | wc -l) skills restored)"
+  else
+    echo "  ERROR: restore failed -- check $SKILLS_BACKUP manually" >&2
+  fi
+fi
 
 cat <<'EOF_DONE'
 

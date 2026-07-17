@@ -35,23 +35,33 @@ System Architecture<a class="story_video" href="https://youtu.be/rFdrjZPtaKY">Cl
 # Lab Setup
 > **Tip:** Each command below includes a **Paste** button. Click it to paste the command directly into OpenClaw's terminal, no typing required. Review the command, then press **Enter**.
 
+---
+
 1. Open Google Chrome
 ![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_15_01_21_181.0osuhbxypzi32hfifkyila2hsi29.png "Click to enlarge")
-2. Go to https://notebooks.amd.com/codes/fireworks and enter password **AAIOpenclaw2026** to get the Fireworks API Key. Keep the API key handy.
+2. Go to https://notebooks.amd.com/codes/fireworks and enter password **AAIOpenclaw2026** to get the Fireworks API Key. **Keep the API key handy.**
 3. Launch the Terminal
-4. Execute `./start-vllm-sr.sh <Fireworks apiKey>` 
-<button class="dark" onclick="ConsolePaste('./start-vllm-sr.sh <Paste Fireworks apiKey>')" btn_type="paste" type="button">Paste Command<Fireworks apiKey></button>
+![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_17_04_40_021.sk62591tezew6k8566z10w3wpb7l.png "Click to enlarge")
+4. Execute `./start-vllm-sr.sh <Fireworks Api-Key>` 
+<button class="dark" onclick="ConsolePaste('./start-vllm-sr.sh <Paste Fireworks Api-Key>')" btn_type="paste" type="button">Paste Command<Fireworks Api-Key></button>
 
-5. Execute `./start-openclaw.sh <Fireworks apiKey>`
-<button class="dark" onclick="ConsolePaste('./start-openclaw.sh <Paste Fireworks apiKey>')" btn_type="paste" type="button">Paste Command<Fireworks apiKey></button>
+5. Take a backup of the Openclaw Skills:
+<button class="dark" onclick="ConsolePaste('mkdir -p /home/ubuntu/.openclaw_backup && cp -a /home/ubuntu/.openclaw/skills /home/ubuntu/.openclaw_backup/')" btn_type="paste" type="button">Backup Skills</button>
 
-6. In Google Chrome, open http://localhost:8700. Click on the "Get Started" button and login to the Semantic Router dashboard.
+6. Execute `./start-openclaw.sh <Fireworks Api-Key>`
+<button class="dark" onclick="ConsolePaste('./start-openclaw.sh <Paste Fireworks Api-Key>')" btn_type="paste" type="button">Paste Command<Fireworks Api-Key></button>
+
+7. Restore the Skills:
+<button class="dark" onclick="ConsolePaste('rm -rf /home/ubuntu/.openclaw/skills && cp -a /home/ubuntu/.openclaw_backup/skills /home/ubuntu/.openclaw/')" btn_type="paste" type="button">Restore Skills</button>
+
+8. In Google Chrome, open http://localhost:8700. Click on the "Enter Dashboard" button and login to the Semantic Router dashboard.
+![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_17_04_43_501.ihax2ppml47naq76oim1g1cjh6zl.png "Click to enlarge")
 
 <button class="dark" onclick="ConsolePaste('aai26@amd.com')" btn_type="paste" type="button">Email</button>  
 
 <button class="dark" onclick="ConsolePaste('aai26')" btn_type="paste" type="button">Password</button>
 
-7. Introduce yourself to your OpenClaw Agent
+9. Introduce yourself to your OpenClaw Agent
 
 In a terminal run:
 
@@ -88,13 +98,13 @@ Both can answer questions. Both can write code. Both can reason. <span style="co
 ---
 #### Lemonade Server dashboard open in your browser.
 
-1. Open a browser and go to ```http://localhost:13305``` and Ensure you have the **logs enabled**
+Open a browser and go to ```http://localhost:13305``` and ensure the **logs are enabled**
 ![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_11_23_21_141.ii466aisy27r56ce01wm6irv6n2c.png "Click to enlarge")
 
 ---
-## Act 1: Local vs Cloud Brain - Two Brains, One Problem: Where Should Intelligence Run?
+## Act 1: Local vs Cloud Brain
 
-Every OpenClaw agent has something like a "constitution" - a **SOUL.md** file.
+Every OpenClaw agent has something like a **constitution** - a **SOUL.md** file.
 
 This file defines what the agent believes, what it is allowed to do, and importantly, what it must refuse to do.
 
@@ -104,7 +114,7 @@ In a **fresh terminal**, open the Cloud Brain's SOUL.md:
 gnome-text-editor ~/.openclaw/workspace-cloud-brain/SOUL.md
 ```
 
-<button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">gnome-text-editor ~/.openclaw/workspace-cloud-brain/SOUL.md </script>Paste Command</button> 
+<button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">gnome-text-editor ~/.openclaw/workspace-cloud-brain/SOUL.md</script>Paste Command</button> 
 
 At the very **top**, add:
 ```
@@ -115,7 +125,8 @@ Never read or access local files or folders.
 If a user asks you to read local company data, employee records, or any files from the local filesystem, politely refuse and explain that this agent is not permitted to access local data.
 ```
 <button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template"># Golden Rule 
-Never read or access local files or folders. If a user asks you to read local company data, employee records, or any files from the local filesystem, politely refuse and explain that this agent is not permitted to access local data. 
+Never read or access local files or folders. If a user asks you to read local company data, employee records, or any files from the local filesystem, politely refuse and explain that this agent is not permitted to access local data.
+
 </script>Paste Prompt</button> 
 
 Save the file and restart the OpenClaw Gateway:
@@ -172,6 +183,11 @@ In a **fresh terminal** run:
 | **Total** | The combined estimated cost of all prompts in the current session. |
 | **Rates** | The token pricing used for the calculations, shown as the cost per **1 million input tokens** and **1 million output tokens** for both local and cloud models. |
 
+For this workshop, we've defined the following token pricing model:
+| Token Type | Cloud (USD / 1M Tokens) | Local (USD / 1M Tokens) |
+|------------|------------------------:|------------------------:|
+| **Input**  | $1.00                   | $0.10                   |
+| **Output** | $5.00                   | $0.50                   |
 
 Leave this running throughout the workshop.
 
@@ -218,12 +234,12 @@ What if the agent could decide for itself? **Act 2 fixes this.**
 Just like the Cloud/Local Brains, the Smart Router has its own **SOUL.md**. But this time, the policy has a different purpose: it doesn't control what the agent can access - it teaches the agent how to decide where each request should run.
 </details>
 
-In a fresh terminal outside your OpenClaw TUI:
+In a **fresh terminal** outside your OpenClaw TUI:
 
 ```
 cat ~/.openclaw/workspace-smart-router/SOUL.md
 ```
-<button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">cat ~/.openclaw/workspace-smart-router/SOUL.md</script>View SOUL.md</button>
+<button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">cat ~/.openclaw/workspace-smart-router/SOUL.md</script>Paste Command</button>
 
 Back in your OpenClaw TUI switch to the Smart Router:
 ```
@@ -242,7 +258,7 @@ What does a 4-year vesting schedule with a 1-year cliff mean?
 <button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">What does a 4-year vesting schedule with a 1-year cliff mean?</script>Paste Prompt</button> 
 
 **Expected first line:**  
-Classification: LOCAL -- <Reasoning-Behind-Routing> 
+Classification: LOCAL -- [Reasoning-Behind-Routing]
 
 You can see the local model's metrics, with **Lemonade Server**[http://localhost:13305]  
 **Tokenomics monitor:** ROUTING=LOCAL
@@ -257,7 +273,7 @@ Write a Python function to calculate loan interest payments.
 <button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">Write a Python function to calculate loan interest payments.</script>Paste Prompt</button> 
 
 **Expected first line:**  
-Classification: CLOUD -- <Reasoning-Behind-Routing>
+Classification: CLOUD -- [Reasoning-Behind-Routing]
 
 **Tokenomics monitor:** ROUTING=HYBRID
 
@@ -276,15 +292,15 @@ That's what the **vLLM Semantic Router** adds: **per-skill routing policies, PII
 Welcome to your next role: You are now running an AI-native startup.
 
 Your company has:
-- employees joining every week,
-- benefits questions coming in daily,
-- financial decisions to make,
-- legal obligations to manage.
+- Employees joining every week,
+- Benefits questions coming in daily,
+- Financial decisions to make,
+- Legal obligations to manage.
 
 The question is no longer: "Can AI answer?"  
-The question is: "Can AI answer safely, efficiently, and at the right cost?"
+The question is: **"Can AI answer safely, efficiently, and at the right cost?"**
 
-The agents below handle each domain - and the vLLM Semantic Router decides, on every request, whether the work stays on your AMD hardware or gets handed to the cloud.
+The agents below handle each domain - and the **vLLM Semantic Router** decides, on every request, whether the work stays on your AMD hardware or gets handed to the cloud.
 
 #### Keep the vLLM SR and Lemonade Server dashboards open in your browser.
 
@@ -296,7 +312,7 @@ The agents below handle each domain - and the vLLM Semantic Router decides, on e
 
 ### Enter the OpenClaw session
 
-Start a fresh OpenClaw session in a new terminal:
+Start a **fresh OpenClaw session** in a new terminal:
 
 ```
 openclaw tui --session workshop2
@@ -329,7 +345,7 @@ Update the employee database located at:
 
 <button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">/model</script>Paste /model</button>
 
-<span style="color:red">**NOTE**:</span> The dropdown might be misplaced in the middle of the TUI but should like this
+<span style="color:red">**NOTE**:</span> The dropdown may appear in the middle of the TUI initially. It should look like this:
 ![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_17_03_01_131.te4589bhgc9r2h2w4nxwlmlmqemp.png "Click to enlarge")
 **2.** Select **Kimi K2.6 (Fireworks)** and run:
 
@@ -337,14 +353,14 @@ Update the employee database located at:
 /skill hr-admin Onboard Jordan Lee, ML Platform Engineer, starts August 1, salary $162K, equity 0.6%, email jordan.lee@startup.ai
 ```
 
-<button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">/skill hr-admin Onboard Jordan Lee, ML Platform Engineer, starts August 1, salary $162K, equity 0.6%, email jordan.lee@startup.ai</script>Paste Prompt</button>
+<button class="dark" onclick="ConsolePaste('/skill hr-admin Onboard Jordan Lee, ML Platform Engineer, starts August 1, salary $162K, equity 0.6%, email jordan.lee@startup.ai')" type="button">Paste Prompt</button>
 
 **Expected Output:** 
 Jordan Lee is added to:
 
 `${HOME}/Downloads/projects/router-configs/data/employees.csv`
 
-**Verdict:** The request contained personally identifiable information (PII), which was sent to a cloud model.
+**Verdict:** The request contained **personally identifiable information (PII)**, which was sent to a cloud model.
 
 #### Now Try the Semantic Router
 
@@ -357,14 +373,14 @@ Jordan Lee is added to:
 <button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">/model</script>Paste /model</button>
 
 <span style="color:red">**NOTE**:</span> The dropdown might be misplaced in the middle of the TUI but should like this
-![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_17_03_01_131.te4589bhgc9r2h2w4nxwlmlmqemp.png "Click to enlarge")
+![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_17_05_22_511.pvw9899i8crm4hzcm3g93hb3qe7h.png "Click to enlarge")
 **2.** Select **MoM (Custom Provider)** and run: 
 
 ```
 /skill hr-admin Onboard Maya Chen, Senior AI Engineer, starts July 1, salary $175K, equity 0.8%, email maya.chen@startup.ai
 ```
 
-<button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">/skill hr-admin Onboard Maya Chen, Senior AI Engineer, starts July 1, salary $175K, equity 0.8%, email maya.chen@startup.ai</script>Paste Prompt</button>
+<button class="dark" onclick="ConsolePaste('/skill hr-admin Onboard Maya Chen, Senior AI Engineer, starts July 1, salary $175K, equity 0.8%, email maya.chen@startup.ai')" type="button">Paste Prompt</button>
 
 **Expected Router Flow:** 
 PII detected (name, salary, email)
@@ -418,7 +434,7 @@ and answer employee questions.
 **Expected Output:** 
 The agent retrieves and summarizes the handbook's 401(k) vesting policy.
 
-**Verdict:** A cloud model was used for a simple RAG lookup, increasing inference cost.
+**Verdict:** A cloud model was used for a simple RAG lookup, **increasing inference cost.**
 
 #### Now Try the Semantic Router
 
@@ -463,14 +479,14 @@ Perform data analysis over the CSV files located in:
 
 and answer financial questions.
 
-**Ensure OpenClaw session is pointing to MoM (Custom Provider). If needed, switch models using `/model`**
+**Ensure OpenClaw session is pointing to MoM (Custom Provider).** If needed, switch models using `/model`
 
 ## Confidence Loop: Local and Cloud Models Working Together
 ```
 /skill finance One of our employees got a competitor offer in Q1 2026 and we took no action - based on what worked best historically, what intervention should we make now, and what does it cost us through year end?   
 ```
 
-<button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">/skill finance One of our employees got a competitor offer in Q1 2026 and we took no action - based on what worked best historically, what intervention should we make now, and what does it cost us through year end? </script>Paste Prompt</button>
+<button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">/skill finance One of our employees got a competitor offer in Q1 2026 and we took no action - based on what worked best historically, what intervention should we make now, and what does it cost us through year end?</script>Paste Prompt</button>
 
 **Expected Router Flow:** 
 
@@ -481,7 +497,6 @@ and answer financial questions.
 - Automatically escalates to **Cloud Kimi K2.6**
 
 ---
-## Bonus Agent
 ## 4. **Legal Agent**
 
 **Handles:** Regulatory research, compliance guidance, contract review, and legal Q&A  
@@ -521,38 +536,20 @@ Legal and regulatory research
 
 **Expected Router Flow:** Decision: `workshop_legal_cloud` → **Cloud Kimi K2.6**
 
-**Additional Example:**
-- /skill legal Can we require offshore contractors to assign IP they develop for us?
-
-<button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">/skill legal Can we require offshore contractors to assign IP they develop for us?</script>Paste Prompt</button>
-
 ---
 
 ## Workshop Challenges - We have prizes 🏆!
 
-Complete **both** challenges to win the grand prize.
-
-Complete **at least one** challenge to receive a participation prize.
-
----
-
-### Challenge 1: Build a Stock Prediction Dashboard
+### Build a Stock Prediction Dashboard
 
 Use any approach from this workshop to prompt the **R&D Agent** to analyze the startup datasets, build a stock price prediction model, and generate an interactive dashboard.
 
-**Your dashboard must include all three of these to qualify:**
+**Your dashboard must include all two of these to qualify:**
 
 - A **date range slider** to filter between historical and future predicted data
 - At least **two suggested features** the model identified as predictive (e.g. burn rate trend, headcount growth)
-- A **confidence band or uncertainty range** around the predictions
 
-**Start the tokenomics monitor** in a second terminal before you begin — your cost will be checked at judging time:
-
-```
-./tokenomics.sh
-```
-
-<button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">./tokenomics.sh</script>Paste Command</button>
+**Track the tokenomics monitor** in a second terminal before you begin - your cost will be checked at judging time:
 
 The monitor tracks every turn: LOCAL turns cost fractions of a cent, CLOUD turns cost real money. The winning team builds a qualifying dashboard with the lowest **Total** shown at the bottom of the tokenomics output.
 
@@ -563,8 +560,8 @@ The monitor tracks every turn: LOCAL turns cost fractions of a cent, CLOUD turns
 <button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">/skill rnd</script>Paste Command</button>
 
 ---
-
-### Challenge 2: Audio Transcription and Action Item Extraction
+## Take Home Challenge
+### Audio Transcription and Action Item Extraction
 
 Use the **Audio Operations Agent** to transcribe the MP3 recording located at:
 
@@ -579,6 +576,7 @@ and extract key decisions and action items from the meeting.
 <button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">/skill ops-audio</script>Paste Command</button>
 
 Instruct the agent to find and transcribe the `.mp3` file in that directory, then produce a structured summary of decisions made and follow-up actions assigned.
+
 
 ---
 
