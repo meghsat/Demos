@@ -70,13 +70,10 @@ Inside the OpenClaw TUI run:
 Select **Kimi K2.6 (Fireworks)**
 ![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_16_00_37_081.3a1gd84hfm1bqpx523frpr8natji.png "Click to enlarge")
 
+Introduce yourself:
 ```
 Hey! I'm <YOUR-NAME>
 ```
-<button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">Hey! I'm <YOUR-NAME>
-</script>Paste Prompt</button>
-
----
 
 > **Tip:** Each command below includes a **Paste** button. Click it to paste the command directly into OpenClaw's terminal, no typing required. Review the command, then press **Enter**.
 
@@ -89,14 +86,19 @@ Hey! I'm <YOUR-NAME>
 Both can answer questions. Both can write code. Both can reason. <span style="color:red">**But should they be trusted with the same data?**</span>
 
 ---
+#### Lemonade Server dashboard open in your browser.
 
+1. Open a browser and go to ```http://localhost:13305``` and Ensure you have the **logs enabled**
+![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_11_23_21_141.ii466aisy27r56ce01wm6irv6n2c.png "Click to enlarge")
+
+---
 ## Act 1: Local vs Cloud Brain - Two Brains, One Problem: Where Should Intelligence Run?
 
 Every OpenClaw agent has something like a "constitution" - a **SOUL.md** file.
 
 This file defines what the agent believes, what it is allowed to do, and importantly, what it must refuse to do.
 
-Open the Cloud Brain's SOUL.md:
+In a **fresh terminal**, open the Cloud Brain's SOUL.md:
 
 ```
 gnome-text-editor ~/.openclaw/workspace-cloud-brain/SOUL.md
@@ -104,7 +106,7 @@ gnome-text-editor ~/.openclaw/workspace-cloud-brain/SOUL.md
 
 <button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">gnome-text-editor ~/.openclaw/workspace-cloud-brain/SOUL.md </script>Paste Command</button> 
 
-At the very top, add:
+At the very **top**, add:
 ```
 # Golden Rule
 
@@ -112,7 +114,9 @@ Never read or access local files or folders.
 
 If a user asks you to read local company data, employee records, or any files from the local filesystem, politely refuse and explain that this agent is not permitted to access local data.
 ```
-<button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template"># Golden Rule Never read or access local files or folders. If a user asks you to read local company data, employee records, or any files from the local filesystem, politely refuse and explain that this agent is not permitted to access local data. </script>Paste Prompt</button> 
+<button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template"># Golden Rule 
+Never read or access local files or folders. If a user asks you to read local company data, employee records, or any files from the local filesystem, politely refuse and explain that this agent is not permitted to access local data. 
+</script>Paste Prompt</button> 
 
 Save the file and restart the OpenClaw Gateway:
 
@@ -149,7 +153,7 @@ The agent **refuses** - not because it can't, but because its policy says it sho
 
 ## Let's track the Tokenomics with a live routing monitor
 
-In a fresh terminal run:
+In a **fresh terminal** run:
 
 ```
 ./tokenomics.sh
@@ -187,7 +191,10 @@ Read the contents of ${HOME}/Downloads/projects/router-configs/data/financials.c
 
 <button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">Read the contents of ${HOME}/Downloads/projects/router-configs/data/financials.csv</script>Paste Prompt</button> 
 
-**Tokenomics monitor shows:** ROUTING=LOCAL - secure, zero API cost. 
+You can see the local model being loaded, with **Lemonade Server**[http://localhost:13305] displaying logs that include metrics such as TTFT and TPS.
+![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_11_23_25_061.1h37w2eqzoxjefothx8oode4kdj6.png "Click to enlarge")
+
+**Tokenomics monitor shows:** ROUTING=LOCAL
 
 This time, the agent reads the file without any issues. 
 
@@ -211,13 +218,14 @@ What if the agent could decide for itself? **Act 2 fixes this.**
 Just like the Cloud/Local Brains, the Smart Router has its own **SOUL.md**. But this time, the policy has a different purpose: it doesn't control what the agent can access - it teaches the agent how to decide where each request should run.
 </details>
 
-Open the routing policy:
+In a fresh terminal outside your OpenClaw TUI:
 
 ```
 cat ~/.openclaw/workspace-smart-router/SOUL.md
 ```
 <button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">cat ~/.openclaw/workspace-smart-router/SOUL.md</script>View SOUL.md</button>
 
+Back in your OpenClaw TUI switch to the Smart Router:
 ```
 /agent smart-router
 ```
@@ -234,9 +242,11 @@ What does a 4-year vesting schedule with a 1-year cliff mean?
 <button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">What does a 4-year vesting schedule with a 1-year cliff mean?</script>Paste Prompt</button> 
 
 **Expected first line:**  
-Classification: LOCAL -- factual definition, single deterministic answer 
+Classification: LOCAL -- <Reasoning-Behind-Routing> 
 
+You can see the local model's metrics, with **Lemonade Server**[http://localhost:13305]  
 **Tokenomics monitor:** ROUTING=LOCAL
+
 
 ### Code Generation → Cloud
 
@@ -247,7 +257,7 @@ Write a Python function to calculate loan interest payments.
 <button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">Write a Python function to calculate loan interest payments.</script>Paste Prompt</button> 
 
 **Expected first line:**  
-Classification: CLOUD -- multi-step financial reasoning. Delegating to kimi-k2p6. 
+Classification: CLOUD -- <Reasoning-Behind-Routing>
 
 **Tokenomics monitor:** ROUTING=HYBRID
 
@@ -292,7 +302,7 @@ Start a fresh OpenClaw session in a new terminal:
 openclaw tui --session workshop2
 ```
 
-<button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">openclaw tui --session workshop1</script>OpenClaw tui --session workshop1</button>
+<button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">openclaw tui --session workshop2</script>OpenClaw tui --session workshop2</button>
 
 ---
 
@@ -319,6 +329,8 @@ Update the employee database located at:
 
 <button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">/model</script>Paste /model</button>
 
+<span style="color:red">**NOTE**:</span> The dropdown might be misplaced in the middle of the TUI but should like this
+![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_17_03_01_131.te4589bhgc9r2h2w4nxwlmlmqemp.png "Click to enlarge")
 **2.** Select **Kimi K2.6 (Fireworks)** and run:
 
 ```
@@ -344,7 +356,9 @@ Jordan Lee is added to:
 
 <button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">/model</script>Paste /model</button>
 
-**2.** Select **MoM (Custom Provider)** and run:
+<span style="color:red">**NOTE**:</span> The dropdown might be misplaced in the middle of the TUI but should like this
+![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_17_03_01_131.te4589bhgc9r2h2w4nxwlmlmqemp.png "Click to enlarge")
+**2.** Select **MoM (Custom Provider)** and run: 
 
 ```
 /skill hr-admin Onboard Maya Chen, Senior AI Engineer, starts July 1, salary $175K, equity 0.8%, email maya.chen@startup.ai
@@ -438,7 +452,7 @@ HR policy query
 
 ## 3. Finance Agent
 
-**Handles:** Burn rate, equity modeling, retention analysis, budgeting, and runway forecasting
+**Handles:** Burn rate, equity modeling, retention analysis, budgeting, and runway forecasting  
 **Data Sources:** `financials.csv`, `cap_table.csv`, `employees.csv`, `retention_history.csv`
 
 #### Agent Goal
@@ -467,10 +481,10 @@ and answer financial questions.
 - Automatically escalates to **Cloud Kimi K2.6**
 
 ---
-
+## Bonus Agent
 ## 4. **Legal Agent**
 
-**Handles:** Regulatory research, compliance guidance, contract review, and legal Q&A
+**Handles:** Regulatory research, compliance guidance, contract review, and legal Q&A  
 **Data Sources:** Live web search and uploaded contracts
 
 #### Agent Goal
@@ -520,36 +534,51 @@ Complete **both** challenges to win the grand prize.
 
 Complete **at least one** challenge to receive a participation prize.
 
-#### Challenge 1: 
-Build an AI-powered analytics application.
+---
 
-Your task is to prompt the **R&D Agent** to:
+### Challenge 1: Build a Stock Prediction Dashboard
 
-- Analyze the startup datasets
-- Build a stock price prediction model
-- Generate an interactive dashboard to visualize the predictions
+Use any approach from this workshop to prompt the **R&D Agent** to analyze the startup datasets, build a stock price prediction model, and generate an interactive dashboard.
 
-#### Hint:
+**Your dashboard must include all three of these to qualify:**
 
-Use:
+- A **date range slider** to filter between historical and future predicted data
+- At least **two suggested features** the model identified as predictive (e.g. burn rate trend, headcount growth)
+- A **confidence band or uncertainty range** around the predictions
+
+**Start the tokenomics monitor** in a second terminal before you begin — your cost will be checked at judging time:
+
+```
+./tokenomics.sh
+```
+
+<button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">./tokenomics.sh</script>Paste Command</button>
+
+The monitor tracks every turn: LOCAL turns cost fractions of a cent, CLOUD turns cost real money. The winning team builds a qualifying dashboard with the lowest **Total** shown at the bottom of the tokenomics output.
+
 ```
 /skill rnd
 ```
-Explore the **vLLM Semantic Router configuration** to ensure a sufficiently powerful local model is enabled.
 
+<button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">/skill rnd</script>Paste Command</button>
 
-#### Challenge 2
+---
+
+### Challenge 2: Audio Transcription and Action Item Extraction
 
 Use the **Audio Operations Agent** to transcribe the MP3 recording located at:
+
 `${HOME}/Downloads/projects/router-configs/data/transcripts`
-and extract key decisions and action items.
 
-#### Hint
+and extract key decisions and action items from the meeting.
 
-Use:
 ```
 /skill ops-audio
 ```
-and instruct the agent to transcribe the `.mp3` file in the directory.
+
+<button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">/skill ops-audio</script>Paste Command</button>
+
+Instruct the agent to find and transcribe the `.mp3` file in that directory, then produce a structured summary of decisions made and follow-up actions assigned.
 
 ---
+
