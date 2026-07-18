@@ -35,14 +35,23 @@ System Architecture<a class="story_video" href="https://youtu.be/rFdrjZPtaKY">Cl
 # Lab Setup
 > **Tip:** Each command below includes a **Paste** button. Click it to paste the command directly into OpenClaw's terminal, no typing required. Review the command, then press **Enter**.
 
+### Open Google Chrome
+![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_15_01_21_181.0osuhbxypzi32hfifkyila2hsi29.png "Click to enlarge")
+
+
+
 ---
 
 1. Open Google Chrome
 ![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_15_01_21_181.0osuhbxypzi32hfifkyila2hsi29.png "Click to enlarge")
-2. Go to https://notebooks.amd.com/codes/fireworks and enter password **AAIOpenclaw2026** to get the Fireworks API Key. **Keep the API key handy.**
+2. Go to https://notebooks.amd.com/codes/fireworks 
+<button class="dark" onclick="ConsolePaste('https://notebooks.amd.com/codes/fireworks')" btn_type="paste" type="button">Paste URL<Fireworks Api-Key></button>  
+and enter password **AAIOpenclaw2026** 
+<button class="dark" onclick="ConsolePaste('AAIOpenclaw2026')" btn_type="paste" type="button">Paste Password<Fireworks Api-Key></button>  
+to get the Fireworks API Key. **Keep the API key handy.**  
 3. Launch the Terminal
-![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_17_04_40_021.sk62591tezew6k8566z10w3wpb7l.png "Click to enlarge")
-4. Execute `./start-vllm-sr.sh <Fireworks Api-Key>` 
+![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_17_04_40_021.sk62591tezew6k8566z10w3wpb7l.png "Click to enlarge")  
+4. Execute `./start-vllm-sr.sh <Fireworks Api-Key>`  
 <button class="dark" onclick="ConsolePaste('./start-vllm-sr.sh <Paste Fireworks Api-Key>')" btn_type="paste" type="button">Paste Command<Fireworks Api-Key></button>
 
 5. Take a backup of the Openclaw Skills:
@@ -98,7 +107,12 @@ Both can answer questions. Both can write code. Both can reason. <span style="co
 ---
 #### Lemonade Server dashboard open in your browser.
 
-Open a browser and go to ```http://localhost:13305``` and ensure the **logs are enabled**
+Open a browser and go to ```http://localhost:13305```  
+
+<button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">http://localhost:13305</script>Paste URL</button> 
+
+
+and ensure the logs are enabled **View > Logs**
 ![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_11_23_21_141.ii466aisy27r56ce01wm6irv6n2c.png "Click to enlarge")
 
 ---
@@ -126,7 +140,6 @@ If a user asks you to read local company data, employee records, or any files fr
 ```
 <button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template"># Golden Rule 
 Never read or access local files or folders. If a user asks you to read local company data, employee records, or any files from the local filesystem, politely refuse and explain that this agent is not permitted to access local data.
-
 </script>Paste Prompt</button> 
 
 Save the file and restart the OpenClaw Gateway:
@@ -184,7 +197,7 @@ In a **fresh terminal** run:
 | **Rates** | The token pricing used for the calculations, shown as the cost per **1 million input tokens** and **1 million output tokens** for both local and cloud models. |
 
 For this workshop, we've defined the following token pricing model:
-| Token Type | Cloud (USD / 1M Tokens) | Local (USD / 1M Tokens) |
+| Token Type | Cloud ($/1M Tokens) | Local ($/1M Tokens) |
 |------------|------------------------:|------------------------:|
 | **Input**  | $1.00                   | $0.10                   |
 | **Output** | $5.00                   | $0.50                   |
@@ -304,9 +317,15 @@ The agents below handle each domain - and the **vLLM Semantic Router** decides, 
 
 #### Keep the vLLM SR and Lemonade Server dashboards open in your browser.
 
-1. vLLM Semantic Router at http://localhost:8700
+1. vLLM Semantic Router at ```http://localhost:8700```
+
+<button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">http://localhost:8700</script>Paste URL</button> 
+
 ![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_11_23_20_181.7whkmda2ujlxzqt1yv6osovj7a0h.png "Click to enlarge")
-2. Lemonade Server at http://localhost:13305 - **Ensure you have the logs enabled**
+2. Lemonade Server at ```http://localhost:13305``` - Ensure you have the logs enabled **View > Logs**
+
+<button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">http://localhost:13305</script>Paste URL</button> 
+
 ![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_11_23_21_141.ii466aisy27r56ce01wm6irv6n2c.png "Click to enlarge")
 
 
@@ -579,4 +598,3 @@ Instruct the agent to find and transcribe the `.mp3` file in that directory, the
 
 
 ---
-
