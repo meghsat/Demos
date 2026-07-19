@@ -30,6 +30,7 @@ By the end you'll have seen the same architecture at three levels of sophisticat
 - **Local model not confident enough?** → confidence loop kicks in, escalates automatically
 
 System Architecture<a class="story_video" href="https://youtu.be/rFdrjZPtaKY">Click this to view the video</a>
+
 ---
 
 # Lab Setup
@@ -104,9 +105,9 @@ Hey! I'm <YOUR-NAME>
 
 Open Google Chrome and go to ```http://localhost:13305```  
  
-<button class="dark" onclick="ConsolePaste('http://localhost:13305')" btn_type="paste" type="button">Paste URL<Fireworks Api-Key></button> 
+<button class="dark" onclick="ConsolePaste('http://localhost:13305')" btn_type="paste" type="button">Paste URL</button> 
 
-ensure the logs are enabled **View > Logs**
+Ensure the logs are enabled **View > Logs**
 ![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_11_23_21_141.ii466aisy27r56ce01wm6irv6n2c.png "Click to enlarge")
 
 ---
@@ -396,7 +397,7 @@ Jordan Lee is added to:
 
 <button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">/model</script>Paste /model</button>
 
-<span style="color:red">**NOTE**:</span> The dropdown might be misplaced in the middle of the TUI but should like this
+<span style="color:red">**NOTE**:</span> The dropdown might be misplaced in the middle of the TUI but should look like this
 ![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_17_05_22_511.pvw9899i8crm4hzcm3g93hb3qe7h.png "Click to enlarge")
 **2.** Select **MoM (Custom Provider)** and run: 
 
@@ -413,7 +414,7 @@ PII detected (name, salary, email)
 
 - Same result with **zero data egress**
 
-**You can see the local model being loaded, with Lemonade Server displaying logs that include metrics such as TTFT and TPS.**
+You can see the local model being loaded, with **Lemonade Server** displaying logs that include metrics such as TTFT and TPS.
 ![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_11_23_25_061.1h37w2eqzoxjefothx8oode4kdj6.png "Click to enlarge")
 
 **Expected Output:** 
@@ -568,7 +569,7 @@ Legal and regulatory research
 
 Use any approach from this workshop to prompt the **R&D Agent** to analyze the startup datasets, build a stock price prediction model, and generate an interactive dashboard.
 
-**Your dashboard must include all two of these to qualify:**
+**Your dashboard must include both of these to qualify:**
 
 - A **date range slider** to filter between historical and future predicted data
 - At least **two suggested features** the model identified as predictive (e.g. burn rate trend, headcount growth)
