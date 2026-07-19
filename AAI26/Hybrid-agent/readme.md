@@ -33,51 +33,54 @@ System Architecture<a class="story_video" href="https://youtu.be/rFdrjZPtaKY">Cl
 ---
 
 # Lab Setup
-> **Tip:** Each command below includes a **Paste** button. Click it to paste the command directly into OpenClaw's terminal, no typing required. Review the command, then press **Enter**.
+> **Tip:** Each command below includes a **Paste** button. First, click where you want the command to be pasted in the instance. Then click Paste to insert the command automatically, no typing required. Review the command, then press Enter.
 
-### Open Google Chrome
+### Google Chrome
 ![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_15_01_21_181.0osuhbxypzi32hfifkyila2hsi29.png "Click to enlarge")
 
-
+### Terminal Emulator
+![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_17_04_40_021.sk62591tezew6k8566z10w3wpb7l.png "Click to enlarge")  
 
 ---
 
 1. Open Google Chrome
 ![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_15_01_21_181.0osuhbxypzi32hfifkyila2hsi29.png "Click to enlarge")
-2. Go to https://notebooks.amd.com/codes/fireworks 
+
+2. Go to ```https://notebooks.amd.com/codes/fireworks```
 <button class="dark" onclick="ConsolePaste('https://notebooks.amd.com/codes/fireworks')" btn_type="paste" type="button">Paste URL<Fireworks Api-Key></button>  
-and enter password **AAIOpenclaw2026** 
+
+and enter password ```AAIOpenclaw2026``` to get the Fireworks API Key. **Keep the API key handy.** 
+
 <button class="dark" onclick="ConsolePaste('AAIOpenclaw2026')" btn_type="paste" type="button">Paste Password<Fireworks Api-Key></button>  
-to get the Fireworks API Key. **Keep the API key handy.**  
+
 3. Launch the Terminal
 ![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_17_04_40_021.sk62591tezew6k8566z10w3wpb7l.png "Click to enlarge")  
-4. Execute `./start-vllm-sr.sh <Fireworks Api-Key>`  
-<button class="dark" onclick="ConsolePaste('./start-vllm-sr.sh <Paste Fireworks Api-Key>')" btn_type="paste" type="button">Paste Command<Fireworks Api-Key></button>
 
-5. Take a backup of the Openclaw Skills:
-<button class="dark" onclick="ConsolePaste('mkdir -p /home/ubuntu/.openclaw_backup && cp -a /home/ubuntu/.openclaw/skills /home/ubuntu/.openclaw_backup/')" btn_type="paste" type="button">Backup Skills</button>
+4. Run `./hybrid-multi-agent-openclaw/start-vllm-sr.sh <Fireworks Api-Key>`  
+<button class="dark" onclick="ConsolePaste('./hybrid-multi-agent-openclaw/start-vllm-sr.sh <Paste Fireworks Api-Key>')" btn_type="paste" type="button">Paste Command</button>
 
-6. Execute `./start-openclaw.sh <Fireworks Api-Key>`
-<button class="dark" onclick="ConsolePaste('./start-openclaw.sh <Paste Fireworks Api-Key>')" btn_type="paste" type="button">Paste Command<Fireworks Api-Key></button>
-
-7. Restore the Skills:
-<button class="dark" onclick="ConsolePaste('rm -rf /home/ubuntu/.openclaw/skills && cp -a /home/ubuntu/.openclaw_backup/skills /home/ubuntu/.openclaw/')" btn_type="paste" type="button">Restore Skills</button>
-
-8. In Google Chrome, open http://localhost:8700. Click on the "Enter Dashboard" button and login to the Semantic Router dashboard.
+5. The previous command should have opened the vLLM SR dashboard. If it didn't, open Google Chrome on the instance and navigate to ```http://localhost:8700```. Click **Enter Dashboard** and log in to the Semantic Router dashboard.
 ![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_17_04_43_501.ihax2ppml47naq76oim1g1cjh6zl.png "Click to enlarge")
+
+Enter the below login credentials: 
+```aai26@amd.com``` and ```aai26```
 
 <button class="dark" onclick="ConsolePaste('aai26@amd.com')" btn_type="paste" type="button">Email</button>  
 
 <button class="dark" onclick="ConsolePaste('aai26')" btn_type="paste" type="button">Password</button>
 
-9. Introduce yourself to your OpenClaw Agent
+6. Run `./hybrid-multi-agent-openclaw/start-openclaw.sh <Fireworks Api-Key>`
+<button class="dark" onclick="ConsolePaste('./hybrid-multi-agent-openclaw/start-openclaw.sh <Paste Fireworks Api-Key>')" btn_type="paste" type="button">Paste Command</button>
 
-In a terminal run:
+
+7. In a terminal run:
 
 ```
 openclaw tui --session workshop
 ```
 <button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">openclaw tui --session workshop</script>Paste Command</button> 
+
+![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_19_18_47_571.ore6la560tc5e6pp9bm9cqhsb6bg.png "Click to enlarge")
 
 Inside the OpenClaw TUI run:
 ```
@@ -94,55 +97,41 @@ Introduce yourself:
 Hey! I'm <YOUR-NAME>
 ```
 
-> **Tip:** Each command below includes a **Paste** button. Click it to paste the command directly into OpenClaw's terminal, no typing required. Review the command, then press **Enter**.
+> **Tip:** Each command below includes a **Paste** button. First, click where you want the command to be pasted in the instance. Then click Paste to insert the command automatically, no typing required. Review the command, then press Enter.
 
 ---
+#### Lemonade Server Dashboard
 
-**Scenario**: We have two AI agents with the same capabilities. 
-- One runs entirely on your local AMD hardware. **cloud-brain**
-- The other uses a cloud model. **local-brain**
+Open Google Chrome and go to ```http://localhost:13305```  
+ 
+<button class="dark" onclick="ConsolePaste('http://localhost:13305')" btn_type="paste" type="button">Paste URL<Fireworks Api-Key></button> 
 
-Both can answer questions. Both can write code. Both can reason. <span style="color:red">**But should they be trusted with the same data?**</span>
-
----
-#### Lemonade Server dashboard open in your browser.
-
-Open a browser and go to ```http://localhost:13305```  
-
-<button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">http://localhost:13305</script>Paste URL</button> 
-
-
-and ensure the logs are enabled **View > Logs**
+ensure the logs are enabled **View > Logs**
 ![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_11_23_21_141.ii466aisy27r56ce01wm6irv6n2c.png "Click to enlarge")
 
 ---
 ## Act 1: Local vs Cloud Brain
 
-Every OpenClaw agent has something like a **constitution** - a **SOUL.md** file.
+Every OpenClaw agent has a configuration that defines what tools it is allowed to use.
 
-This file defines what the agent believes, what it is allowed to do, and importantly, what it must refuse to do.
+For the Cloud Brain, we'll remove access to the filesystem and runtime tools. This means the agent can still answer questions, but it **won't be able to read local files or execute commands.**
 
-In a **fresh terminal**, open the Cloud Brain's SOUL.md:
+In a **fresh terminal**, run:
 
+![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_19_20_22_161.2lxc8jatry4zzu3b38nnlx3a8qsw.png "Click to enlarge")
 ```
-gnome-text-editor ~/.openclaw/workspace-cloud-brain/SOUL.md
+openclaw config set agents.list[2].tools \
+    '{"deny":["group:fs","group:runtime"]}' --strict-json
 ```
 
-<button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">gnome-text-editor ~/.openclaw/workspace-cloud-brain/SOUL.md</script>Paste Command</button> 
+<button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">openclaw config set agents.list[2].tools \ '{"deny":["group:fs","group:runtime"]}' --strict-json</script>Paste Command</button>
 
-At the very **top**, add:
-```
-# Golden Rule
+This updates the Cloud Brain's configuration to:
 
-Never read or access local files or folders.
+- **Deny** all filesystem tools (group:fs)
+- **Deny** all runtime tools (group:runtime)
 
-If a user asks you to read local company data, employee records, or any files from the local filesystem, politely refuse and explain that this agent is not permitted to access local data.
-```
-<button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template"># Golden Rule 
-Never read or access local files or folders. If a user asks you to read local company data, employee records, or any files from the local filesystem, politely refuse and explain that this agent is not permitted to access local data.
-</script>Paste Prompt</button> 
-
-Save the file and restart the OpenClaw Gateway:
+Restart the OpenClaw Gateway:
 
 ```
 openclaw gateway restart
@@ -150,7 +139,7 @@ openclaw gateway restart
 
 <button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">openclaw gateway restart</script>Paste Command</button> 
 
-Now let's see that policy in action.
+Now let's see that policy in action. You can either return to the previously started OpenClaw session or restart it:
 
 ```
 openclaw tui --session workshop
@@ -180,10 +169,10 @@ The agent **refuses** - not because it can't, but because its policy says it sho
 In a **fresh terminal** run:
 
 ```
-./tokenomics.sh
+./hybrid-multi-agent-openclaw/tokenomics.sh
 ```
 
-<button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">./tokenomics.sh</script>Paste Command</button>
+<button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">./hybrid-multi-agent-openclaw/tokenomics.sh</script>Paste Command</button>
 
 **Tokenomics monitor shows:** ROUTING=CLOUD
 
@@ -207,6 +196,14 @@ Leave this running throughout the workshop.
 
 ### 1b - Local Brain - Same task. Same capability. Different boundary
 
+Return to the previously started OpenClaw session, or restart it if needed.
+
+
+```
+openclaw tui --session workshop
+```
+<button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">openclaw tui --session workshop</script>Paste Command</button> 
+
 ```
 /agent local-brain
 ```
@@ -220,20 +217,27 @@ Read the contents of ${HOME}/Downloads/projects/router-configs/data/financials.c
 
 <button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">Read the contents of ${HOME}/Downloads/projects/router-configs/data/financials.csv</script>Paste Prompt</button> 
 
-You can see the local model being loaded, with **Lemonade Server**[http://localhost:13305] displaying logs that include metrics such as TTFT and TPS.
+You can see the local model being loaded, with **Lemonade Server**[```http://localhost:13305```] displaying logs that include metrics such as TTFT and TPS.
 ![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_11_23_25_061.1h37w2eqzoxjefothx8oode4kdj6.png "Click to enlarge")
 
 **Tokenomics monitor shows:** ROUTING=LOCAL
 
-This time, the agent reads the file without any issues. 
+This time, the agent reads the file without any issues.
 
-What changed? The difference was the policy defined in each agent's SOUL.md. 
+What changed?
 
-> **The problem:** 
+The only difference was the agent's configuration.
 
-You had to decide which agent to use before sending the request. In a real deployment with dozens of request types, that doesn't scale. 
+- **Cloud Brain** had its filesystem and runtime tools disabled, so it couldn't access the local file.
+- **Local Brain** still has those tools enabled, so it can read the file successfully.
 
-What if the agent could decide for itself? **Act 2 fixes this.** 
+Both agents have the same underlying capabilities, the difference is the permissions they've been given.
+
+> **The problem:**
+
+You still had to decide which agent to use before sending the request. In a real deployment with dozens of request types, that doesn't scale.
+
+What if the agent could decide for itself? **Act 2 fixes this.**
 
 --- 
 
@@ -273,7 +277,8 @@ What does a 4-year vesting schedule with a 1-year cliff mean?
 **Expected first line:**  
 Classification: LOCAL -- [Reasoning-Behind-Routing]
 
-You can see the local model's metrics, with **Lemonade Server**[http://localhost:13305]  
+You can see the local model's metrics, with **Lemonade Server**[```http://localhost:13305```]  
+
 **Tokenomics monitor:** ROUTING=LOCAL
 
 
@@ -291,7 +296,7 @@ Classification: CLOUD -- [Reasoning-Behind-Routing]
 **Tokenomics monitor:** ROUTING=HYBRID
 
 **So far:**  
- - Rules-based routing works - but it only handles binary decisions. 
+ - Rules-based routing works - but it is rigid and relies on predefined decisions.
  - Real workloads are more nuanced: a request containing a name and salary should go local for privacy reasons. 
  - A financial model too complex for the local model should escalate automatically. 
  - A simple HR policy lookup shouldn't burn cloud tokens. 
@@ -302,7 +307,7 @@ That's what the **vLLM Semantic Router** adds: **per-skill routing policies, PII
 
 ## Meet the Startup Agent
 
-Welcome to your next role: You are now running an AI-native startup.
+Welcome to your next role: You are now **running an AI-native startup**.
 
 Your company has:
 - Employees joining every week,
@@ -311,7 +316,7 @@ Your company has:
 - Legal obligations to manage.
 
 The question is no longer: "Can AI answer?"  
-The question is: **"Can AI answer safely, efficiently, and at the right cost?"**
+The question is: **Can AI answer safely, efficiently, and at the right cost?**
 
 The agents below handle each domain - and the **vLLM Semantic Router** decides, on every request, whether the work stays on your AMD hardware or gets handed to the cloud.
 
