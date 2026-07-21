@@ -14,27 +14,13 @@ By the end you'll have seen the same architecture at three levels of sophisticat
 
 ---
 
-### How the system works
-
-**OpenClaw** is the agent runtime. It manages sessions, loads workspace files as system prompts, and calls tools on behalf of the model. Every agent in this workshop runs inside OpenClaw.
-
-**Skills** give agents their context. Each skill injects:
-- A pointer to the relevant data source (`employees.csv`, `benefits_handbook.md`, cap table CSVs)
-- Output expectations (what a correct response looks like)
-- Operation guidelines (e.g. soft-delete only, never overwrite existing records)
-
-**The vLLM Semantic Router** sits between OpenClaw and the models. On every request it decides:
-- **PII detected?** (names, emails, salaries) → stays on local AMD hardware
-- **Simple lookup or RAG?** → local model handles it, no cloud cost
-- **Complex reasoning?** → escalates to cloud
-- **Local model not confident enough?** → confidence loop kicks in, escalates automatically
-
-System Architecture<a class="story_video" href="https://youtu.be/rFdrjZPtaKY">Click this to view the video</a>
+> <span style="color:red">**Tip:**</span> Each command below includes a **Paste** button. First, click where you want the command to be pasted in the instance. Then click Paste to insert the command automatically, no typing required. Review the command, then press Enter.
 
 ---
 
-# Lab Setup
-> **Tip:** Each command below includes a **Paste** button. First, click where you want the command to be pasted in the instance. Then click Paste to insert the command automatically, no typing required. Review the command, then press Enter.
+### Your Workshop Workspace - <span style="color:red">Read This First</span>
+
+Every step below starts with a colored band that tells you exactly where to go next. Match the band to the surface and you'll never lose your place.
 
 ### Google Chrome
 ![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_15_01_21_181.0osuhbxypzi32hfifkyila2hsi29.png "Click to enlarge")
@@ -42,39 +28,58 @@ System Architecture<a class="story_video" href="https://youtu.be/rFdrjZPtaKY">Cl
 ### Terminal Emulator
 ![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_17_04_40_021.sk62591tezew6k8566z10w3wpb7l.png "Click to enlarge")  
 
+### New Terminal Tab
+![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_19_20_22_161.2lxc8jatry4zzu3b38nnlx3a8qsw.png "Click to enlarge")
+
+### The bands you'll see:
+Switch to Browser:
+![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_20_20_29_381.6bj96yfp4vg8546e4w29ubravxto.png "Click to enlarge")
+
+Switch to Terminal:
+![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_20_20_30_061.hchrduni450wmfg4by5tntqdkz9s.png "Click to enlarge")
+
+Open a New Terminal Tab:
+![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_20_20_29_591.w3rlpml9i4zbov809ydbs9617uzt.png "Click to enlarge")
+
+Start a New OpenClaw Session:
+![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_20_20_29_521.tf0s0mpgvgu1uv56h4jmbzyknk6q.png "Click to enlarge")
+
+Inside the OpenClaw TUI:
+![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_20_20_30_181.611vzyf6yasvtd1gge8zs71p3out.png "Click to enlarge")
+
 ---
+# Lab Setup
 
-1. Open Google Chrome
-![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_15_01_21_181.0osuhbxypzi32hfifkyila2hsi29.png "Click to enlarge")
+1.
+![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_20_20_29_591.w3rlpml9i4zbov809ydbs9617uzt.png "Click to enlarge")
 
-2. Go to ```https://notebooks.amd.com/codes/fireworks```
-<button class="dark" onclick="ConsolePaste('https://notebooks.amd.com/codes/fireworks')" btn_type="paste" type="button">Paste URL<Fireworks Api-Key></button>  
+2. Run `$HOME/hybrid-multi-agent-openclaw/start-vllm-sr.sh <Fireworks Api-Key>`  
+<button class="dark" onclick="ConsolePaste('$HOME/hybrid-multi-agent-openclaw/start-vllm-sr.sh <Paste Fireworks Api-Key>')" btn_type="paste" type="button">Paste Command</button>
 
-and enter password ```AAIOpenclaw2026``` to get the Fireworks API Key. **Keep the API key handy.** 
+3. The previous command should have opened the vLLM SR dashboard. If it didn't
+![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_20_20_29_381.6bj96yfp4vg8546e4w29ubravxto.png "Click to enlarge")
+and navigate to ```http://localhost:8700```
 
-<button class="dark" onclick="ConsolePaste('AAIOpenclaw2026')" btn_type="paste" type="button">Paste Password<Fireworks Api-Key></button>  
-
-3. Launch the Terminal
-![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_17_04_40_021.sk62591tezew6k8566z10w3wpb7l.png "Click to enlarge")  
-
-4. Run `./hybrid-multi-agent-openclaw/start-vllm-sr.sh <Fireworks Api-Key>`  
-<button class="dark" onclick="ConsolePaste('./hybrid-multi-agent-openclaw/start-vllm-sr.sh <Paste Fireworks Api-Key>')" btn_type="paste" type="button">Paste Command</button>
-
-5. The previous command should have opened the vLLM SR dashboard. If it didn't, open Google Chrome on the instance and navigate to ```http://localhost:8700```. Click **Enter Dashboard** and log in to the Semantic Router dashboard.
+Click **Enter Dashboard** and log in to the Semantic Router dashboard.
 ![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_17_04_43_501.ihax2ppml47naq76oim1g1cjh6zl.png "Click to enlarge")
 
 Enter the below login credentials: 
 ```aai26@amd.com``` and ```aai26```
 
-<button class="dark" onclick="ConsolePaste('aai26@amd.com')" btn_type="paste" type="button">Email</button>  
+<button class="dark" onclick="ConsolePaste('aai26@amd.com')" btn_type="paste" type="button">Paste Email</button>  
 
-<button class="dark" onclick="ConsolePaste('aai26')" btn_type="paste" type="button">Password</button>
+<button class="dark" onclick="ConsolePaste('aai26')" btn_type="paste" type="button">Paste Password</button>
 
-6. Run `./hybrid-multi-agent-openclaw/start-openclaw.sh <Fireworks Api-Key>`
-<button class="dark" onclick="ConsolePaste('./hybrid-multi-agent-openclaw/start-openclaw.sh <Paste Fireworks Api-Key>')" btn_type="paste" type="button">Paste Command</button>
+4. 
+![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_20_20_30_061.hchrduni450wmfg4by5tntqdkz9s.png "Click to enlarge")
+
+Run `$HOME/hybrid-multi-agent-openclaw/start-openclaw.sh <Fireworks Api-Key>`
+
+<button class="dark" onclick="ConsolePaste('$HOME/hybrid-multi-agent-openclaw/start-openclaw.sh <Paste Fireworks Api-Key>')" btn_type="paste" type="button">Paste Command</button>
 
 
-7. In a terminal run:
+5. 
+![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_20_20_30_061.hchrduni450wmfg4by5tntqdkz9s.png "Click to enlarge")
 
 ```
 openclaw tui --session workshop
@@ -83,7 +88,7 @@ openclaw tui --session workshop
 
 ![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_19_18_47_571.ore6la560tc5e6pp9bm9cqhsb6bg.png "Click to enlarge")
 
-Inside the OpenClaw TUI run:
+![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_20_20_30_181.611vzyf6yasvtd1gge8zs71p3out.png "Click to enlarge")
 ```
 /model
 ```
@@ -94,21 +99,53 @@ Select **Kimi K2.6 (Fireworks)**
 ![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_16_00_37_081.3a1gd84hfm1bqpx523frpr8natji.png "Click to enlarge")
 
 Introduce yourself:
+![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_20_20_30_181.611vzyf6yasvtd1gge8zs71p3out.png "Click to enlarge")
+
 ```
 Hey! I'm <YOUR-NAME>
 ```
 
-> **Tip:** Each command below includes a **Paste** button. First, click where you want the command to be pasted in the instance. Then click Paste to insert the command automatically, no typing required. Review the command, then press Enter.
+
+> <span style="color:red">**Tip:**</span> Each command below includes a **Paste** button. First, click where you want the command to be pasted in the instance. Then click Paste to insert the command automatically, no typing required. Review the command, then press Enter.
 
 ---
 #### Lemonade Server Dashboard
 
-Open Google Chrome and go to ```http://localhost:13305```  
+![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_20_20_29_381.6bj96yfp4vg8546e4w29ubravxto.png "Click to enlarge")
+ 
+In a new tab, go to ```http://localhost:13305```  
  
 <button class="dark" onclick="ConsolePaste('http://localhost:13305')" btn_type="paste" type="button">Paste URL</button> 
 
 Ensure the logs are enabled **View > Logs**
 ![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_11_23_21_141.ii466aisy27r56ce01wm6irv6n2c.png "Click to enlarge")
+
+#### Let's track the Tokenomics with a live routing monitor
+
+![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_20_20_29_591.w3rlpml9i4zbov809ydbs9617uzt.png "Click to enlarge")
+
+```
+$HOME/hybrid-multi-agent-openclaw/tokenomics.sh
+```
+
+<button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">$HOME/hybrid-multi-agent-openclaw/tokenomics.sh</script>Paste Command</button>
+
+![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_15_23_18_311.2w71v4bdyf3getq63asbimtbvr01.png "Click to enlarge")
+
+| Field | Description |
+|-------|-------------|
+| **Routing** | Indicates which execution path handled the prompt. **LOCAL** means the request was answered entirely by a local model, while **HYBRID** means the request used both a local model and a cloud model. |
+| **Cost** | The estimated cost of answering that individual prompt, calculated from the input/output token usage and the configured token pricing. |
+| **Total** | The combined estimated cost of all prompts in the current session. |
+| **Rates** | The token pricing used for the calculations, shown as the cost per **1 million input tokens** and **1 million output tokens** for both local and cloud models. |
+
+For this workshop, we've defined the following token pricing model:
+| Token Type | Cloud ($/1M Tokens) | Local ($/1M Tokens) |
+|------------|------------------------:|------------------------:|
+| **Input**  | $1.00                   | $0.10                   |
+| **Output** | $5.00                   | $0.50                   |
+
+Leave this running throughout the workshop.
 
 ---
 ## Act 1: Local vs Cloud Brain
@@ -117,9 +154,8 @@ Every OpenClaw agent has a configuration that defines what tools it is allowed t
 
 For the Cloud Brain, we'll remove access to the filesystem and runtime tools. This means the agent can still answer questions, but it **won't be able to read local files or execute commands.**
 
-In a **fresh terminal**, run:
+![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_20_20_29_591.w3rlpml9i4zbov809ydbs9617uzt.png "Click to enlarge")
 
-![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_19_20_22_161.2lxc8jatry4zzu3b38nnlx3a8qsw.png "Click to enlarge")
 ```
 openclaw config set agents.list[2].tools \
     '{"deny":["group:fs","group:runtime"]}' --strict-json
@@ -140,7 +176,10 @@ openclaw gateway restart
 
 <button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">openclaw gateway restart</script>Paste Command</button> 
 
-Now let's see that policy in action. You can either return to the previously started OpenClaw session or restart it:
+Now let's see that policy in action.
+
+![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_20_20_29_521.tf0s0mpgvgu1uv56h4jmbzyknk6q.png "Click to enlarge")
+
 
 ```
 openclaw tui --session workshop
@@ -149,6 +188,8 @@ openclaw tui --session workshop
 
 
 ### 1a - Cloud Brain
+
+![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_20_20_30_181.611vzyf6yasvtd1gge8zs71p3out.png "Click to enlarge")
 
 ```
 /agent cloud-brain
@@ -163,47 +204,14 @@ Read the contents of ${HOME}/Downloads/projects/router-configs/data/financials.c
 
 <button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">Read the contents of ${HOME}/Downloads/projects/router-configs/data/financials.csv</script>Paste Prompt</button> 
 
-The agent **refuses** - not because it can't, but because its policy says it shouldn't. 
-
-## Let's track the Tokenomics with a live routing monitor
-
-In a **fresh terminal** run:
-
-```
-./hybrid-multi-agent-openclaw/tokenomics.sh
-```
-
-<button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">./hybrid-multi-agent-openclaw/tokenomics.sh</script>Paste Command</button>
-
 **Tokenomics monitor shows:** ROUTING=CLOUD
 
-![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_15_23_18_311.2w71v4bdyf3getq63asbimtbvr01.png "Click to enlarge")
-
-| Field | Description |
-|-------|-------------|
-| **Routing** | Indicates which execution path handled the prompt. **LOCAL** means the request was answered entirely by a local model, while **HYBRID** means the request used both a local model and a cloud model. |
-| **Cost** | The estimated cost of answering that individual prompt, calculated from the input/output token usage and the configured token pricing. |
-| **Total** | The combined estimated cost of all prompts in the current session. |
-| **Rates** | The token pricing used for the calculations, shown as the cost per **1 million input tokens** and **1 million output tokens** for both local and cloud models. |
-
-For this workshop, we've defined the following token pricing model:
-| Token Type | Cloud ($/1M Tokens) | Local ($/1M Tokens) |
-|------------|------------------------:|------------------------:|
-| **Input**  | $1.00                   | $0.10                   |
-| **Output** | $5.00                   | $0.50                   |
-
-Leave this running throughout the workshop.
+The agent **refuses** - not because it can't, but because its policy says it shouldn't. 
 
 
 ### 1b - Local Brain - Same task. Same capability. Different boundary
 
-Return to the previously started OpenClaw session, or restart it if needed.
-
-
-```
-openclaw tui --session workshop
-```
-<button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">openclaw tui --session workshop</script>Paste Command</button> 
+![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_20_20_30_181.611vzyf6yasvtd1gge8zs71p3out.png "Click to enlarge")
 
 ```
 /agent local-brain
@@ -234,7 +242,7 @@ The only difference was the agent's configuration.
 
 Both agents have the same underlying capabilities, the difference is the permissions they've been given.
 
-> **The problem:**
+> **Can we automate this?**
 
 You still had to decide which agent to use before sending the request. In a real deployment with dozens of request types, that doesn't scale.
 
@@ -246,20 +254,15 @@ What if the agent could decide for itself? **Act 2 fixes this.**
 
 **Scenario:** A single agent that reads every request, classifies it as LOCAL or CLOUD, and delegates to the right model - no manual switching required. 
 
-**Any guesses how we get this to work?** 
 
-<details>
-Just like the Cloud/Local Brains, the Smart Router has its own **SOUL.md**. But this time, the policy has a different purpose: it doesn't control what the agent can access - it teaches the agent how to decide where each request should run.
-</details>
-
-In a **fresh terminal** outside your OpenClaw TUI:
+![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_20_20_29_591.w3rlpml9i4zbov809ydbs9617uzt.png "Click to enlarge")
 
 ```
-cat ~/.openclaw/workspace-smart-router/SOUL.md
+gnome-text-editor ~/.openclaw/workspace-smart-router/SOUL.md
 ```
-<button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">cat ~/.openclaw/workspace-smart-router/SOUL.md</script>Paste Command</button>
+<button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">gnome-text-editor ~/.openclaw/workspace-smart-router/SOUL.md</script>Paste Command</button>
 
-Back in your OpenClaw TUI switch to the Smart Router:
+![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_20_20_30_181.611vzyf6yasvtd1gge8zs71p3out.png "Click to enlarge")
 ```
 /agent smart-router
 ```
@@ -306,6 +309,25 @@ That's what the **vLLM Semantic Router** adds: **per-skill routing policies, PII
 
 ---
 
+### How the system works
+
+**OpenClaw** is the agent runtime. It manages sessions, loads workspace files as system prompts, and calls tools on behalf of the model. Every agent in this workshop runs inside OpenClaw.
+
+**Skills** give agents their context. Each skill injects:
+- A pointer to the relevant data source (`employees.csv`, `benefits_handbook.md`, cap table CSVs)
+- Output expectations (what a correct response looks like)
+- Operation guidelines (e.g. soft-delete only, never overwrite existing records)
+
+**The vLLM Semantic Router** sits between OpenClaw and the models. On every request it decides:
+- **PII detected?** (names, emails, salaries) → stays on local AMD hardware
+- **Simple lookup or RAG?** → local model handles it, no cloud cost
+- **Complex reasoning?** → escalates to cloud
+- **Local model not confident enough?** → confidence loop kicks in, escalates automatically
+
+System Architecture<a class="story_video" href="https://youtu.be/rFdrjZPtaKY">Click this to view the video</a>
+
+---
+
 ## Meet the Startup Agent
 
 Welcome to your next role: You are now **running an AI-native startup**.
@@ -323,12 +345,14 @@ The agents below handle each domain - and the **vLLM Semantic Router** decides, 
 
 #### Keep the vLLM SR and Lemonade Server dashboards open in your browser.
 
+![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_20_20_29_381.6bj96yfp4vg8546e4w29ubravxto.png "Click to enlarge")
+
 1. vLLM Semantic Router at ```http://localhost:8700```
 
 <button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">http://localhost:8700</script>Paste URL</button> 
 
 ![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_11_23_20_181.7whkmda2ujlxzqt1yv6osovj7a0h.png "Click to enlarge")
-2. Lemonade Server at ```http://localhost:13305``` - Ensure you have the logs enabled **View > Logs**
+2. In a new tab, Lemonade Server at ```http://localhost:13305``` - Ensure you have the logs enabled **View > Logs**
 
 <button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">http://localhost:13305</script>Paste URL</button> 
 
@@ -337,7 +361,7 @@ The agents below handle each domain - and the **vLLM Semantic Router** decides, 
 
 ### Enter the OpenClaw session
 
-Start a **fresh OpenClaw session** in a new terminal:
+![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_20_20_29_521.tf0s0mpgvgu1uv56h4jmbzyknk6q.png "Click to enlarge")
 
 ```
 openclaw tui --session workshop2
@@ -353,16 +377,16 @@ openclaw tui --session workshop2
 **Routing:** Local (PII-sensitive)  
 **Data Source:** `employees.csv`  
 
-#### Agent Goal
-
-Update the employee database located at:
+#### Agent's Goal: Update the employee database located at:
 
 `${HOME}/Downloads/projects/router-configs/data/employees.csv`
 
 
 #### Try it with the Cloud Model First
 
-**1.** In OpenClaw's terminal, open the model picker:
+**1.** 
+![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_20_20_30_181.611vzyf6yasvtd1gge8zs71p3out.png "Click to enlarge")
+
 
 ```
 /model
@@ -389,7 +413,8 @@ Jordan Lee is added to:
 
 #### Now Try the Semantic Router
 
-**1.** Open the model picker again:
+**1.** 
+![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_20_20_30_181.611vzyf6yasvtd1gge8zs71p3out.png "Click to enlarge")
 
 ```
 /model
@@ -430,9 +455,7 @@ Maya Chen is added to:
 **Handles:** Employee self-service questions about benefits, HR policies, and handbook content  
 **Data Source:** `benefits_handbook.md`
 
-#### Agent Goal
-
-Perform RAG over:
+#### Agent's Goal: Perform RAG over:
 
 `${HOME}/Downloads/projects/router-configs/data/benefits_handbook.md`
 
@@ -440,7 +463,9 @@ and answer employee questions.
 
 #### Try it with the Cloud Model First
 
-**1.** In OpenClaw's terminal, open the model picker:
+**1.** 
+![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_20_20_30_181.611vzyf6yasvtd1gge8zs71p3out.png "Click to enlarge")
+
 
 ```
 /model
@@ -463,7 +488,9 @@ The agent retrieves and summarizes the handbook's 401(k) vesting policy.
 
 #### Now Try the Semantic Router
 
-**1.** Open the model picker again:
+**1.** 
+![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_20_20_30_181.611vzyf6yasvtd1gge8zs71p3out.png "Click to enlarge")
+
 
 ```
 /model
@@ -496,9 +523,7 @@ HR policy query
 **Handles:** Burn rate, equity modeling, retention analysis, budgeting, and runway forecasting  
 **Data Sources:** `financials.csv`, `cap_table.csv`, `employees.csv`, `retention_history.csv`
 
-#### Agent Goal
-
-Perform data analysis over the CSV files located in:
+#### Agent's Goal: Perform data analysis over the CSV files located in:
 
 `${HOME}/Downloads/projects/router-configs/data/`
 
@@ -506,7 +531,10 @@ and answer financial questions.
 
 **Ensure OpenClaw session is pointing to MoM (Custom Provider).** If needed, switch models using `/model`
 
-## Confidence Loop: Local and Cloud Models Working Together
+#### Confidence Loop: Local and Cloud Models Working Together
+
+![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_20_20_30_181.611vzyf6yasvtd1gge8zs71p3out.png "Click to enlarge")
+
 ```
 /skill finance One of our employees got a competitor offer in Q1 2026 and we took no action - based on what worked best historically, what intervention should we make now, and what does it cost us through year end?   
 ```
@@ -527,9 +555,7 @@ and answer financial questions.
 **Handles:** Regulatory research, compliance guidance, contract review, and legal Q&A  
 **Data Sources:** Live web search and uploaded contracts
 
-#### Agent Goal
-
-Perform web search and RAG over uploaded legal documents to answer legal and compliance questions.
+#### Agent's Goal: Perform web search and RAG over uploaded legal documents to answer legal and compliance questions.
 
 **Ensure OpenClaw session is pointing to MoM (Custom Provider). If needed, switch models using `/model`**
 
@@ -538,9 +564,7 @@ Perform web search and RAG over uploaded legal documents to answer legal and com
 /skill legal What GDPR compliance and data protection regulatory requirements apply to an AI vendor under EU privacy law?
 ```
 
-<button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">/skill legal What GDPR compliance and data protection regulatory requirements apply to an AI vendor under EU privacy law?
- 
-</script>Paste Prompt</button>
+<button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">/skill legal What GDPR compliance and data protection regulatory requirements apply to an AI vendor under EU privacy law?</script>Paste Prompt</button>
 
 **Expected Router Flow:**
 
@@ -563,44 +587,26 @@ Legal and regulatory research
 
 ---
 
-## Workshop Challenges - We have prizes 🏆!
 
-### Build a Stock Prediction Dashboard
+### Fireworks API Keys
 
-Use any approach from this workshop to prompt the **R&D Agent** to analyze the startup datasets, build a stock price prediction model, and generate an interactive dashboard.
-
-**Your dashboard must include both of these to qualify:**
-
-- A **date range slider** to filter between historical and future predicted data
-- At least **two suggested features** the model identified as predictive (e.g. burn rate trend, headcount growth)
-
-**Track the tokenomics monitor** in a second terminal before you begin - your cost will be checked at judging time:
-
-The monitor tracks every turn: LOCAL turns cost fractions of a cent, CLOUD turns cost real money. The winning team builds a qualifying dashboard with the lowest **Total** shown at the bottom of the tokenomics output.
-
-```
-/skill rnd
-```
-
-<button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">/skill rnd</script>Paste Command</button>
-
----
-## Take Home Challenge
-### Audio Transcription and Action Item Extraction
-
-Use the **Audio Operations Agent** to transcribe the MP3 recording located at:
-
-`${HOME}/Downloads/projects/router-configs/data/transcripts`
-
-and extract key decisions and action items from the meeting.
-
-```
-/skill ops-audio
-```
-
-<button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">/skill ops-audio</script>Paste Command</button>
-
-Instruct the agent to find and transcribe the `.mp3` file in that directory, then produce a structured summary of decisions made and follow-up actions assigned.
-
-
----
+1. Sign up for Fireworks AI: https://app.fireworks.ai/signup and log in.
+2. Go to https://notebooks.amd.com/codes/fireworks and enter the password **AAIOpenclaw2026** to obtain a promo code. Keep the promo code handy.
+3. Click the **Credits** button:
+![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_20_22_42_031.9tvo21deifqwvjgmj7qgg4dhmidi.png "Click to enlarge")
+4. Click **Redeem Promo**:
+![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_20_22_42_401.t7vxokf8wa621a6cxg7qn5ioqnyv.png "Click to enlarge")
+5. Paste the promo code from step 2 into the field:
+![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_20_22_43_571.816dz696l9hvh9yfyjkt3qj2gruc.png "Click to enlarge")
+You should see **$50 in credits** added to your account.
+6. Generate an API key by going to: https://app.fireworks.ai/settings/users/api-keys
+![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_20_22_44_571.b49f3x7bm3pjwzc2wde4u0i4hmp8.png "Click to enlarge")
+![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_20_22_45_491.nv2h3mu96eaj6c585babmy9yxl55.png "Click to enlarge")
+7. Transfer the API Key to the Instance:
+   - Copy the API Key.
+   - Place the cursor where you want the key to be pasted within the instance.
+   - Click the dropdown next to the **Console** button and slect **Send text**:
+   ![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_20_22_47_381.1xd315goc5w5yvtp2iw7z28vj3py.png "Click to enlarge")
+   - Paste the API key into the clipboard and click **Send text**
+   ![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_20_22_50_121.6e4mg6elrlt13trk4oktgt7eeork.png "Click to enlarge")
+   **The API key will be pasted wherever the cursor is positioned within the instance.**
