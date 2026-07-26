@@ -2,9 +2,9 @@
   "version": "1",
   "model_name": "user.Legal-Router",
   "recipe": "collection.router",
-  "components": ["Qwen3.5-9B-GGUF", "fireworks.kimi-k2p6"],
+  "components": ["Qwen3.5-9B-NoThinking", "fireworks.kimi-k2p6"],
   "routing": {
-    "candidates": ["Qwen3.5-9B-GGUF", "fireworks.kimi-k2p6"],
+    "candidates": ["Qwen3.5-9B-NoThinking", "fireworks.kimi-k2p6"],
     "default_model": "fireworks.kimi-k2p6",
     "rules": [
       {
@@ -15,7 +15,7 @@
             { "keywords_any": ["my employee", "specific employee", "named employee", "personal data of"] }
           ]
         },
-        "route_to": "Qwen3.5-9B-GGUF",
+        "route_to": "Qwen3.5-9B-NoThinking",
         "outputs": { "reason": "pii-in-legal-query", "data_class": "sensitive" }
       },
       {

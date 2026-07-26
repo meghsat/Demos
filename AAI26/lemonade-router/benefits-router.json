@@ -2,29 +2,45 @@
   "version": "1",
   "model_name": "user.Benefits-Router",
   "recipe": "collection.router",
-  "components": ["Qwen3.5-9B-GGUF", "fireworks.kimi-k2p6"],
+  "components": ["Qwen3.5-9B-NoThinking", "fireworks.kimi-k2p6"],
   "routing": {
-    "candidates": ["Qwen3.5-9B-GGUF", "fireworks.kimi-k2p6"],
+    "candidates": ["Qwen3.5-9B-NoThinking", "fireworks.kimi-k2p6"],
     "default_model": "fireworks.kimi-k2p6",
     "rules": [
       {
-        "id": "complex-benefits-comparison",
+        "id": "pii-stays-local",
         "match": {
-          "keywords_any": ["compare", "industry standard", "benchmark", "analyze", "recommend", "strategy", "optimize"]
+          "any": [
+            { "regex": "[A-Za-z0-9._%+\\-]+@[A-Za-z0-9.\\-]+\\.[A-Za-z]{2,}" },
+            { "regex": "\\$[0-9,]+(K|k|M|m)?\\b" },
+            { "regex": "\\b[0-9]{3}-[0-9]{2}-[0-9]{4}\\b" },
+            { "keywords_any": ["salary", "equity", "ssn", "social security", "bank account", "date of birth", "compensation"] }
+          ]
+        },
+        "route_to": "Qwen3.5-9B-NoThinking",
+        "outputs": { "reason": "pii-detected", "data_class": "sensitive" }
+      },
+      {
+        "id": "complex-benefits-analysis",
+        "match": {
+          "any": [
+            { "keywords_any": ["compare", "benchmark", "analyze", "optimize", "recommend", "industry standard", "strategy"] },
+            { "min_chars": 800 }
+          ]
         },
         "route_to": "fireworks.kimi-k2p6",
-        "outputs": { "reason": "benefits-analysis", "tier": "cloud" }
+        "outputs": { "reason": "complex-benefits-analysis", "tier": "cloud" }
       },
       {
         "id": "simple-benefits-rag",
         "match": {
-          "any": [
-            { "keywords_any": ["401k", "401(k)", "vesting", "parental leave", "PTO", "vacation", "healthcare", "dental", "vision", "FSA", "HSA", "COBRA", "open enrollment", "qualifying life event", "handbook", "policy", "copay", "deductible", "premium"] },
-            { "max_chars": 400 }
+          "all": [
+            { "max_chars": 400 },
+            { "keywords_any": ["401k", "401(k)", "vesting", "parental leave", "PTO", "vacation", "healthcare", "dental", "vision", "FSA", "HSA", "COBRA", "open enrollment", "qualifying life event", "copay", "deductible", "premium", "handbook", "policy", "onboard"] }
           ]
         },
-        "route_to": "Qwen3.5-9B-GGUF",
-        "outputs": { "reason": "simple-benefits-rag", "tier": "local" }
+        "route_to": "Qwen3.5-9B-NoThinking",
+        "outputs": { "reason": "simple-benefits-rag", "tier": "local-fast" }
       }
     ]
   }
