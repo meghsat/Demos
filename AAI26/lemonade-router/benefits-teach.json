@@ -2,9 +2,9 @@
   "version": "1",
   "model_name": "user.Benefits-Teach",
   "recipe": "collection.router",
-  "components": ["Qwen3.5-9B-GGUF", "fireworks.kimi-k2p6"],
+  "components": ["Qwen3.5-9B-NoThinking", "fireworks.kimi-k2p6"],
   "routing": {
-    "candidates": ["Qwen3.5-9B-GGUF", "fireworks.kimi-k2p6"],
+    "candidates": ["Qwen3.5-9B-NoThinking", "fireworks.kimi-k2p6"],
     "default_model": "fireworks.kimi-k2p6",
     "rules": [
       {
@@ -17,7 +17,7 @@
             { "keywords_any": ["salary", "equity", "ssn", "social security", "bank account", "date of birth", "compensation"] }
           ]
         },
-        "route_to": "Qwen3.5-9B-GGUF",
+        "route_to": "Qwen3.5-9B-NoThinking",
         "outputs": { "reason": "pii-detected", "data_class": "sensitive" }
       },
       {
@@ -39,7 +39,7 @@
             { "keywords_any": ["401k", "401(k)", "vesting", "parental leave", "PTO", "vacation", "healthcare", "dental", "vision", "FSA", "HSA", "COBRA", "open enrollment", "qualifying life event", "copay", "deductible", "premium", "handbook", "policy", "onboard"] }
           ]
         },
-        "route_to": "Qwen3.5-9B-GGUF",
+        "route_to": "Qwen3.5-9B-NoThinking",
         "outputs": { "reason": "simple-benefits-rag", "tier": "local-fast" }
       }
     ]

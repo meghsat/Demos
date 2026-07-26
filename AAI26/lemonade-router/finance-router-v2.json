@@ -2,7 +2,7 @@
   "version": "1",
   "model_name": "user.Finance-Router-V2",
   "recipe": "collection.router",
-  "components": ["Qwen3.5-9B-GGUF", "fireworks.kimi-k2p6", "Qwen3.5-9B-NoThinking", "embeddinggemma-300m-qat-q8_0-GGUF"],
+  "components": ["Qwen3.5-9B-GGUF", "fireworks.kimi-k2p6", "Qwen3.5-9B-NoThinking", "embeddinggemma-300m-qat-q8_0-GGUF-Q8_0"],
   "routing": {
     "candidates": ["Qwen3.5-9B-GGUF", "fireworks.kimi-k2p6"],
     "default_model": "Qwen3.5-9B-GGUF",
@@ -10,7 +10,7 @@
       {
         "id": "finance-topic",
         "type": "semantic_similarity",
-        "model": "embeddinggemma-300m-qat-q8_0-GGUF",
+        "model": "embeddinggemma-300m-qat-q8_0-GGUF-Q8_0",
         "reference_phrases": {
           "simple-lookup": [
             "what is our current burn rate",
