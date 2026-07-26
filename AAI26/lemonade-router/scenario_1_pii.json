@@ -1,0 +1,36 @@
+{
+  "version": "1",
+  "model_name": "user.Startup-HR-Router",
+  "recipe": "collection.router",
+  "components": ["Qwen3-1.7B-GGUF", "Qwen3.5-9B-GGUF"],
+  "routing": {
+    "candidates": ["Qwen3-1.7B-GGUF", "Qwen3.5-9B-GGUF"],
+    "default_model": "Qwen3.5-9B-GGUF",
+    "rules": [
+      {
+        "id": "pii-stays-local",
+        "match": {
+          "any": [
+            { "keywords_any": ["salary", "equity", "ssn", "social security", "date of birth", "dob", "passport", "bank account", "routing number"] },
+            { "regex": "\\b[A-Za-z0-9._%+\\-]+@[A-Za-z0-9.\\-]+\\.[A-Za-z]{2,}\\b" },
+            { "regex": "\\$[0-9,]+(K|k|M|m)?\\b" },
+            { "regex": "\\b[0-9]{3}-[0-9]{2}-[0-9]{4}\\b" }
+          ]
+        },
+        "route_to": "Qwen3-1.7B-GGUF",
+        "outputs": { "reason": "pii-detected", "data_class": "sensitive" }
+      },
+      {
+        "id": "complex-hr-analysis",
+        "match": {
+          "any": [
+            { "keywords_any": ["analyze", "compare", "trend", "forecast", "retention", "benchmark", "recommend"] },
+            { "min_chars": 1500 }
+          ]
+        },
+        "route_to": "Qwen3.5-9B-GGUF",
+        "outputs": { "reason": "complex-analysis" }
+      }
+    ]
+  }
+}

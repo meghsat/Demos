@@ -1,0 +1,24 @@
+{
+  "version": "1",
+  "model_name": "user.HR-Admin-Router",
+  "recipe": "collection.router",
+  "components": ["Qwen3-1.7B-GGUF", "fireworks.kimi-k2p6"],
+  "routing": {
+    "candidates": ["Qwen3-1.7B-GGUF", "fireworks.kimi-k2p6"],
+    "default_model": "fireworks.kimi-k2p6",
+    "rules": [
+      {
+        "id": "pii-stays-local",
+        "match": {
+          "any": [
+            { "keywords_any": ["salary", "equity", "ssn", "social security", "bank account", "date of birth", "dob", "passport"] },
+            { "regex": "[A-Za-z0-9._%+\\-]+@[A-Za-z0-9.\\-]+\\.[A-Za-z]{2,}" },
+            { "regex": "\\$[0-9,]+(K|k|M)?" }
+          ]
+        },
+        "route_to": "Qwen3-1.7B-GGUF",
+        "outputs": { "reason": "pii-detected", "data_class": "sensitive" }
+      }
+    ]
+  }
+}

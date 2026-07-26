@@ -1,0 +1,47 @@
+{
+  "version": "1",
+  "model_name": "user.RuleVerifier",
+  "recipe": "collection.router",
+  "components": ["Qwen3-1.7B-GGUF"],
+  "routing": {
+    "candidates": ["Qwen3-1.7B-GGUF"],
+    "default_model": "Qwen3-1.7B-GGUF",
+    "rules": [
+      {
+        "id": "simple-lookup",
+        "match": { "all": [ { "max_chars": 300 }, { "keywords_any": ["what is", "when does", "how much"] } ] },
+        "route_to": "Qwen3-1.7B-GGUF", "outputs": {"tier": "fast"}
+      },
+      {
+        "id": "legal",
+        "match": { "keywords_any": ["GDPR", "non-compete", "NDA", "compliance", "contract", "arbitration"] },
+        "route_to": "Qwen3-1.7B-GGUF", "outputs": {"domain": "legal"}
+      },
+      {
+        "id": "finance-complex",
+        "match": { "keywords_any": ["Monte Carlo", "cap table dilution", "runway forecast", "sensitivity analysis"] },
+        "route_to": "Qwen3-1.7B-GGUF", "outputs": {"tier": "complex"}
+      },
+      {
+        "id": "pii-email",
+        "match": { "regex": "[A-Za-z0-9._%+\\-]+@[A-Za-z0-9.\\-]+\\.[A-Za-z]{2,}" },
+        "route_to": "Qwen3-1.7B-GGUF", "outputs": {"reason": "pii-email"}
+      },
+      {
+        "id": "pii-keywords",
+        "match": { "keywords_any": ["salary", "ssn", "social security", "bank account"] },
+        "route_to": "Qwen3-1.7B-GGUF", "outputs": {"reason": "pii-kw"}
+      },
+      {
+        "id": "benefits",
+        "match": { "keywords_any": ["401k", "401(k)", "vesting", "parental leave", "healthcare", "benefits"] },
+        "route_to": "Qwen3-1.7B-GGUF", "outputs": {"domain": "hr-benefits"}
+      },
+      {
+        "id": "code",
+        "match": { "keywords_any": ["function", "def ", "script", "automate"] },
+        "route_to": "Qwen3-1.7B-GGUF", "outputs": {"domain": "engineering"}
+      }
+    ]
+  }
+}

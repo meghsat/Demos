@@ -1,0 +1,44 @@
+{
+  "version": "1",
+  "model_name": "user.Startup-Domain-Router",
+  "recipe": "collection.router",
+  "components": ["Qwen3-1.7B-GGUF", "Qwen3.5-9B-GGUF", "fireworks.kimi-k2p6"],
+  "routing": {
+    "candidates": ["Qwen3-1.7B-GGUF", "Qwen3.5-9B-GGUF", "fireworks.kimi-k2p6"],
+    "default_model": "Qwen3.5-9B-GGUF",
+    "rules": [
+      {
+        "id": "legal-compliance",
+        "match": {
+          "keywords_any": ["GDPR", "HIPAA", "compliance", "regulation", "contract", "liability", "non-compete", "NDA", "indemnify", "arbitration", "jurisdiction", "statute", "fiduciary"]
+        },
+        "route_to": "fireworks.kimi-k2p6",
+        "outputs": { "reason": "legal-domain", "domain": "legal", "tier": "cloud" }
+      },
+      {
+        "id": "hr-benefits-rag",
+        "match": {
+          "keywords_any": ["401k", "401(k)", "vesting", "parental leave", "PTO", "healthcare", "dental", "vision", "benefits", "handbook", "policy", "onboard", "offboard", "termination"]
+        },
+        "route_to": "Qwen3-1.7B-GGUF",
+        "outputs": { "reason": "hr-rag-lookup", "domain": "hr" }
+      },
+      {
+        "id": "engineering-code",
+        "match": {
+          "keywords_any": ["function", "def ", "class ", "import ", "bug", "refactor", "deploy", "kubernetes", "docker", "pipeline", "API", "endpoint", "microservice", "```"]
+        },
+        "route_to": "Qwen3.5-9B-GGUF",
+        "outputs": { "reason": "engineering-domain", "domain": "engineering" }
+      },
+      {
+        "id": "finance-analysis",
+        "match": {
+          "keywords_any": ["burn rate", "runway", "ARR", "MRR", "churn", "LTV", "CAC", "equity", "cap table", "investor", "term sheet", "valuation", "revenue"]
+        },
+        "route_to": "fireworks.kimi-k2p6",
+        "outputs": { "reason": "finance-domain", "domain": "finance", "tier": "cloud" }
+      }
+    ]
+  }
+}

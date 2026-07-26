@@ -1,0 +1,31 @@
+{
+  "version": "1",
+  "model_name": "user.Legal-Router",
+  "recipe": "collection.router",
+  "components": ["Qwen3-1.7B-GGUF", "fireworks.kimi-k2p6"],
+  "routing": {
+    "candidates": ["Qwen3-1.7B-GGUF", "fireworks.kimi-k2p6"],
+    "default_model": "fireworks.kimi-k2p6",
+    "rules": [
+      {
+        "id": "pii-legal-local",
+        "match": {
+          "any": [
+            { "regex": "[A-Za-z0-9._%+\\-]+@[A-Za-z0-9.\\-]+\\.[A-Za-z]{2,}" },
+            { "keywords_any": ["my employee", "specific employee", "named employee", "personal data of"] }
+          ]
+        },
+        "route_to": "Qwen3-1.7B-GGUF",
+        "outputs": { "reason": "pii-in-legal-query", "data_class": "sensitive" }
+      },
+      {
+        "id": "legal-research-cloud",
+        "match": {
+          "keywords_any": ["GDPR", "HIPAA", "SOC 2", "compliance", "regulation", "statute", "contract", "liability", "non-compete", "NDA", "indemnify", "arbitration", "fiduciary", "jurisdiction", "IP assignment", "work-for-hire", "trade secret"]
+        },
+        "route_to": "fireworks.kimi-k2p6",
+        "outputs": { "reason": "legal-research", "tier": "cloud" }
+      }
+    ]
+  }
+}

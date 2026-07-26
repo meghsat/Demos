@@ -1,0 +1,70 @@
+{
+  "version": "1",
+  "model_name": "user.AI-Company-Router",
+  "recipe": "collection.router",
+  "components": ["Qwen3-1.7B-GGUF", "Qwen3.5-9B-GGUF", "fireworks.kimi-k2p6"],
+  "routing": {
+    "candidates": ["Qwen3-1.7B-GGUF", "Qwen3.5-9B-GGUF", "fireworks.kimi-k2p6"],
+    "default_model": "Qwen3.5-9B-GGUF",
+    "rules": [
+      {
+        "id": "pii-hard-local",
+        "match": {
+          "any": [
+            { "keywords_any": ["salary", "equity", "ssn", "social security", "bank account", "compensation", "date of birth"] },
+            { "regex": "[A-Za-z0-9._%+\\-]+@[A-Za-z0-9.\\-]+\\.[A-Za-z]{2,}" },
+            { "regex": "\\$[0-9,]+(K|k|M)?" }
+          ]
+        },
+        "route_to": "Qwen3-1.7B-GGUF",
+        "outputs": { "reason": "pii-detected", "agent": "any", "tier": "local-fast" }
+      },
+      {
+        "id": "legal-research-cloud",
+        "match": {
+          "keywords_any": ["GDPR", "HIPAA", "SOC 2", "compliance", "regulation", "statute", "contract", "liability", "non-compete", "NDA", "indemnify", "arbitration", "fiduciary", "IP assignment", "trade secret"]
+        },
+        "route_to": "fireworks.kimi-k2p6",
+        "outputs": { "reason": "legal-research", "agent": "legal", "tier": "cloud" }
+      },
+      {
+        "id": "simple-rag-local",
+        "match": {
+          "all": [
+            { "max_chars": 350 },
+            { "keywords_any": ["what is", "what's", "when does", "how much", "is there", "do we have", "does the", "who handles", "can I", "am I"] }
+          ]
+        },
+        "route_to": "Qwen3-1.7B-GGUF",
+        "outputs": { "reason": "simple-rag-lookup", "agent": "benefits-or-hr", "tier": "local-fast" }
+      },
+      {
+        "id": "deep-analysis-cloud",
+        "match": {
+          "any": [
+            { "keywords_any": ["forecast", "model", "Monte Carlo", "cohort", "retention analysis", "retention intervention", "runway", "recommend intervention", "intervention", "sensitivity", "cap table dilution", "waterfall"] },
+            { "min_chars": 1500 }
+          ]
+        },
+        "route_to": "fireworks.kimi-k2p6",
+        "outputs": { "reason": "complex-multi-source-analysis", "agent": "finance", "tier": "cloud" }
+      },
+      {
+        "id": "benefits-hr-rag-local",
+        "match": {
+          "keywords_any": ["401k", "401(k)", "vesting", "parental leave", "PTO", "vacation", "healthcare", "dental", "vision", "FSA", "HSA", "COBRA", "open enrollment", "copay", "deductible", "handbook", "policy", "onboard", "offboard", "termination"]
+        },
+        "route_to": "Qwen3-1.7B-GGUF",
+        "outputs": { "reason": "hr-benefits-rag", "agent": "hr-or-benefits", "tier": "local-fast" }
+      },
+      {
+        "id": "code-generation-balanced",
+        "match": {
+          "keywords_any": ["write a function", "def ", "class ", "import ", "refactor", "debug this", "```python", "script", "automate"]
+        },
+        "route_to": "Qwen3.5-9B-GGUF",
+        "outputs": { "reason": "code-generation", "agent": "engineering", "tier": "local-balanced" }
+      }
+    ]
+  }
+}

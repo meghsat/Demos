@@ -1,0 +1,65 @@
+{
+  "gateway": {
+    "host": "127.0.0.1",
+    "port": 18789,
+    "bind": "127.0.0.1",
+    "auth": {
+      "type": "token"
+    }
+  },
+  "providers": {
+    "fireworks": {
+      "type": "openai",
+      "baseUrl": "https://api.fireworks.ai/inference/v1",
+      "apiKey": "fw_SWon1YFerj52JWSxyxtoMe",
+      "model": "accounts/fireworks/models/kimi-k2p5",
+      "supportsImages": false
+    },
+    "lemonade-hr": {
+      "type": "openai",
+      "baseUrl": "http://localhost:13305/api/v1",
+      "apiKey": "lemonade",
+      "model": "user.HR-Admin-Router",
+      "supportsImages": false
+    },
+    "lemonade-benefits": {
+      "type": "openai",
+      "baseUrl": "http://localhost:13305/api/v1",
+      "apiKey": "lemonade",
+      "model": "user.Benefits-Router",
+      "supportsImages": false
+    },
+    "lemonade-finance": {
+      "type": "openai",
+      "baseUrl": "http://localhost:13305/api/v1",
+      "apiKey": "lemonade",
+      "model": "user.Finance-Router",
+      "supportsImages": false
+    },
+    "lemonade-legal": {
+      "type": "openai",
+      "baseUrl": "http://localhost:13305/api/v1",
+      "apiKey": "lemonade",
+      "model": "user.Legal-Router",
+      "supportsImages": false
+    },
+    "lemonade-full": {
+      "type": "openai",
+      "baseUrl": "http://localhost:13305/api/v1",
+      "apiKey": "lemonade",
+      "model": "user.AI-Company-Router",
+      "supportsImages": false
+    }
+  },
+  "defaultProvider": "lemonade-full",
+  "search": {
+    "provider": null
+  },
+  "channels": [],
+  "hooks": {
+    "enabled": false
+  },
+  "skills": {
+    "configureOnStartup": false
+  }
+}
