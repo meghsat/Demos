@@ -1,0 +1,111 @@
+{
+  "version": "1",
+  "model_name": "user.HR-Admin-Router-V2",
+  "recipe": "collection.router",
+  "components": ["Qwen3.5-9B-GGUF", "fireworks.kimi-k2p6", "Qwen3.5-9B-NoThinking", "embeddinggemma-300m-qat-q8_0-GGUF"],
+  "routing": {
+    "candidates": ["Qwen3.5-9B-GGUF", "fireworks.kimi-k2p6"],
+    "default_model": "Qwen3.5-9B-GGUF",
+    "classifiers": [
+      {
+        "id": "hr-topic",
+        "type": "semantic_similarity",
+        "model": "embeddinggemma-300m-qat-q8_0-GGUF",
+        "reference_phrases": {
+          "pii-sensitive": [
+            "what is my salary",
+            "show me compensation data",
+            "employee social security number",
+            "bank account details",
+            "personal date of birth",
+            "passport number",
+            "equity grant details",
+            "stock options vesting schedule"
+          ],
+          "policy-lookup": [
+            "what is the parental leave policy",
+            "how many PTO days do I get",
+            "when does open enrollment start",
+            "what does the handbook say about",
+            "how do I request time off",
+            "what is the vacation accrual",
+            "who handles onboarding"
+          ],
+          "complex-hr-analysis": [
+            "analyze retention trends across departments",
+            "benchmark our benefits against industry",
+            "forecast headcount needs for next quarter",
+            "compare compensation bands to market",
+            "recommend intervention for high attrition"
+          ]
+        }
+      },
+      {
+        "id": "pii-risk",
+        "type": "llm",
+        "model": "Qwen3.5-9B-NoThinking",
+        "prompt": "You are a privacy classifier for an HR system. Determine if this request involves personally identifiable information (PII) such as: employee names with salaries, SSNs, bank accounts, medical data, or specific individual compensation. Reply with exactly one label: PII or SAFE. PII means the request contains or asks for individual-level sensitive data. SAFE means it is a general policy question or aggregate analysis.",
+        "labels": ["PII", "SAFE"],
+        "default_label": "PII",
+        "on_error": "match_true"
+      }
+    ],
+    "rules": [
+      {
+        "id": "pii-hard-local-regex",
+        "match": {
+          "any": [
+            { "regex": "[A-Za-z0-9._%+\\-]+@[A-Za-z0-9.\\-]+\\.[A-Za-z]{2,}" },
+            { "regex": "\\b[0-9]{3}-[0-9]{2}-[0-9]{4}\\b" },
+            { "regex": "\\$[0-9,]+(K|k|M|m)?\\b" }
+          ]
+        },
+        "route_to": "Qwen3.5-9B-GGUF",
+        "outputs": { "reason": "pii-regex-match", "data_class": "sensitive", "classifier": "deterministic" }
+      },
+      {
+        "id": "pii-keyword-local",
+        "match": {
+          "keywords_any": ["salary", "equity", "ssn", "social security", "bank account", "date of birth", "dob", "passport", "compensation", "routing number"]
+        },
+        "route_to": "Qwen3.5-9B-GGUF",
+        "outputs": { "reason": "pii-keyword-match", "data_class": "sensitive", "classifier": "keyword" }
+      },
+      {
+        "id": "pii-semantic-local",
+        "match": { "classifier": "hr-topic", "label": "pii-sensitive", "min_score": 0.70 },
+        "route_to": "Qwen3.5-9B-GGUF",
+        "outputs": { "reason": "pii-semantic-similarity", "data_class": "sensitive", "classifier": "semantic" }
+      },
+      {
+        "id": "pii-llm-local",
+        "match": { "classifier": "pii-risk", "label": "PII", "min_score": 0.5 },
+        "route_to": "Qwen3.5-9B-GGUF",
+        "outputs": { "reason": "pii-llm-classified", "data_class": "sensitive", "classifier": "llm" }
+      },
+      {
+        "id": "simple-policy-lookup",
+        "match": {
+          "all": [
+            { "max_chars": 400 },
+            { "classifier": "hr-topic", "label": "policy-lookup", "min_score": 0.60 }
+          ]
+        },
+        "route_to": "Qwen3.5-9B-GGUF",
+        "outputs": { "reason": "simple-policy-rag", "tier": "local-fast", "classifier": "semantic" }
+      },
+      {
+        "id": "complex-hr-to-cloud",
+        "match": {
+          "any": [
+            { "classifier": "hr-topic", "label": "complex-hr-analysis", "min_score": 0.65 },
+            { "keywords_any": ["analyze", "benchmark", "forecast", "retention", "attrition", "recommend intervention"] },
+            { "min_chars": 1500 }
+          ]
+        },
+        "route_to": "fireworks.kimi-k2p6",
+        "outputs": { "reason": "complex-hr-analysis", "tier": "cloud", "classifier": "semantic" }
+      }
+    ]
+  }
+}

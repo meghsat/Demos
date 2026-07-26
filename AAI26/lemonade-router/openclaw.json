@@ -14,6 +14,12 @@
         "lemonade/user.Finance-Router": {},
         "lemonade/user.Legal-Router": {},
         "lemonade/user.AI-Company-Router": {},
+        "lemonade/user.AI-Company-NLRouter": {},
+        "lemonade/user.HR-Admin-Router-V2": {},
+        "lemonade/user.Finance-Router-V2": {},
+        "lemonade/user.HR-Admin-Teach": {},
+        "lemonade/user.Benefits-Teach": {},
+        "lemonade/user.Finance-Teach": {},
         "lemonade/fireworks.kimi-k2p6": {},
         "fireworks/accounts/fireworks/models/kimi-k2p6": {}
       },
@@ -184,6 +190,60 @@
           {
             "id": "user.Legal-Router",
             "name": "Lemonade Router — Legal",
+            "contextWindow": 262000,
+            "maxTokens": 32768,
+            "input": ["text"],
+            "cost": { "input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0 },
+            "reasoning": false
+          },
+          {
+            "id": "user.HR-Admin-Teach",
+            "name": "Teach 1 — HR Admin: NL Router (LLM-as-router)",
+            "contextWindow": 262000,
+            "maxTokens": 32768,
+            "input": ["text"],
+            "cost": { "input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0 },
+            "reasoning": false
+          },
+          {
+            "id": "user.Benefits-Teach",
+            "name": "Teach 2 — Benefits: Keywords + Regex Rules",
+            "contextWindow": 262000,
+            "maxTokens": 32768,
+            "input": ["text"],
+            "cost": { "input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0 },
+            "reasoning": false
+          },
+          {
+            "id": "user.Finance-Teach",
+            "name": "Teach 3 — Finance: Classifiers Only (Semantic + LLM)",
+            "contextWindow": 262000,
+            "maxTokens": 32768,
+            "input": ["text"],
+            "cost": { "input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0 },
+            "reasoning": false
+          },
+          {
+            "id": "user.AI-Company-NLRouter",
+            "name": "Lemonade NL Router — AI Company (LLM-as-router)",
+            "contextWindow": 262000,
+            "maxTokens": 32768,
+            "input": ["text"],
+            "cost": { "input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0 },
+            "reasoning": false
+          },
+          {
+            "id": "user.HR-Admin-Router-V2",
+            "name": "Lemonade Router — HR Admin V2 (Semantic + LLM)",
+            "contextWindow": 262000,
+            "maxTokens": 32768,
+            "input": ["text"],
+            "cost": { "input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0 },
+            "reasoning": false
+          },
+          {
+            "id": "user.Finance-Router-V2",
+            "name": "Lemonade Router — Finance V2 (Semantic + LLM Complexity)",
             "contextWindow": 262000,
             "maxTokens": 32768,
             "input": ["text"],
