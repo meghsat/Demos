@@ -2,9 +2,9 @@
   "version": "1",
   "model_name": "user.Finance-Router",
   "recipe": "collection.router",
-  "components": ["Qwen3-1.7B-GGUF", "Qwen3.5-9B-GGUF", "fireworks.kimi-k2p6"],
+  "components": ["Qwen3.5-9B-GGUF", "fireworks.kimi-k2p6"],
   "routing": {
-    "candidates": ["Qwen3-1.7B-GGUF", "Qwen3.5-9B-GGUF", "fireworks.kimi-k2p6"],
+    "candidates": ["Qwen3.5-9B-GGUF", "fireworks.kimi-k2p6"],
     "default_model": "Qwen3.5-9B-GGUF",
     "rules": [
       {
@@ -16,7 +16,7 @@
             { "regex": "\\$[0-9,]+(K|k|M)?" }
           ]
         },
-        "route_to": "Qwen3-1.7B-GGUF",
+        "route_to": "Qwen3.5-9B-GGUF",
         "outputs": { "reason": "pii-in-finance-query", "data_class": "sensitive" }
       },
       {
@@ -27,7 +27,7 @@
             { "keywords_any": ["what is", "what's", "how much", "current", "today's"] }
           ]
         },
-        "route_to": "Qwen3-1.7B-GGUF",
+        "route_to": "Qwen3.5-9B-GGUF",
         "outputs": { "reason": "simple-metric-lookup", "tier": "local-fast" }
       },
       {

@@ -2,9 +2,9 @@
   "version": "1",
   "model_name": "user.Benefits-Router",
   "recipe": "collection.router",
-  "components": ["Qwen3-1.7B-GGUF", "fireworks.kimi-k2p6"],
+  "components": ["Qwen3.5-9B-GGUF", "fireworks.kimi-k2p6"],
   "routing": {
-    "candidates": ["Qwen3-1.7B-GGUF", "fireworks.kimi-k2p6"],
+    "candidates": ["Qwen3.5-9B-GGUF", "fireworks.kimi-k2p6"],
     "default_model": "fireworks.kimi-k2p6",
     "rules": [
       {
@@ -23,7 +23,7 @@
             { "max_chars": 400 }
           ]
         },
-        "route_to": "Qwen3-1.7B-GGUF",
+        "route_to": "Qwen3.5-9B-GGUF",
         "outputs": { "reason": "simple-benefits-rag", "tier": "local" }
       }
     ]

@@ -2,9 +2,9 @@
   "version": "1",
   "model_name": "user.AI-Company-Router",
   "recipe": "collection.router",
-  "components": ["Qwen3-1.7B-GGUF", "Qwen3.5-9B-GGUF", "fireworks.kimi-k2p6"],
+  "components": ["Qwen3.5-9B-GGUF", "fireworks.kimi-k2p6"],
   "routing": {
-    "candidates": ["Qwen3-1.7B-GGUF", "Qwen3.5-9B-GGUF", "fireworks.kimi-k2p6"],
+    "candidates": ["Qwen3.5-9B-GGUF", "fireworks.kimi-k2p6"],
     "default_model": "Qwen3.5-9B-GGUF",
     "rules": [
       {
@@ -16,7 +16,7 @@
             { "regex": "\\$[0-9,]+(K|k|M)?" }
           ]
         },
-        "route_to": "Qwen3-1.7B-GGUF",
+        "route_to": "Qwen3.5-9B-GGUF",
         "outputs": { "reason": "pii-detected", "agent": "any", "tier": "local-fast" }
       },
       {
@@ -35,7 +35,7 @@
             { "keywords_any": ["what is", "what's", "when does", "how much", "is there", "do we have", "does the", "who handles", "can I", "am I"] }
           ]
         },
-        "route_to": "Qwen3-1.7B-GGUF",
+        "route_to": "Qwen3.5-9B-GGUF",
         "outputs": { "reason": "simple-rag-lookup", "agent": "benefits-or-hr", "tier": "local-fast" }
       },
       {
@@ -54,7 +54,7 @@
         "match": {
           "keywords_any": ["401k", "401(k)", "vesting", "parental leave", "PTO", "vacation", "healthcare", "dental", "vision", "FSA", "HSA", "COBRA", "open enrollment", "copay", "deductible", "handbook", "policy", "onboard", "offboard", "termination"]
         },
-        "route_to": "Qwen3-1.7B-GGUF",
+        "route_to": "Qwen3.5-9B-GGUF",
         "outputs": { "reason": "hr-benefits-rag", "agent": "hr-or-benefits", "tier": "local-fast" }
       },
       {
