@@ -1,65 +1,247 @@
 {
+  "agents": {
+    "defaults": {
+      "workspace": "/home/ubuntu/.openclaw/workspace",
+      "model": {
+        "primary": "semanticrouter/MoM"
+      },
+      "models": {
+        "semanticrouter/MoM": {},
+        "lemonade/Qwen3.6-35B-A3B-NoThinking": {},
+        "lemonade/Qwen3.5-9B-NoThinking": {},
+        "lemonade/user.HR-Admin-Router": {},
+        "lemonade/user.Benefits-Router": {},
+        "lemonade/user.Finance-Router": {},
+        "lemonade/user.Legal-Router": {},
+        "lemonade/user.AI-Company-Router": {},
+        "lemonade/fireworks.kimi-k2p6": {},
+        "fireworks/accounts/fireworks/models/kimi-k2p6": {}
+      },
+      "contextInjection": "always"
+    },
+    "list": [
+      {
+        "id": "main"
+      },
+      {
+        "id": "local-brain",
+        "name": "local-brain",
+        "workspace": "/home/ubuntu/.openclaw/workspace-local-brain",
+        "agentDir": "/home/ubuntu/.openclaw/agents/local-brain/agent",
+        "model": "lemonade/Qwen3.6-35B-A3B-NoThinking"
+      },
+      {
+        "id": "cloud-brain",
+        "name": "cloud-brain",
+        "workspace": "/home/ubuntu/.openclaw/workspace-cloud-brain",
+        "agentDir": "/home/ubuntu/.openclaw/agents/cloud-brain/agent",
+        "model": "fireworks/accounts/fireworks/models/kimi-k2p6",
+        "tools": {
+          "deny": [
+            "group:fs",
+            "group:runtime"
+          ]
+        }
+      },
+      {
+        "id": "smart-router",
+        "name": "smart-router",
+        "workspace": "/home/ubuntu/.openclaw/workspace-smart-router",
+        "agentDir": "/home/ubuntu/.openclaw/agents/smart-router/agent",
+        "model": "lemonade/Qwen3.6-35B-A3B-NoThinking"
+      },
+      {
+        "id": "hr-admin",
+        "name": "hr-admin",
+        "workspace": "/home/ubuntu/.openclaw/workspace",
+        "agentDir": "/home/ubuntu/.openclaw/agents/hr-admin/agent",
+        "model": "lemonade/user.HR-Admin-Router"
+      },
+      {
+        "id": "benefits",
+        "name": "benefits",
+        "workspace": "/home/ubuntu/.openclaw/workspace",
+        "agentDir": "/home/ubuntu/.openclaw/agents/benefits/agent",
+        "model": "lemonade/user.Benefits-Router"
+      },
+      {
+        "id": "finance",
+        "name": "finance",
+        "workspace": "/home/ubuntu/.openclaw/workspace",
+        "agentDir": "/home/ubuntu/.openclaw/agents/finance/agent",
+        "model": "lemonade/user.Finance-Router"
+      },
+      {
+        "id": "legal",
+        "name": "legal",
+        "workspace": "/home/ubuntu/.openclaw/workspace",
+        "agentDir": "/home/ubuntu/.openclaw/agents/legal/agent",
+        "model": "lemonade/user.Legal-Router"
+      }
+    ]
+  },
   "gateway": {
-    "host": "127.0.0.1",
-    "port": 18789,
-    "bind": "127.0.0.1",
+    "mode": "local",
     "auth": {
-      "type": "token"
+      "mode": "token",
+      "token": "e1cc600fb061e58f3cf04872fc1cddb87535766e52545d01"
+    },
+    "port": 18789,
+    "bind": "loopback",
+    "tailscale": {
+      "mode": "off",
+      "resetOnExit": false
+    },
+    "controlUi": {
+      "allowInsecureAuth": true
+    },
+    "nodes": {
+      "denyCommands": [
+        "camera.snap",
+        "camera.clip",
+        "screen.record",
+        "contacts.add",
+        "calendar.add",
+        "reminders.add",
+        "sms.send",
+        "sms.search"
+      ]
     }
   },
-  "providers": {
-    "fireworks": {
-      "type": "openai",
-      "baseUrl": "https://api.fireworks.ai/inference/v1",
-      "apiKey": "fw_SWon1YFerj52JWSxyxtoMe",
-      "model": "accounts/fireworks/models/kimi-k2p5",
-      "supportsImages": false
-    },
-    "lemonade-hr": {
-      "type": "openai",
-      "baseUrl": "http://localhost:13305/api/v1",
-      "apiKey": "lemonade",
-      "model": "user.HR-Admin-Router",
-      "supportsImages": false
-    },
-    "lemonade-benefits": {
-      "type": "openai",
-      "baseUrl": "http://localhost:13305/api/v1",
-      "apiKey": "lemonade",
-      "model": "user.Benefits-Router",
-      "supportsImages": false
-    },
-    "lemonade-finance": {
-      "type": "openai",
-      "baseUrl": "http://localhost:13305/api/v1",
-      "apiKey": "lemonade",
-      "model": "user.Finance-Router",
-      "supportsImages": false
-    },
-    "lemonade-legal": {
-      "type": "openai",
-      "baseUrl": "http://localhost:13305/api/v1",
-      "apiKey": "lemonade",
-      "model": "user.Legal-Router",
-      "supportsImages": false
-    },
-    "lemonade-full": {
-      "type": "openai",
-      "baseUrl": "http://localhost:13305/api/v1",
-      "apiKey": "lemonade",
-      "model": "user.AI-Company-Router",
-      "supportsImages": false
+  "session": {
+    "dmScope": "per-channel-peer"
+  },
+  "tools": {
+    "profile": "coding"
+  },
+  "models": {
+    "mode": "merge",
+    "providers": {
+      "semanticrouter": {
+        "baseUrl": "http://localhost:8899/v1",
+        "api": "openai-completions",
+        "models": [
+          {
+            "id": "MoM",
+            "name": "MoM (Custom Provider)",
+            "contextWindow": 262000,
+            "maxTokens": 32768,
+            "input": ["text", "image"],
+            "cost": { "input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0 },
+            "reasoning": false
+          }
+        ]
+      },
+      "lemonade": {
+        "baseUrl": "http://localhost:13305/v1",
+        "api": "openai-completions",
+        "models": [
+          {
+            "id": "Qwen3.6-35B-A3B-NoThinking",
+            "name": "Qwen3.6 35B A3B (NoThinking)",
+            "contextWindow": 262000,
+            "maxTokens": 32768,
+            "input": ["text", "image"],
+            "cost": { "input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0 },
+            "reasoning": false
+          },
+          {
+            "id": "Qwen3.5-9B-NoThinking",
+            "name": "Qwen3.5 9B (NoThinking)",
+            "contextWindow": 262000,
+            "maxTokens": 32768,
+            "input": ["text", "image"],
+            "cost": { "input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0 },
+            "reasoning": false
+          },
+          {
+            "id": "user.HR-Admin-Router",
+            "name": "Lemonade Router — HR Admin",
+            "contextWindow": 262000,
+            "maxTokens": 32768,
+            "input": ["text"],
+            "cost": { "input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0 },
+            "reasoning": false
+          },
+          {
+            "id": "user.Benefits-Router",
+            "name": "Lemonade Router — Benefits",
+            "contextWindow": 262000,
+            "maxTokens": 32768,
+            "input": ["text"],
+            "cost": { "input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0 },
+            "reasoning": false
+          },
+          {
+            "id": "user.Finance-Router",
+            "name": "Lemonade Router — Finance",
+            "contextWindow": 262000,
+            "maxTokens": 32768,
+            "input": ["text"],
+            "cost": { "input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0 },
+            "reasoning": false
+          },
+          {
+            "id": "user.Legal-Router",
+            "name": "Lemonade Router — Legal",
+            "contextWindow": 262000,
+            "maxTokens": 32768,
+            "input": ["text"],
+            "cost": { "input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0 },
+            "reasoning": false
+          },
+          {
+            "id": "user.AI-Company-Router",
+            "name": "Lemonade Router — AI Company (All Agents)",
+            "contextWindow": 262000,
+            "maxTokens": 32768,
+            "input": ["text"],
+            "cost": { "input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0 },
+            "reasoning": false
+          },
+          {
+            "id": "fireworks.kimi-k2p6",
+            "name": "Kimi K2 (via Lemonade)",
+            "contextWindow": 262000,
+            "maxTokens": 32768,
+            "input": ["text"],
+            "cost": { "input": 3, "output": 9, "cacheRead": 0, "cacheWrite": 0 },
+            "reasoning": false
+          }
+        ]
+      },
+      "fireworks": {
+        "baseUrl": "https://api.fireworks.ai/inference/v1",
+        "api": "openai-completions",
+        "auth": "api-key",
+        "apiKey": "fw_SWon1YFerj52JWSxyxtoMe",
+        "models": [
+          {
+            "id": "accounts/fireworks/models/kimi-k2p6",
+            "name": "Kimi K2 (Fireworks)",
+            "contextWindow": 262000,
+            "maxTokens": 32768,
+            "input": ["text"],
+            "cost": { "input": 3, "output": 9, "cacheRead": 0, "cacheWrite": 0 },
+            "reasoning": false
+          }
+        ]
+      }
     }
-  },
-  "defaultProvider": "lemonade-full",
-  "search": {
-    "provider": null
-  },
-  "channels": [],
-  "hooks": {
-    "enabled": false
   },
   "skills": {
-    "configureOnStartup": false
+    "install": {
+      "nodeManager": "npm"
+    }
+  },
+  "wizard": {
+    "lastRunAt": "2026-07-22T22:45:45.046Z",
+    "lastRunVersion": "2026.6.2",
+    "lastRunCommand": "onboard",
+    "lastRunMode": "local"
+  },
+  "meta": {
+    "lastTouchedVersion": "2026.6.2",
+    "lastTouchedAt": "2026-07-22T22:50:08.371Z"
   }
 }
