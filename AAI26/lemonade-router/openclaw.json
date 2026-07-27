@@ -3,7 +3,7 @@
     "defaults": {
       "workspace": "/home/ubuntu/.openclaw/workspace",
       "model": {
-        "primary": "semanticrouter/MoM"
+        "primary": "lemonade/Qwen3.5-9B-NoThinking"
       },
       "models": {
         "semanticrouter/MoM": {},
@@ -13,13 +13,6 @@
         "lemonade/user.Benefits-Router": {},
         "lemonade/user.Finance-Router": {},
         "lemonade/user.Legal-Router": {},
-        "lemonade/user.AI-Company-Router": {},
-        "lemonade/user.AI-Company-NLRouter": {},
-        "lemonade/user.HR-Admin-Router-V2": {},
-        "lemonade/user.Finance-Router-V2": {},
-        "lemonade/user.HR-Admin-Teach": {},
-        "lemonade/user.Benefits-Teach": {},
-        "lemonade/user.Finance-Teach": {},
         "lemonade/fireworks.kimi-k2p6": {},
         "fireworks/accounts/fireworks/models/kimi-k2p6": {}
       },
@@ -90,7 +83,7 @@
     "mode": "local",
     "auth": {
       "mode": "token",
-      "token": "e1cc600fb061e58f3cf04872fc1cddb87535766e52545d01"
+      "token": "OPENCLAW_GATEWAY_TOKEN"
     },
     "port": 18789,
     "bind": "loopback",
@@ -129,7 +122,7 @@
         "models": [
           {
             "id": "MoM",
-            "name": "MoM (Custom Provider)",
+            "name": "MoM — vLLM Semantic Router (backup)",
             "contextWindow": 262000,
             "maxTokens": 32768,
             "input": ["text", "image"],
@@ -162,7 +155,7 @@
           },
           {
             "id": "user.HR-Admin-Router",
-            "name": "Lemonade Router — HR Admin",
+            "name": "Lemonade Router — HR Admin (NL Router)",
             "contextWindow": 262000,
             "maxTokens": 32768,
             "input": ["text"],
@@ -171,7 +164,7 @@
           },
           {
             "id": "user.Benefits-Router",
-            "name": "Lemonade Router — Benefits",
+            "name": "Lemonade Router — Benefits (Keywords + Regex)",
             "contextWindow": 262000,
             "maxTokens": 32768,
             "input": ["text"],
@@ -180,7 +173,7 @@
           },
           {
             "id": "user.Finance-Router",
-            "name": "Lemonade Router — Finance",
+            "name": "Lemonade Router — Finance (Semantic + LLM Classifier)",
             "contextWindow": 262000,
             "maxTokens": 32768,
             "input": ["text"],
@@ -197,71 +190,8 @@
             "reasoning": false
           },
           {
-            "id": "user.HR-Admin-Teach",
-            "name": "Teach 1 — HR Admin: NL Router (LLM-as-router)",
-            "contextWindow": 262000,
-            "maxTokens": 32768,
-            "input": ["text"],
-            "cost": { "input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0 },
-            "reasoning": false
-          },
-          {
-            "id": "user.Benefits-Teach",
-            "name": "Teach 2 — Benefits: Keywords + Regex Rules",
-            "contextWindow": 262000,
-            "maxTokens": 32768,
-            "input": ["text"],
-            "cost": { "input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0 },
-            "reasoning": false
-          },
-          {
-            "id": "user.Finance-Teach",
-            "name": "Teach 3 — Finance: Classifiers Only (Semantic + LLM)",
-            "contextWindow": 262000,
-            "maxTokens": 32768,
-            "input": ["text"],
-            "cost": { "input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0 },
-            "reasoning": false
-          },
-          {
-            "id": "user.AI-Company-NLRouter",
-            "name": "Lemonade NL Router — AI Company (LLM-as-router)",
-            "contextWindow": 262000,
-            "maxTokens": 32768,
-            "input": ["text"],
-            "cost": { "input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0 },
-            "reasoning": false
-          },
-          {
-            "id": "user.HR-Admin-Router-V2",
-            "name": "Lemonade Router — HR Admin V2 (Semantic + LLM)",
-            "contextWindow": 262000,
-            "maxTokens": 32768,
-            "input": ["text"],
-            "cost": { "input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0 },
-            "reasoning": false
-          },
-          {
-            "id": "user.Finance-Router-V2",
-            "name": "Lemonade Router — Finance V2 (Semantic + LLM Complexity)",
-            "contextWindow": 262000,
-            "maxTokens": 32768,
-            "input": ["text"],
-            "cost": { "input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0 },
-            "reasoning": false
-          },
-          {
-            "id": "user.AI-Company-Router",
-            "name": "Lemonade Router — AI Company (All Agents)",
-            "contextWindow": 262000,
-            "maxTokens": 32768,
-            "input": ["text"],
-            "cost": { "input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0 },
-            "reasoning": false
-          },
-          {
             "id": "fireworks.kimi-k2p6",
-            "name": "Kimi K2 (via Lemonade)",
+            "name": "Kimi K2.6 (via Lemonade)",
             "contextWindow": 262000,
             "maxTokens": 32768,
             "input": ["text"],
@@ -274,11 +204,11 @@
         "baseUrl": "https://api.fireworks.ai/inference/v1",
         "api": "openai-completions",
         "auth": "api-key",
-        "apiKey": "fw_SWon1YFerj52JWSxyxtoMe",
+        "apiKey": "FIREWORKS_API_KEY_PLACEHOLDER",
         "models": [
           {
             "id": "accounts/fireworks/models/kimi-k2p6",
-            "name": "Kimi K2 (Fireworks)",
+            "name": "Kimi K2.6 (Fireworks)",
             "contextWindow": 262000,
             "maxTokens": 32768,
             "input": ["text"],
@@ -293,15 +223,5 @@
     "install": {
       "nodeManager": "npm"
     }
-  },
-  "wizard": {
-    "lastRunAt": "2026-07-22T22:45:45.046Z",
-    "lastRunVersion": "2026.6.2",
-    "lastRunCommand": "onboard",
-    "lastRunMode": "local"
-  },
-  "meta": {
-    "lastTouchedVersion": "2026.6.2",
-    "lastTouchedAt": "2026-07-22T22:50:08.371Z"
   }
 }

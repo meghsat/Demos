@@ -50,41 +50,28 @@ Inside the OpenClaw TUI:
 ---
 # Lab Setup
 
+**Prerequisites:** Lemonade Server is running on port 13305. Your Fireworks API key is ready.
+
 1.
 ![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_20_20_29_591.w3rlpml9i4zbov809ydbs9617uzt.png "Click to enlarge")
-
-2. Run `$HOME/hybrid-multi-agent-openclaw/start-vllm-sr.sh <Fireworks Api-Key>`  
-<button class="dark" onclick="ConsolePaste('$HOME/hybrid-multi-agent-openclaw/start-vllm-sr.sh <Paste Fireworks Api-Key>')" btn_type="paste" type="button">Paste Command</button>
-
-3. The previous command should have opened the vLLM SR dashboard. If it didn't
-![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_20_20_29_381.6bj96yfp4vg8546e4w29ubravxto.png "Click to enlarge")
-and navigate to ```http://localhost:8700```
-
-Click **Enter Dashboard** and log in to the Semantic Router dashboard.
-![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_17_04_43_501.ihax2ppml47naq76oim1g1cjh6zl.png "Click to enlarge")
-
-Enter the below login credentials: 
-```aai26@amd.com``` and ```aai26```
-
-<button class="dark" onclick="ConsolePaste('aai26@amd.com')" btn_type="paste" type="button">Paste Email</button>  
-
-<button class="dark" onclick="ConsolePaste('aai26')" btn_type="paste" type="button">Paste Password</button>
-
-4. 
-![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_20_20_30_061.hchrduni450wmfg4by5tntqdkz9s.png "Click to enlarge")
 
 Run `$HOME/hybrid-multi-agent-openclaw/start-openclaw.sh <Fireworks Api-Key>`
 
 <button class="dark" onclick="ConsolePaste('$HOME/hybrid-multi-agent-openclaw/start-openclaw.sh <Paste Fireworks Api-Key>')" btn_type="paste" type="button">Paste Command</button>
 
+This script:
+- Onboards OpenClaw against the **Lemonade Server** on port 13305
+- Registers the three Lemonade Router policies (`user.HR-Admin-Router`, `user.Benefits-Router`, `user.Finance-Router`) via `POST /api/v1/pull`
+- Creates the workshop agents (`local-brain`, `cloud-brain`, `smart-router`, `hr-admin`, `benefits`, `finance`, `legal`)
+- Patches the OpenClaw config with all Lemonade model entries and the Fireworks provider
 
-5. 
+2.
 ![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_20_20_30_061.hchrduni450wmfg4by5tntqdkz9s.png "Click to enlarge")
 
 ```
 openclaw tui --session workshop
 ```
-<button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">openclaw tui --session workshop</script>Paste Command</button> 
+<button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">openclaw tui --session workshop</script>Paste Command</button>
 
 ![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_19_18_47_571.ore6la560tc5e6pp9bm9cqhsb6bg.png "Click to enlarge")
 
@@ -305,7 +292,7 @@ Classification: CLOUD -- [Reasoning-Behind-Routing]
  - A financial model too complex for the local model should escalate automatically. 
  - A simple HR policy lookup shouldn't burn cloud tokens. 
 
-That's what the **vLLM Semantic Router** adds: **per-skill routing policies, PII detection, and a confidence loop** - each tuned to the task, not a single binary rule.
+That's what the **Lemonade Router** adds: **per-skill routing policies, PII detection, and semantic classification** — each tuned to the task, not a single binary rule.
 
 ---
 
@@ -318,11 +305,10 @@ That's what the **vLLM Semantic Router** adds: **per-skill routing policies, PII
 - Output expectations (what a correct response looks like)
 - Operation guidelines (e.g. soft-delete only, never overwrite existing records)
 
-**The vLLM Semantic Router** sits between OpenClaw and the models. On every request it decides:
-- **PII detected?** (names, emails, salaries) → stays on local AMD hardware
+**The Lemonade Router** sits between OpenClaw and the models. Each agent uses its own `collection.router` policy. On every request it decides:
+- **PII detected?** (names, emails, salaries) → stays on local AMD hardware, via regex, keyword, semantic similarity, or an LLM classifier — depending on the router
 - **Simple lookup or RAG?** → local model handles it, no cloud cost
-- **Complex reasoning?** → escalates to cloud
-- **Local model not confident enough?** → confidence loop kicks in, escalates automatically
+- **Complex reasoning or deep modeling?** → escalates to cloud via semantic similarity or LLM complexity classifier
 
 System Architecture<a class="story_video" href="https://youtu.be/rFdrjZPtaKY">Click this to view the video</a>
 
@@ -374,19 +360,17 @@ openclaw tui --session workshop2
 ## 1. HR Admin Agent
 
 **Handles:** Employee records - onboarding, salary/equity updates, role changes, and terminations  
-**Routing:** Local (PII-sensitive)  
-**Data Source:** `employees.csv`  
+**Router:** `user.HR-Admin-Router` - NL Router (LLM reads the request and decides local vs. cloud)  
+**Data Source:** `employees.csv`
 
 #### Agent's Goal: Update the employee database located at:
 
 `${HOME}/Downloads/projects/router-configs/data/employees.csv`
 
+#### First: Try it with Kimi K2.6 directly
 
-#### Try it with the Cloud Model First
-
-**1.** 
+**1.**
 ![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_20_20_30_181.611vzyf6yasvtd1gge8zs71p3out.png "Click to enlarge")
-
 
 ```
 /model
@@ -404,16 +388,16 @@ openclaw tui --session workshop2
 
 <button class="dark" onclick="ConsolePaste('/skill hr-admin Onboard Jordan Lee, ML Platform Engineer, starts August 1, salary $162K, equity 0.6%, email jordan.lee@startup.ai')" type="button">Paste Prompt</button>
 
-**Expected Output:** 
+**Expected Output:**
 Jordan Lee is added to:
 
 `${HOME}/Downloads/projects/router-configs/data/employees.csv`
 
-**Verdict:** The request contained **personally identifiable information (PII)**, which was sent to a cloud model.
+**Verdict:** The request contained **personally identifiable information (PII)** - name, salary, equity, and email - and was sent directly to a **cloud model**. The data left the machine.
 
-#### Now Try the Semantic Router
+#### Now switch to the Lemonade HR Admin Router
 
-**1.** 
+**1.**
 ![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_20_20_30_181.611vzyf6yasvtd1gge8zs71p3out.png "Click to enlarge")
 
 ```
@@ -424,7 +408,7 @@ Jordan Lee is added to:
 
 <span style="color:red">**NOTE**:</span> The dropdown might be misplaced in the middle of the TUI but should look like this
 ![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_17_05_22_511.pvw9899i8crm4hzcm3g93hb3qe7h.png "Click to enlarge")
-**2.** Select **MoM (Custom Provider)** and run: 
+**2.** Select **Lemonade HR Admin Router** (`user.HR-Admin-Router`) and run:
 
 ```
 /skill hr-admin Onboard Maya Chen, Senior AI Engineer, starts July 1, salary $175K, equity 0.8%, email maya.chen@startup.ai
@@ -432,17 +416,21 @@ Jordan Lee is added to:
 
 <button class="dark" onclick="ConsolePaste('/skill hr-admin Onboard Maya Chen, Senior AI Engineer, starts July 1, salary $175K, equity 0.8%, email maya.chen@startup.ai')" type="button">Paste Prompt</button>
 
-**Expected Router Flow:** 
-PII detected (name, salary, email)
+**How the router decides:**
 
-- Routes to **Local Qwen3.5 9B**
+The `user.HR-Admin-Router` uses a **Natural Language Router** - a small `Qwen3.5-9B-NoThinking` model reads the full request and picks the destination. No keywords, no patterns. It understands that names + salary + email + equity = PII → stays local.
 
-- Same result with **zero data egress**
+**Expected Router Flow:**
+PII detected (name, salary, equity, email)
+
+- `Qwen3.5-9B-NoThinking` router reads the request and selects **Local**
+- Routes to **Local Qwen3.5 9B NoThinking**
+- **Zero data egress** - same result, data never leaves the machine
 
 You can see the local model being loaded, with **Lemonade Server** displaying logs that include metrics such as TTFT and TPS.
 ![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_11_23_25_061.1h37w2eqzoxjefothx8oode4kdj6.png "Click to enlarge")
 
-**Expected Output:** 
+**Expected Output:**
 
 Maya Chen is added to:
 
@@ -453,6 +441,7 @@ Maya Chen is added to:
 ## 2. Benefits Agent
 
 **Handles:** Employee self-service questions about benefits, HR policies, and handbook content  
+**Router:** `user.Benefits-Router` - Keyword + Regex Rules (deterministic, no model needed for routing)  
 **Data Source:** `benefits_handbook.md`
 
 #### Agent's Goal: Perform RAG over:
@@ -461,11 +450,8 @@ Maya Chen is added to:
 
 and answer employee questions.
 
-#### Try it with the Cloud Model First
-
-**1.** 
+**1.**
 ![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_20_20_30_181.611vzyf6yasvtd1gge8zs71p3out.png "Click to enlarge")
-
 
 ```
 /model
@@ -473,7 +459,9 @@ and answer employee questions.
 
 <button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">/model</script>Paste /model</button>
 
-**2.** Select **Kimi K2.6 (Fireworks)** and run:
+**2.** Select **Lemonade Benefits Router** (`user.Benefits-Router`).
+
+#### Simple RAG question → routes Local
 
 ```
 /skill benefits When does my 401(k) vesting cliff kick in?
@@ -481,24 +469,17 @@ and answer employee questions.
 
 <button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">/skill benefits When does my 401(k) vesting cliff kick in?</script>Paste Prompt</button>
 
-**Expected Output:** 
-The agent retrieves and summarizes the handbook's 401(k) vesting policy.
+**How the router decides:**
 
-**Verdict:** A cloud model was used for a simple RAG lookup, **increasing inference cost.**
+The `simple-benefits-rag` rule fires: keyword `401(k)` matched + query is under 400 characters → **Local**. No model is consulted - the decision is instant and deterministic.
 
-#### Now Try the Semantic Router
+**Expected Router Flow:**
+- `simple-benefits-rag` rule matched (keyword + max_chars)
+- Routes to **Local Qwen3.5 9B NoThinking**
 
-**1.** 
-![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_20_20_30_181.611vzyf6yasvtd1gge8zs71p3out.png "Click to enlarge")
+**Expected Output:** The agent retrieves and summarizes the handbook's 401(k) vesting policy.
 
-
-```
-/model
-```
-
-<button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">/model</script>Paste /model</button>
-
-**2.** Select **MoM (Custom Provider)** and run:
+#### Complex analysis question → routes Cloud
 
 ```
 /skill benefits What's our parental leave policy compared to industry standard?
@@ -506,21 +487,22 @@ The agent retrieves and summarizes the handbook's 401(k) vesting policy.
 
 <button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">/skill benefits What's our parental leave policy compared to industry standard?</script>Paste Prompt</button>
 
+**How the router decides:**
+
+The `complex-benefits-analysis` rule fires first: keyword `compared` matched - the router sees "comparison" as a signal for cloud-level reasoning before it even checks `simple-benefits-rag`.
+
 **Expected Router Flow:**
+- `complex-benefits-analysis` rule matched (`compare` keyword)
+- Routes to **Cloud Kimi K2.6**
 
-HR policy query
-
-- Simple RAG request
-
-- Routes to **Local Qwen3.5 9B**
-
-**Expected Output:** A summary of the company's parental leave policy, including a comparison with common industry practices.
+**Expected Output:** A summary of the company's parental leave policy with a comparison to common industry practices.
 
 ---
 
 ## 3. Finance Agent
 
 **Handles:** Burn rate, equity modeling, retention analysis, budgeting, and runway forecasting  
+**Router:** `user.Finance-Router` - Semantic Similarity + LLM Complexity Classifier  
 **Data Sources:** `financials.csv`, `cap_table.csv`, `employees.csv`, `retention_history.csv`
 
 #### Agent's Goal: Perform data analysis over the CSV files located in:
@@ -529,25 +511,53 @@ HR policy query
 
 and answer financial questions.
 
-**Ensure OpenClaw session is pointing to MoM (Custom Provider).** If needed, switch models using `/model`
-
-#### Confidence Loop: Local and Cloud Models Working Together
-
+**1.**
 ![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_20_20_30_181.611vzyf6yasvtd1gge8zs71p3out.png "Click to enlarge")
 
 ```
-/skill finance One of our employees got a competitor offer in Q1 2026 and we took no action - based on what worked best historically, what intervention should we make now, and what does it cost us through year end?   
+/model
+```
+
+<button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">/model</script>Paste /model</button>
+
+**2.** Select **Lemonade Finance Router** (`user.Finance-Router`).
+
+#### Simple metric lookup → routes Local
+
+```
+/skill finance What is our current burn rate?
+```
+
+<button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">/skill finance What is our current burn rate?</script>Paste Prompt</button>
+
+**How the router decides:**
+
+The `finance-topic` semantic similarity classifier embeds the query and computes cosine similarity against labeled reference phrases. "What is our current burn rate" scores highest against the **`simple-lookup`** concept → **Local**.
+
+**Expected Router Flow:**
+- `finance-topic` semantic classifier → label: `simple-lookup`
+- `simple-metric-lookup` rule matched
+- Routes to **Local Qwen3.5 9B**
+
+#### Complex multi-source analysis → routes Cloud
+
+```
+/skill finance One of our employees got a competitor offer in Q1 2026 and we took no action - based on what worked best historically, what intervention should we make now, and what does it cost us through year end?
 ```
 
 <button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">/skill finance One of our employees got a competitor offer in Q1 2026 and we took no action - based on what worked best historically, what intervention should we make now, and what does it cost us through year end?</script>Paste Prompt</button>
 
-**Expected Router Flow:** 
+**How the router decides:**
 
-**Confidence Loop**
+Two classifiers evaluate this in parallel:
+- **Semantic classifier** (`finance-topic`): query embeds close to the **`deep-modeling`** concept (historical analysis, intervention, cost projection)
+- **LLM classifier** (`complexity`, `Qwen3.5-9B-NoThinking`): reads the request and labels it **COMPLEX** - multi-source synthesis across retention history and financials
 
-- Pass 1 → Local Qwen3.5 9B attempts the task
-- Confidence below threshold
-- Automatically escalates to **Cloud Kimi K2.6**
+Either classifier alone is sufficient to escalate to cloud. First match wins.
+
+**Expected Router Flow:**
+- `finance-topic` semantic classifier → label: `deep-modeling` → `deep-model-semantic` rule matched
+- Routes to **Cloud Kimi K2.6**
 
 ---
 ## 4. **Legal Agent**
