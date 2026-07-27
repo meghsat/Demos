@@ -6,7 +6,7 @@
 #   1. Downloads the 4 Lemonade Router JSON policies from GitHub
 #   2. Downloads the workshop openclaw.json config from GitHub,
 #      injects the Fireworks API key + a gateway token, and installs it
-#      at ~/.openclaw/config.json
+#      at ~/.openclaw/openclaw.json
 #   3. Pulls each router policy to the Lemonade Server (POST /api/v1/pull)
 #   4. Writes the smart-router SOUL.md
 #   5. Restarts the OpenClaw gateway
@@ -44,8 +44,9 @@ fi
   exit 1
 }
 
-command -v openclaw >/dev/null || { echo "ERROR: openclaw not on PATH" >&2; exit 1; }
-command -v curl     >/dev/null || { echo "ERROR: curl not on PATH" >&2; exit 1; }
+command -v openclaw  >/dev/null || { echo "ERROR: openclaw not on PATH" >&2; exit 1; }
+command -v lemonade  >/dev/null || { echo "ERROR: lemonade not on PATH" >&2; exit 1; }
+command -v curl      >/dev/null || { echo "ERROR: curl not on PATH" >&2; exit 1; }
 
 # ---------------------------------------------------------------------------
 # Verify Lemonade Server
@@ -102,6 +103,7 @@ for F in $ROUTER_FILES; do
     || { echo "  WARNING: failed to download $F — will use local copy if available" >&2; }
 done
 
+
 # ---------------------------------------------------------------------------
 # Download and install openclaw.json
 # ---------------------------------------------------------------------------
@@ -117,15 +119,15 @@ curl -sf --max-time 15 "$GITHUB_RAW/openclaw.json" -o "$OC_CONFIG_TMP" || {
 
 # Generate a gateway token (reuse existing one if present, else generate fresh)
 EXISTING_TOKEN=""
-if [ -f "$OC_DIR/config.json" ]; then
-  EXISTING_TOKEN="$(grep -o '"token": *"[^"]*"' "$OC_DIR/config.json" 2>/dev/null | head -1 | sed 's/.*"\([^"]*\)"$/\1/' || true)"
+if [ -f "$OC_DIR/openclaw.json" ]; then
+  EXISTING_TOKEN="$(grep -o '"token": *"[^"]*"' "$OC_DIR/openclaw.json" 2>/dev/null | head -1 | sed 's/.*"\([^"]*\)"$/\1/' 2>/dev/null || true)"
 fi
 if [ -z "$EXISTING_TOKEN" ]; then
   EXISTING_TOKEN="$(openssl rand -hex 24 2>/dev/null || cat /proc/sys/kernel/random/uuid 2>/dev/null | tr -d '-' || echo "workshop-token-$(date +%s)")"
 fi
 
 # Inject secrets into the config — replace placeholders
-echo "==> Installing openclaw.json to $OC_DIR/config.json..."
+echo "==> Installing openclaw.json to $OC_DIR/openclaw.json..."
 mkdir -p "$OC_DIR"
 OC_CONFIG_FINAL="$(mktemp)"
 sed \
@@ -133,7 +135,7 @@ sed \
   -e "s|OPENCLAW_GATEWAY_TOKEN|$EXISTING_TOKEN|g" \
   "$OC_CONFIG_TMP" > "$OC_CONFIG_FINAL"
 rm -f "$OC_CONFIG_TMP"
-cp "$OC_CONFIG_FINAL" "$OC_DIR/config.json"
+cp "$OC_CONFIG_FINAL" "$OC_DIR/openclaw.json"
 echo "  done"
 
 # If vLLM SR is NOT running, strip the semanticrouter provider block so
@@ -143,7 +145,7 @@ if [ "$VLLM_SR_UP" = "0" ]; then
   # Remove the semanticrouter provider entry and its models/defaults entry
   # using Python (available on all Ubuntu workshop machines) for safe JSON surgery
   if command -v python3 >/dev/null 2>&1; then
-    python3 - "$OC_DIR/config.json" <<'PY'
+    python3 - "$OC_DIR/openclaw.json" <<'PY'
 import sys, json
 path = sys.argv[1]
 with open(path) as f:
@@ -160,7 +162,7 @@ PY
 fi
 
 # ---------------------------------------------------------------------------
-# Onboard OpenClaw (registers the daemon; config.json already in place)
+# Onboard OpenClaw (registers the daemon; openclaw.json already in place)
 # ---------------------------------------------------------------------------
 echo "==> Onboarding OpenClaw..."
 openclaw onboard --non-interactive \
@@ -174,11 +176,59 @@ openclaw onboard --non-interactive \
   --skip-health --accept-risk --install-daemon
 
 # Restore our config — openclaw onboard may have overwritten it
-cp "$OC_CONFIG_FINAL" "$OC_DIR/config.json"
+cp "$OC_CONFIG_FINAL" "$OC_DIR/openclaw.json"
 rm -f "$OC_CONFIG_FINAL"
 
 echo "==> Restarting gateway with workshop config..."
 openclaw gateway restart
+
+# ---------------------------------------------------------------------------
+# Lemonade prerequisites: cloud provider + required models
+# ---------------------------------------------------------------------------
+echo "==> Registering Fireworks cloud provider with Lemonade..."
+lemonade cloud install fireworks \
+  --base-url "https://api.fireworks.ai/inference/v1" \
+  --api-key "$FIREWORKS_API_KEY" \
+  && echo "  fireworks provider: registered" \
+  || echo "  WARNING: fireworks provider install failed — router pulls may fail" >&2
+
+# Helper: check if a model is already downloaded in Lemonade
+lemonade_model_downloaded() {
+  curl -sf --max-time 5 "http://localhost:13305/api/v1/models" 2>/dev/null \
+    | grep -q "\"id\":\"$1\".*\"downloaded\":true" || \
+  curl -sf --max-time 5 "http://localhost:13305/api/v1/models" 2>/dev/null \
+    | python3 -c "
+import sys, json
+data = json.load(sys.stdin)
+for m in data.get('data', []):
+    if m.get('id') == sys.argv[1] and m.get('downloaded'):
+        sys.exit(0)
+sys.exit(1)
+" "$1" 2>/dev/null
+}
+
+echo "==> Ensuring required local models are available..."
+
+# Qwen3.5-9B-NoThinking — used as router LLM and primary candidate
+if lemonade_model_downloaded "Qwen3.5-9B-NoThinking"; then
+  echo "  Qwen3.5-9B-NoThinking: already downloaded"
+else
+  echo "  Qwen3.5-9B-NoThinking: pulling (this may take a few minutes)..."
+  lemonade pull Qwen3.5-9B-NoThinking \
+    && echo "  Qwen3.5-9B-NoThinking: done" \
+    || echo "  WARNING: pull failed — check Lemonade server" >&2
+fi
+
+# embeddinggemma-300m-qat-q8_0-GGUF — used by Finance and HR semantic classifiers
+EMBED_MODEL="embeddinggemma-300m-qat-q8_0-GGUF-Q8_0"
+if lemonade_model_downloaded "$EMBED_MODEL"; then
+  echo "  $EMBED_MODEL: already downloaded"
+else
+  echo "  $EMBED_MODEL: pulling..."
+  lemonade pull "$EMBED_MODEL" \
+    && echo "  $EMBED_MODEL: done" \
+    || echo "  WARNING: pull failed — semantic classifier rules will not fire" >&2
+fi
 
 # ---------------------------------------------------------------------------
 # Pull Lemonade Router policies to Lemonade Server
@@ -195,8 +245,8 @@ for F in $ROUTER_FILES; do
     RESULT=$(curl -s -X POST "http://localhost:13305/api/v1/pull" \
       -H "Content-Type: application/json" \
       --data-binary "@$FPATH" 2>&1)
-    MODEL=$(echo "$RESULT" | grep -o '"model_name":"[^"]*"' | sed 's/"model_name":"//;s/"//')
-    STATUS=$(echo "$RESULT" | grep -o '"status":"[^"]*"' | sed 's/"status":"//;s/"//')
+    MODEL=$(echo "$RESULT" | grep -o '"model_name":"[^"]*"' | sed 's/"model_name":"//;s/"//' || true)
+    STATUS=$(echo "$RESULT" | grep -o '"status":"[^"]*"' | sed 's/"status":"//;s/"//' || true)
     if [ "$STATUS" = "success" ]; then
       echo "  $F → $MODEL: registered"
     else
