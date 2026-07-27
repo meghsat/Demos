@@ -34,8 +34,9 @@ with open(path) as f:
     cfg = json.load(f)
 updated = 0
 for pid, pdata in cfg.get("models", {}).get("providers", {}).items():
-    if "fireworks" in pid.lower() or "fireworks" in pdata.get("base_url", "").lower():
-        pdata["api_key"] = key
+    if "fireworks" in pid.lower() or "fireworks" in pdata.get("baseUrl", "").lower():
+        pdata["apiKey"] = key
+        pdata.pop("api_key", None)  # remove any stale snake_case field
         updated += 1
 if updated == 0:
     print("WARNING: no fireworks provider entry found in config", file=sys.stderr)
