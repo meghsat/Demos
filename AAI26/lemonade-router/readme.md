@@ -1,19 +1,3 @@
-# Building a Hybrid Multi-Agent Openclaw System from Client to Cloud
-**AGENDA:**
-This workshop builds a hybrid agent system in three acts:
-
-- Start with local and cloud models running side by side.
-- Add a markdown-driven routing layer that automatically chooses the right model.
-- Replace it with a production-grade vLLM Semantic Router that enables:
-  - PII detection and privacy-aware routing.
-  - Per-skill model policies.
-  - Confidence-based escalation.
-- Run the complete hybrid agent system on AMD hardware.
-
-By the end you'll have seen the same architecture at three levels of sophistication, and understand exactly what each layer adds.
-
----
-
 > <span style="color:red">**Tip:**</span> Each command below includes a **Paste** button. First, click where you want the command to be pasted in the instance. Then click Paste to insert the command automatically, no typing required. Review the command, then press Enter.
 
 ---
@@ -48,30 +32,15 @@ Inside the OpenClaw TUI:
 ![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_20_20_30_181.611vzyf6yasvtd1gge8zs71p3out.png "Click to enlarge")
 
 ---
-# Lab Setup
+# Introduction
 
-**Prerequisites:** Lemonade Server is running on port 13305. Your Fireworks API key is ready.
 
-1.
-![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_20_20_29_591.w3rlpml9i4zbov809ydbs9617uzt.png "Click to enlarge")
-
-Run `$HOME/hybrid-multi-agent-openclaw/start-openclaw.sh <Fireworks Api-Key>`
-
-<button class="dark" onclick="ConsolePaste('$HOME/hybrid-multi-agent-openclaw/start-openclaw.sh <Paste Fireworks Api-Key>')" btn_type="paste" type="button">Paste Command</button>
-
-This script:
-- Onboards OpenClaw against the **Lemonade Server** on port 13305
-- Registers the three Lemonade Router policies (`user.HR-Admin-Router`, `user.Benefits-Router`, `user.Finance-Router`) via `POST /api/v1/pull`
-- Creates the workshop agents (`local-brain`, `cloud-brain`, `smart-router`, `hr-admin`, `benefits`, `finance`, `legal`)
-- Patches the OpenClaw config with all Lemonade model entries and the Fireworks provider
-
-2.
 ![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_20_20_30_061.hchrduni450wmfg4by5tntqdkz9s.png "Click to enlarge")
 
 ```
 openclaw tui --session workshop
 ```
-<button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">openclaw tui --session workshop</script>Paste Command</button>
+<button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">openclaw tui --session workshop</script>Paste Command</button> 
 
 ![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_19_18_47_571.ore6la560tc5e6pp9bm9cqhsb6bg.png "Click to enlarge")
 
@@ -92,6 +61,7 @@ Introduce yourself:
 Hey! I'm <YOUR-NAME>
 ```
 
+---
 
 > <span style="color:red">**Tip:**</span> Each command below includes a **Paste** button. First, click where you want the command to be pasted in the instance. Then click Paste to insert the command automatically, no typing required. Review the command, then press Enter.
 
@@ -292,7 +262,7 @@ Classification: CLOUD -- [Reasoning-Behind-Routing]
  - A financial model too complex for the local model should escalate automatically. 
  - A simple HR policy lookup shouldn't burn cloud tokens. 
 
-That's what the **Lemonade Router** adds: **per-skill routing policies, PII detection, and semantic classification** — each tuned to the task, not a single binary rule.
+That's what the **Lemonade Router** adds: **per-skill routing policies, PII detection, and a confidence loop** - each tuned to the task, not a single binary rule.
 
 ---
 
@@ -310,7 +280,6 @@ That's what the **Lemonade Router** adds: **per-skill routing policies, PII dete
 - **Simple lookup or RAG?** → local model handles it, no cloud cost
 - **Complex reasoning or deep modeling?** → escalates to cloud via semantic similarity or LLM complexity classifier
 
-System Architecture<a class="story_video" href="https://youtu.be/rFdrjZPtaKY">Click this to view the video</a>
 
 ---
 
@@ -327,18 +296,12 @@ Your company has:
 The question is no longer: "Can AI answer?"  
 The question is: **Can AI answer safely, efficiently, and at the right cost?**
 
-The agents below handle each domain - and the **vLLM Semantic Router** decides, on every request, whether the work stays on your AMD hardware or gets handed to the cloud.
+The agents below handle each domain - and the **Lemonade Router** decides, on every request, whether the work stays on your AMD hardware or gets handed to the cloud.
 
-#### Keep the vLLM SR and Lemonade Server dashboards open in your browser.
+#### Keep the Lemonade Server dashboard open in your browser.
 
-![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_20_20_29_381.6bj96yfp4vg8546e4w29ubravxto.png "Click to enlarge")
 
-1. vLLM Semantic Router at ```http://localhost:8700```
-
-<button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">http://localhost:8700</script>Paste URL</button> 
-
-![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_11_23_20_181.7whkmda2ujlxzqt1yv6osovj7a0h.png "Click to enlarge")
-2. In a new tab, Lemonade Server at ```http://localhost:13305``` - Ensure you have the logs enabled **View > Logs**
+In a new tab, Lemonade Server at ```http://localhost:13305``` - Ensure you have the logs enabled **View > Logs**
 
 <button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">http://localhost:13305</script>Paste URL</button> 
 
@@ -360,7 +323,7 @@ openclaw tui --session workshop2
 ## 1. HR Admin Agent
 
 **Handles:** Employee records - onboarding, salary/equity updates, role changes, and terminations  
-**Router:** `user.HR-Admin-Router` - NL Router (LLM reads the request and decides local vs. cloud)  
+**Router:** `user.HR-Admin-Router` - Natural Language Router  
 **Data Source:** `employees.csv`
 
 #### Agent's Goal: Update the employee database located at:
@@ -379,7 +342,7 @@ openclaw tui --session workshop2
 <button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">/model</script>Paste /model</button>
 
 <span style="color:red">**NOTE**:</span> The dropdown may appear in the middle of the TUI initially. It should look like this:
-![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_17_03_01_131.te4589bhgc9r2h2w4nxwlmlmqemp.png "Click to enlarge")
+![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_29_04_11_191.lvi08bj1z6rh8lenompmh7lx4ven.png "Click to enlarge")
 **2.** Select **Kimi K2.6 (Fireworks)** and run:
 
 ```
@@ -407,8 +370,8 @@ Jordan Lee is added to:
 <button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">/model</script>Paste /model</button>
 
 <span style="color:red">**NOTE**:</span> The dropdown might be misplaced in the middle of the TUI but should look like this
-![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_17_05_22_511.pvw9899i8crm4hzcm3g93hb3qe7h.png "Click to enlarge")
-**2.** Select **Lemonade HR Admin Router** (`user.HR-Admin-Router`) and run:
+![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_29_04_12_031.puutaydolay2v4lx8uww2psby2e0.png "Click to enlarge")
+**2.** Select **HR Admin Router** (`user.HR-Admin-Router`) and run:
 
 ```
 /skill hr-admin Onboard Maya Chen, Senior AI Engineer, starts July 1, salary $175K, equity 0.8%, email maya.chen@startup.ai
@@ -418,7 +381,7 @@ Jordan Lee is added to:
 
 **How the router decides:**
 
-The `user.HR-Admin-Router` uses a **Natural Language Router** - a small `Qwen3.5-9B-NoThinking` model reads the full request and picks the destination. No keywords, no patterns. It understands that names + salary + email + equity = PII → stays local.
+The `user.HR-Admin-Router` uses a **Natural Language Router** - a small `Qwen3.5-9B-NoThinking` model reads the full request and picks the destination.
 
 **Expected Router Flow:**
 PII detected (name, salary, equity, email)
@@ -441,7 +404,7 @@ Maya Chen is added to:
 ## 2. Benefits Agent
 
 **Handles:** Employee self-service questions about benefits, HR policies, and handbook content  
-**Router:** `user.Benefits-Router` - Keyword + Regex Rules (deterministic, no model needed for routing)  
+**Router:** `user.Benefits-Router` - Keyword + Regex Rules   
 **Data Source:** `benefits_handbook.md`
 
 #### Agent's Goal: Perform RAG over:
@@ -459,7 +422,7 @@ and answer employee questions.
 
 <button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">/model</script>Paste /model</button>
 
-**2.** Select **Lemonade Benefits Router** (`user.Benefits-Router`).
+**2.** Select **Benefits Router** (`user.Benefits-Router`).
 
 #### Simple RAG question → routes Local
 
@@ -471,7 +434,7 @@ and answer employee questions.
 
 **How the router decides:**
 
-The `simple-benefits-rag` rule fires: keyword `401(k)` matched + query is under 400 characters → **Local**. No model is consulted - the decision is instant and deterministic.
+The `simple-benefits-rag` rule fires: keyword `401(k)` matched + query is under 400 characters → **Local**.
 
 **Expected Router Flow:**
 - `simple-benefits-rag` rule matched (keyword + max_chars)
@@ -492,7 +455,7 @@ The `simple-benefits-rag` rule fires: keyword `401(k)` matched + query is under 
 The `complex-benefits-analysis` rule fires first: keyword `compared` matched - the router sees "comparison" as a signal for cloud-level reasoning before it even checks `simple-benefits-rag`.
 
 **Expected Router Flow:**
-- `complex-benefits-analysis` rule matched (`compare` keyword)
+- `complex-benefits-analysis` rule matched  
 - Routes to **Cloud Kimi K2.6**
 
 **Expected Output:** A summary of the company's parental leave policy with a comparison to common industry practices.
@@ -520,7 +483,7 @@ and answer financial questions.
 
 <button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">/model</script>Paste /model</button>
 
-**2.** Select **Lemonade Finance Router** (`user.Finance-Router`).
+**2.** Select **Finance Router** (`user.Finance-Router`).
 
 #### Simple metric lookup → routes Local
 
@@ -560,48 +523,11 @@ Either classifier alone is sufficient to escalate to cloud. First match wins.
 - Routes to **Cloud Kimi K2.6**
 
 ---
-## 4. **Legal Agent**
-
-**Handles:** Regulatory research, compliance guidance, contract review, and legal Q&A  
-**Data Sources:** Live web search and uploaded contracts
-
-#### Agent's Goal: Perform web search and RAG over uploaded legal documents to answer legal and compliance questions.
-
-**Ensure OpenClaw session is pointing to MoM (Custom Provider). If needed, switch models using `/model`**
-
-#### Example 1
-```
-/skill legal What GDPR compliance and data protection regulatory requirements apply to an AI vendor under EU privacy law?
-```
-
-<button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">/skill legal What GDPR compliance and data protection regulatory requirements apply to an AI vendor under EU privacy law?</script>Paste Prompt</button>
-
-**Expected Router Flow:**
-
-Legal and regulatory research
-
-- Routes to **Cloud Kimi K2.6**
-
-**Expected Output:** A structured summary of applicable GDPR obligations and compliance considerations.
-
-#### Example 2
-```
-/skill legal Can we enforce non-compete clauses for employees in California under state contract law?
-
-```
-
-<button class="dark" onclick="ConsolePaste(this.children[0].innerText)" type="button"><script type="template">/skill legal Can we enforce non-compete clauses for employees in California under state contract law?
-</script>Paste Prompt</button>
-
-**Expected Router Flow:** Decision: `workshop_legal_cloud` → **Cloud Kimi K2.6**
-
----
-
 
 ### Fireworks API Keys
 
 1. Sign up for Fireworks AI: https://app.fireworks.ai/signup and log in.
-2. Go to https://notebooks.amd.com/codes/fireworks and enter the password **AAIOpenclaw2026** to obtain a promo code. Keep the promo code handy.
+2. Go to https://notebooks.amd.com/codes/fireworks, use your AMD Developer account to sign in and enter the password **AAIOpenclaw2026** to obtain a promo code. Keep the promo code handy.
 3. Click the **Credits** button:
 ![Click to enlarge](https://techaccelerator.s3.us-west-2.amazonaws.com/portal/AMD/2026_07_20_22_42_031.9tvo21deifqwvjgmj7qgg4dhmidi.png "Click to enlarge")
 4. Click **Redeem Promo**:

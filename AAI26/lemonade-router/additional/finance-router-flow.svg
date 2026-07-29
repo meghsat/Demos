@@ -1,0 +1,166 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 740" width="860" height="740" font-family="'Inter', 'Segoe UI', system-ui, sans-serif">
+  <defs>
+    <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#888"/>
+    </marker>
+    <marker id="arr-local" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#FCD846"/>
+    </marker>
+    <marker id="arr-cloud" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#4a9eff"/>
+    </marker>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#00000022"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="860" height="740" fill="#fdfbf6"/>
+
+  <!-- Title bar -->
+  <rect x="0" y="0" width="860" height="48" fill="#1a1a1a"/>
+  <text x="430" y="30" text-anchor="middle" fill="#FCD846" font-size="15" font-weight="700" letter-spacing="0.5">user.Finance-Router</text>
+  <text x="430" y="44" text-anchor="middle" fill="#888" font-size="10">collection.router · Semantic Similarity + LLM Complexity Classifier · First match wins</text>
+
+  <!-- ── USER INPUT ── -->
+  <rect x="310" y="68" width="240" height="40" rx="6" fill="#efebe1" stroke="#e2ddd1" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="430" y="84" text-anchor="middle" fill="#2D2F2F" font-size="11" font-weight="600">User Request</text>
+  <text x="430" y="98" text-anchor="middle" fill="#6b6b6b" font-size="9">/skill finance What is our current burn rate?</text>
+
+  <line x1="430" y1="108" x2="430" y2="130" stroke="#888" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- ── ROUTER ENGINE ── -->
+  <rect x="180" y="130" width="500" height="44" rx="8" fill="#1a1a1a" stroke="#FCD846" stroke-width="2" filter="url(#shadow)"/>
+  <text x="430" y="150" text-anchor="middle" fill="#FCD846" font-size="12" font-weight="700">🦞 Lemonade Router Engine</text>
+  <text x="430" y="166" text-anchor="middle" fill="#aaa" font-size="10">Classifiers run in parallel · rules evaluated top-to-bottom · first match wins</text>
+
+  <!-- ── CLASSIFIERS PANEL ── -->
+  <line x1="430" y1="174" x2="430" y2="192" stroke="#888" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <rect x="60" y="192" width="740" height="110" rx="8" fill="#111" stroke="#F56565" stroke-width="1.5" stroke-dasharray="5,2" filter="url(#shadow)"/>
+  <text x="430" y="208" text-anchor="middle" fill="#F56565" font-size="10" font-weight="700">CLASSIFIERS (evaluated before rules)</text>
+
+  <!-- Classifier 1: semantic_similarity -->
+  <rect x="80" y="214" width="345" height="76" rx="6" fill="#1a1a1a" stroke="#F56565" stroke-width="1.2"/>
+  <rect x="80" y="214" width="200" height="18" rx="4" fill="#F56565" fill-opacity="0.8"/>
+  <text x="180" y="226" text-anchor="middle" fill="#fff" font-size="8" font-weight="700">finance-topic · semantic_similarity</text>
+  <text x="96" y="243" fill="#aaa" font-size="8">model: embeddinggemma-300m-qat-q8_0-GGUF-Q8_0</text>
+  <text x="96" y="256" fill="#888" font-size="8">Labels (cosine similarity vs. reference phrases):</text>
+  <rect x="96" y="262" width="70" height="13" rx="3" fill="#9F7AEA" fill-opacity="0.2" stroke="#9F7AEA" stroke-width="1"/>
+  <text x="131" y="272" text-anchor="middle" fill="#9F7AEA" font-size="7">pii-finance</text>
+  <rect x="172" y="262" width="70" height="13" rx="3" fill="#4CAF50" fill-opacity="0.2" stroke="#4CAF50" stroke-width="1"/>
+  <text x="207" y="272" text-anchor="middle" fill="#4CAF50" font-size="7">simple-lookup</text>
+  <rect x="248" y="262" width="70" height="13" rx="3" fill="#4a9eff" fill-opacity="0.2" stroke="#4a9eff" stroke-width="1"/>
+  <text x="283" y="272" text-anchor="middle" fill="#4a9eff" font-size="7">deep-modeling</text>
+  <text x="96" y="285" fill="#6b6b6b" font-size="7">→ scores each concept; highest-scoring label used in rules</text>
+
+  <!-- Classifier 2: LLM complexity -->
+  <rect x="435" y="214" width="345" height="76" rx="6" fill="#1a1a1a" stroke="#F56565" stroke-width="1.2"/>
+  <rect x="435" y="214" width="180" height="18" rx="4" fill="#F56565" fill-opacity="0.8"/>
+  <text x="525" y="226" text-anchor="middle" fill="#fff" font-size="8" font-weight="700">complexity · llm</text>
+  <text x="451" y="243" fill="#aaa" font-size="8">model: Qwen3.5-9B-NoThinking</text>
+  <text x="451" y="256" fill="#888" font-size="8">Prompt: Is this request COMPLEX or SIMPLE?</text>
+  <rect x="451" y="262" width="70" height="13" rx="3" fill="#4a9eff" fill-opacity="0.2" stroke="#4a9eff" stroke-width="1"/>
+  <text x="486" y="272" text-anchor="middle" fill="#4a9eff" font-size="7">COMPLEX</text>
+  <rect x="527" y="262" width="70" height="13" rx="3" fill="#4CAF50" fill-opacity="0.2" stroke="#4CAF50" stroke-width="1"/>
+  <text x="562" y="272" text-anchor="middle" fill="#4CAF50" font-size="7">SIMPLE</text>
+  <text x="451" y="285" fill="#6b6b6b" font-size="7">on_error: match_false · default_label: SIMPLE</text>
+
+  <line x1="430" y1="302" x2="430" y2="324" stroke="#888" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- ──────────────────────────────────────── -->
+  <!-- RULE 1: pii-finance-semantic -->
+  <!-- ──────────────────────────────────────── -->
+  <rect x="60" y="324" width="700" height="58" rx="7" fill="#1a1a1a" stroke="#9F7AEA" stroke-width="1.5" filter="url(#shadow)"/>
+  <rect x="60" y="324" width="145" height="18" rx="4" fill="#9F7AEA"/>
+  <text x="132" y="336" text-anchor="middle" fill="#fff" font-size="8" font-weight="700">RULE 1 · pii-finance-semantic</text>
+  <text x="76" y="354" fill="#aaa" font-size="9">Match:</text>
+  <rect x="114" y="344" width="285" height="16" rx="3" fill="#F56565" fill-opacity="0.18" stroke="#F56565" stroke-width="1"/>
+  <text x="256" y="355" text-anchor="middle" fill="#F56565" font-size="8">classifier: finance-topic · label: pii-finance · min_score: 0.65</text>
+  <text x="76" y="372" fill="#aaa" font-size="9">→ route_to:</text>
+  <rect x="132" y="362" width="160" height="14" rx="3" fill="#FCD846" fill-opacity="0.15" stroke="#FCD846" stroke-width="1"/>
+  <text x="212" y="372" text-anchor="middle" fill="#FCD846" font-size="8" font-weight="600">LOCAL · Qwen3.5-9B-NoThinking</text>
+  <text x="310" y="372" fill="#6b6b6b" font-size="8">outputs: reason=pii-semantic-finance · data_class=sensitive</text>
+  <line x1="760" y1="353" x2="810" y2="353" stroke="#FCD846" stroke-width="1.5" marker-end="url(#arr-local)"/>
+
+  <line x1="430" y1="382" x2="430" y2="402" stroke="#888" stroke-width="1.5" stroke-dasharray="3,2" marker-end="url(#arr)"/>
+
+  <!-- ──────────────────────────────────────── -->
+  <!-- RULE 2: deep-model-semantic -->
+  <!-- ──────────────────────────────────────── -->
+  <rect x="60" y="402" width="700" height="58" rx="7" fill="#1a1a1a" stroke="#4a9eff" stroke-width="1.5" filter="url(#shadow)"/>
+  <rect x="60" y="402" width="145" height="18" rx="4" fill="#4a9eff"/>
+  <text x="132" y="414" text-anchor="middle" fill="#fff" font-size="8" font-weight="700">RULE 2 · deep-model-semantic</text>
+  <text x="76" y="432" fill="#aaa" font-size="9">Match:</text>
+  <rect x="114" y="422" width="290" height="16" rx="3" fill="#F56565" fill-opacity="0.18" stroke="#F56565" stroke-width="1"/>
+  <text x="259" y="433" text-anchor="middle" fill="#F56565" font-size="8">classifier: finance-topic · label: deep-modeling · min_score: 0.72</text>
+  <text x="76" y="450" fill="#aaa" font-size="9">→ route_to:</text>
+  <rect x="132" y="440" width="160" height="14" rx="3" fill="#4a9eff" fill-opacity="0.15" stroke="#4a9eff" stroke-width="1"/>
+  <text x="212" y="450" text-anchor="middle" fill="#4a9eff" font-size="8" font-weight="600">CLOUD · fireworks.kimi-k2p6</text>
+  <text x="310" y="450" fill="#6b6b6b" font-size="8">outputs: reason=deep-finance-model-semantic · tier=cloud</text>
+  <line x1="760" y1="431" x2="810" y2="431" stroke="#4a9eff" stroke-width="1.5" marker-end="url(#arr-cloud)"/>
+
+  <line x1="430" y1="460" x2="430" y2="480" stroke="#888" stroke-width="1.5" stroke-dasharray="3,2" marker-end="url(#arr)"/>
+
+  <!-- ──────────────────────────────────────── -->
+  <!-- RULE 3: deep-model-llm-judge -->
+  <!-- ──────────────────────────────────────── -->
+  <rect x="60" y="480" width="700" height="58" rx="7" fill="#1a1a1a" stroke="#4a9eff" stroke-width="1.5" filter="url(#shadow)"/>
+  <rect x="60" y="480" width="155" height="18" rx="4" fill="#4a9eff"/>
+  <text x="137" y="492" text-anchor="middle" fill="#fff" font-size="8" font-weight="700">RULE 3 · deep-model-llm-judge</text>
+  <text x="76" y="510" fill="#aaa" font-size="9">Match:</text>
+  <rect x="114" y="500" width="240" height="16" rx="3" fill="#F56565" fill-opacity="0.18" stroke="#F56565" stroke-width="1"/>
+  <text x="234" y="511" text-anchor="middle" fill="#F56565" font-size="8">classifier: complexity · label: COMPLEX · min_score: 0.5</text>
+  <text x="76" y="528" fill="#aaa" font-size="9">→ route_to:</text>
+  <rect x="132" y="518" width="160" height="14" rx="3" fill="#4a9eff" fill-opacity="0.15" stroke="#4a9eff" stroke-width="1"/>
+  <text x="212" y="528" text-anchor="middle" fill="#4a9eff" font-size="8" font-weight="600">CLOUD · fireworks.kimi-k2p6</text>
+  <text x="310" y="528" fill="#6b6b6b" font-size="8">outputs: reason=llm-judged-complex-finance · tier=cloud</text>
+  <line x1="760" y1="509" x2="810" y2="509" stroke="#4a9eff" stroke-width="1.5" marker-end="url(#arr-cloud)"/>
+
+  <line x1="430" y1="538" x2="430" y2="558" stroke="#888" stroke-width="1.5" stroke-dasharray="3,2" marker-end="url(#arr)"/>
+
+  <!-- ──────────────────────────────────────── -->
+  <!-- RULE 4: simple-metric-lookup -->
+  <!-- ──────────────────────────────────────── -->
+  <rect x="60" y="558" width="700" height="58" rx="7" fill="#1a1a1a" stroke="#4CAF50" stroke-width="1.5" filter="url(#shadow)"/>
+  <rect x="60" y="558" width="145" height="18" rx="4" fill="#4CAF50"/>
+  <text x="132" y="570" text-anchor="middle" fill="#fff" font-size="8" font-weight="700">RULE 4 · simple-metric-lookup</text>
+  <text x="76" y="588" fill="#aaa" font-size="9">Match:</text>
+  <rect x="114" y="578" width="285" height="16" rx="3" fill="#F56565" fill-opacity="0.18" stroke="#F56565" stroke-width="1"/>
+  <text x="256" y="589" text-anchor="middle" fill="#F56565" font-size="8">classifier: finance-topic · label: simple-lookup · min_score: 0.60</text>
+  <text x="76" y="606" fill="#aaa" font-size="9">→ route_to:</text>
+  <rect x="132" y="596" width="160" height="14" rx="3" fill="#FCD846" fill-opacity="0.15" stroke="#FCD846" stroke-width="1"/>
+  <text x="212" y="606" text-anchor="middle" fill="#FCD846" font-size="8" font-weight="600">LOCAL · Qwen3.5-9B-NoThinking</text>
+  <text x="310" y="606" fill="#6b6b6b" font-size="8">outputs: reason=simple-metric-lookup · tier=local-fast</text>
+  <line x1="760" y1="587" x2="810" y2="587" stroke="#FCD846" stroke-width="1.5" marker-end="url(#arr-local)"/>
+
+  <!-- ── DESTINATION COLUMN (right) ── -->
+  <rect x="810" y="330" width="36" height="280" rx="6" fill="#111" stroke="#888" stroke-width="1"/>
+  <!-- LOCAL spans -->
+  <rect x="812" y="340" width="32" height="26" rx="3" fill="#1a1a1a" stroke="#FCD846" stroke-width="1.2"/>
+  <text x="828" y="357" text-anchor="middle" fill="#FCD846" font-size="7">LOCAL</text>
+  <rect x="812" y="580" width="32" height="26" rx="3" fill="#1a1a1a" stroke="#FCD846" stroke-width="1.2"/>
+  <text x="828" y="597" text-anchor="middle" fill="#FCD846" font-size="7">LOCAL</text>
+  <!-- CLOUD spans -->
+  <rect x="812" y="418" width="32" height="26" rx="3" fill="#0a1628" stroke="#4a9eff" stroke-width="1.2"/>
+  <text x="828" y="435" text-anchor="middle" fill="#4a9eff" font-size="7">CLOUD</text>
+  <rect x="812" y="496" width="32" height="26" rx="3" fill="#0a1628" stroke="#4a9eff" stroke-width="1.2"/>
+  <text x="828" y="513" text-anchor="middle" fill="#4a9eff" font-size="7">CLOUD</text>
+
+  <!-- ── LEGEND ── -->
+  <rect x="30" y="632" width="800" height="90" rx="6" fill="#efebe1" stroke="#e2ddd1" stroke-width="1"/>
+  <text x="46" y="648" fill="#474747" font-size="9" font-weight="600">Legend:</text>
+  <rect x="100" y="638" width="10" height="10" rx="2" fill="#F56565"/>
+  <text x="116" y="648" fill="#474747" font-size="9">Classifier condition</text>
+  <rect x="230" y="638" width="10" height="10" rx="2" fill="#9F7AEA"/>
+  <text x="246" y="648" fill="#474747" font-size="9">Semantic similarity</text>
+  <rect x="360" y="638" width="10" height="10" rx="2" fill="#4CAF50"/>
+  <text x="376" y="648" fill="#474747" font-size="9">Simple / local</text>
+  <rect x="460" y="638" width="10" height="10" rx="2" fill="#4a9eff"/>
+  <text x="476" y="648" fill="#474747" font-size="9">Deep model / cloud</text>
+  <rect x="590" y="638" width="10" height="10" rx="2" fill="#FCD846"/>
+  <text x="606" y="648" fill="#474747" font-size="9">→ Local destination</text>
+  <text x="46" y="664" fill="#6b6b6b" font-size="8">Router technique: two classifiers run on every request. finance-topic (semantic_similarity) embeds the query and scores it against labeled reference phrases via</text>
+  <text x="46" y="676" fill="#6b6b6b" font-size="8">cosine similarity. complexity (llm) asks Qwen3.5-9B-NoThinking to classify COMPLEX vs SIMPLE. Rules then test classifier outputs top-to-bottom; first match wins.</text>
+  <text x="46" y="688" fill="#6b6b6b" font-size="8">Rule order: PII local → deep-model cloud → LLM-judged cloud → simple local. Default_model: Qwen3.5-9B-NoThinking (local). Zero keywords anywhere.</text>
+</svg>

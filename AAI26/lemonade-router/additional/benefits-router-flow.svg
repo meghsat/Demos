@@ -1,0 +1,149 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 620" width="760" height="620" font-family="'Inter', 'Segoe UI', system-ui, sans-serif">
+  <defs>
+    <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#888"/>
+    </marker>
+    <marker id="arr-local" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#FCD846"/>
+    </marker>
+    <marker id="arr-cloud" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#4a9eff"/>
+    </marker>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#00000022"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="760" height="620" fill="#fdfbf6"/>
+
+  <!-- Title bar -->
+  <rect x="0" y="0" width="760" height="48" fill="#1a1a1a"/>
+  <text x="380" y="30" text-anchor="middle" fill="#FCD846" font-size="15" font-weight="700" letter-spacing="0.5">user.Benefits-Router</text>
+  <text x="380" y="44" text-anchor="middle" fill="#888" font-size="10">collection.router · Keywords + Regex Rules · First match wins (top → bottom)</text>
+
+  <!-- ── USER INPUT ── -->
+  <rect x="280" y="68" width="200" height="40" rx="6" fill="#efebe1" stroke="#e2ddd1" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="380" y="84" text-anchor="middle" fill="#2D2F2F" font-size="11" font-weight="600">User Request</text>
+  <text x="380" y="98" text-anchor="middle" fill="#6b6b6b" font-size="9">/skill benefits When does my 401(k) vest?</text>
+
+  <line x1="380" y1="108" x2="380" y2="132" stroke="#888" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- ── ROUTER ENGINE ── -->
+  <rect x="200" y="132" width="360" height="44" rx="8" fill="#1a1a1a" stroke="#FCD846" stroke-width="2" filter="url(#shadow)"/>
+  <text x="380" y="152" text-anchor="middle" fill="#FCD846" font-size="12" font-weight="700">🦞 Lemonade Router Engine</text>
+  <text x="380" y="168" text-anchor="middle" fill="#aaa" font-size="10">Deterministic rules — no model needed for routing</text>
+
+  <line x1="380" y1="176" x2="380" y2="200" stroke="#888" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- ──────────────────────────────────────── -->
+  <!-- RULE 1: pii-stays-local -->
+  <!-- ──────────────────────────────────────── -->
+  <rect x="100" y="200" width="560" height="80" rx="7" fill="#1a1a1a" stroke="#9F7AEA" stroke-width="1.5" filter="url(#shadow)"/>
+  <!-- Rule label -->
+  <rect x="100" y="200" width="120" height="20" rx="4" fill="#9F7AEA"/>
+  <text x="160" y="214" text-anchor="middle" fill="#fff" font-size="9" font-weight="700">RULE 1 · pii-stays-local</text>
+  <!-- Conditions -->
+  <text x="116" y="234" fill="#aaa" font-size="9">Match ANY:</text>
+  <!-- regex badge 1 -->
+  <rect x="168" y="224" width="110" height="16" rx="3" fill="#9F7AEA" fill-opacity="0.18" stroke="#9F7AEA" stroke-width="1"/>
+  <text x="223" y="235" text-anchor="middle" fill="#9F7AEA" font-size="8">regex: email pattern</text>
+  <!-- regex badge 2 -->
+  <rect x="284" y="224" width="100" height="16" rx="3" fill="#9F7AEA" fill-opacity="0.18" stroke="#9F7AEA" stroke-width="1"/>
+  <text x="334" y="235" text-anchor="middle" fill="#9F7AEA" font-size="8">regex: $amount</text>
+  <!-- regex badge 3 -->
+  <rect x="390" y="224" width="100" height="16" rx="3" fill="#9F7AEA" fill-opacity="0.18" stroke="#9F7AEA" stroke-width="1"/>
+  <text x="440" y="235" text-anchor="middle" fill="#9F7AEA" font-size="8">regex: SSN pattern</text>
+  <!-- keywords badge -->
+  <rect x="496" y="224" width="148" height="16" rx="3" fill="#4a9eff" fill-opacity="0.18" stroke="#4a9eff" stroke-width="1"/>
+  <text x="570" y="235" text-anchor="middle" fill="#4a9eff" font-size="8">keywords: salary, equity, ssn…</text>
+  <!-- Route to -->
+  <text x="116" y="256" fill="#aaa" font-size="9">→ route_to:</text>
+  <rect x="172" y="246" width="160" height="16" rx="3" fill="#FCD846" fill-opacity="0.15" stroke="#FCD846" stroke-width="1"/>
+  <text x="252" y="257" text-anchor="middle" fill="#FCD846" font-size="8" font-weight="600">LOCAL · Qwen3.5-9B-NoThinking</text>
+  <text x="116" y="272" fill="#6b6b6b" font-size="8">outputs: reason=pii-detected · data_class=sensitive</text>
+
+  <!-- Arrow from rule 1 → local model -->
+  <line x1="660" y1="240" x2="720" y2="240" stroke="#FCD846" stroke-width="1.5" marker-end="url(#arr-local)"/>
+
+  <!-- Vertical line continues if no match -->
+  <line x1="380" y1="280" x2="380" y2="306" stroke="#888" stroke-width="1.5" stroke-dasharray="4,2" marker-end="url(#arr)"/>
+  <text x="395" y="296" fill="#888" font-size="8">no match</text>
+
+  <!-- ──────────────────────────────────────── -->
+  <!-- RULE 2: complex-benefits-analysis -->
+  <!-- ──────────────────────────────────────── -->
+  <rect x="100" y="306" width="560" height="70" rx="7" fill="#1a1a1a" stroke="#4a9eff" stroke-width="1.5" filter="url(#shadow)"/>
+  <rect x="100" y="306" width="155" height="20" rx="4" fill="#4a9eff"/>
+  <text x="177" y="320" text-anchor="middle" fill="#fff" font-size="9" font-weight="700">RULE 2 · complex-benefits-analysis</text>
+  <text x="116" y="340" fill="#aaa" font-size="9">Match ANY:</text>
+  <!-- keywords badge -->
+  <rect x="168" y="330" width="225" height="16" rx="3" fill="#4a9eff" fill-opacity="0.18" stroke="#4a9eff" stroke-width="1"/>
+  <text x="280" y="341" text-anchor="middle" fill="#4a9eff" font-size="8">keywords: compare, benchmark, analyze, recommend…</text>
+  <!-- min_chars badge -->
+  <rect x="400" y="330" width="90" height="16" rx="3" fill="#4CAF50" fill-opacity="0.18" stroke="#4CAF50" stroke-width="1"/>
+  <text x="445" y="341" text-anchor="middle" fill="#4CAF50" font-size="8">min_chars: 800</text>
+  <!-- Route to -->
+  <text x="116" y="360" fill="#aaa" font-size="9">→ route_to:</text>
+  <rect x="172" y="350" width="160" height="16" rx="3" fill="#4a9eff" fill-opacity="0.15" stroke="#4a9eff" stroke-width="1"/>
+  <text x="252" y="361" text-anchor="middle" fill="#4a9eff" font-size="8" font-weight="600">CLOUD · fireworks.kimi-k2p6</text>
+  <text x="116" y="369" fill="#6b6b6b" font-size="8">outputs: reason=complex-benefits-analysis · tier=cloud</text>
+
+  <!-- Arrow from rule 2 → cloud model -->
+  <line x1="660" y1="341" x2="720" y2="341" stroke="#4a9eff" stroke-width="1.5" marker-end="url(#arr-cloud)"/>
+
+  <!-- Vertical continues -->
+  <line x1="380" y1="376" x2="380" y2="402" stroke="#888" stroke-width="1.5" stroke-dasharray="4,2" marker-end="url(#arr)"/>
+  <text x="395" y="392" fill="#888" font-size="8">no match</text>
+
+  <!-- ──────────────────────────────────────── -->
+  <!-- RULE 3: simple-benefits-rag -->
+  <!-- ──────────────────────────────────────── -->
+  <rect x="100" y="402" width="560" height="80" rx="7" fill="#1a1a1a" stroke="#4CAF50" stroke-width="1.5" filter="url(#shadow)"/>
+  <rect x="100" y="402" width="135" height="20" rx="4" fill="#4CAF50"/>
+  <text x="167" y="416" text-anchor="middle" fill="#fff" font-size="9" font-weight="700">RULE 3 · simple-benefits-rag</text>
+  <text x="116" y="436" fill="#aaa" font-size="9">Match ALL:</text>
+  <!-- max_chars badge -->
+  <rect x="168" y="426" width="90" height="16" rx="3" fill="#4CAF50" fill-opacity="0.18" stroke="#4CAF50" stroke-width="1"/>
+  <text x="213" y="437" text-anchor="middle" fill="#4CAF50" font-size="8">max_chars: 400</text>
+  <!-- keywords badge -->
+  <rect x="264" y="426" width="265" height="16" rx="3" fill="#4a9eff" fill-opacity="0.18" stroke="#4a9eff" stroke-width="1"/>
+  <text x="396" y="437" text-anchor="middle" fill="#4a9eff" font-size="8">keywords: 401k, vesting, PTO, healthcare, COBRA…</text>
+  <!-- Route to -->
+  <text x="116" y="456" fill="#aaa" font-size="9">→ route_to:</text>
+  <rect x="172" y="446" width="160" height="16" rx="3" fill="#FCD846" fill-opacity="0.15" stroke="#FCD846" stroke-width="1"/>
+  <text x="252" y="457" text-anchor="middle" fill="#FCD846" font-size="8" font-weight="600">LOCAL · Qwen3.5-9B-NoThinking</text>
+  <text x="116" y="472" fill="#6b6b6b" font-size="8">outputs: reason=simple-benefits-rag · tier=local-fast</text>
+
+  <line x1="660" y1="442" x2="720" y2="442" stroke="#FCD846" stroke-width="1.5" marker-end="url(#arr-local)"/>
+
+  <!-- Default fallback -->
+  <line x1="380" y1="482" x2="380" y2="508" stroke="#ED8936" stroke-width="1.5" stroke-dasharray="4,2" marker-end="url(#arr)"/>
+  <text x="395" y="498" fill="#ED8936" font-size="8">default fallback</text>
+  <rect x="280" y="508" width="200" height="28" rx="5" fill="#0a1628" stroke="#4a9eff" stroke-width="1" stroke-dasharray="3,2"/>
+  <text x="380" y="524" text-anchor="middle" fill="#4a9eff" font-size="9">CLOUD · fireworks.kimi-k2p6</text>
+  <text x="380" y="534" text-anchor="middle" fill="#888" font-size="8">(default_model)</text>
+
+  <!-- ── DESTINATION BOXES (right side) ── -->
+  <!-- LOCAL -->
+  <rect x="720" y="210" width="32" height="250" rx="6" fill="#1a1a1a" stroke="#FCD846" stroke-width="1.5"/>
+  <text x="736" y="280" text-anchor="middle" fill="#FCD846" font-size="9" font-weight="700" writing-mode="tb" transform="rotate(90, 736, 335)">LOCAL · Qwen3.5-9B-NoThinking</text>
+  <!-- CLOUD -->
+  <rect x="720" y="315" width="32" height="60" rx="6" fill="#0a1628" stroke="#4a9eff" stroke-width="1.5"/>
+
+  <!-- ── LEGEND ── -->
+  <rect x="30" y="556" width="700" height="52" rx="6" fill="#efebe1" stroke="#e2ddd1" stroke-width="1"/>
+  <text x="46" y="570" fill="#474747" font-size="9" font-weight="600">Legend:</text>
+  <rect x="100" y="560" width="10" height="10" rx="2" fill="#9F7AEA"/>
+  <text x="116" y="570" fill="#474747" font-size="9">Regex</text>
+  <rect x="165" y="560" width="10" height="10" rx="2" fill="#4a9eff"/>
+  <text x="181" y="570" fill="#474747" font-size="9">Keywords</text>
+  <rect x="255" y="560" width="10" height="10" rx="2" fill="#4CAF50"/>
+  <text x="271" y="570" fill="#474747" font-size="9">Char length</text>
+  <rect x="350" y="560" width="10" height="10" rx="2" fill="#FCD846"/>
+  <text x="366" y="570" fill="#474747" font-size="9">→ Local</text>
+  <rect x="415" y="560" width="10" height="10" rx="2" fill="#4a9eff"/>
+  <text x="431" y="570" fill="#474747" font-size="9">→ Cloud</text>
+  <text x="46" y="586" fill="#6b6b6b" font-size="8">Router technique: pure keyword + regex rules — zero model calls for routing. Rules evaluated top-to-bottom; first match wins.</text>
+  <text x="46" y="598" fill="#6b6b6b" font-size="8">Rule order matters: complex-analysis fires before simple-rag so long benefit queries with keywords go cloud, not local.</text>
+</svg>

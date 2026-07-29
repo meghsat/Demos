@@ -1,0 +1,98 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 520" width="760" height="520" font-family="'Inter', 'Segoe UI', system-ui, sans-serif">
+  <defs>
+    <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#888"/>
+    </marker>
+    <marker id="arr-local" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#FCD846"/>
+    </marker>
+    <marker id="arr-cloud" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#4a9eff"/>
+    </marker>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#00000022"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="760" height="520" fill="#fdfbf6"/>
+
+  <!-- Title bar -->
+  <rect x="0" y="0" width="760" height="48" fill="#1a1a1a" rx="0"/>
+  <text x="380" y="30" text-anchor="middle" fill="#FCD846" font-size="15" font-weight="700" letter-spacing="0.5">user.HR-Admin-Router</text>
+  <text x="380" y="44" text-anchor="middle" fill="#888" font-size="10">collection.router · NL Router (LLM-as-router)</text>
+
+  <!-- ── USER INPUT ── -->
+  <rect x="280" y="68" width="200" height="40" rx="6" fill="#efebe1" stroke="#e2ddd1" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="380" y="84" text-anchor="middle" fill="#2D2F2F" font-size="11" font-weight="600">User Request</text>
+  <text x="380" y="98" text-anchor="middle" fill="#6b6b6b" font-size="9">/skill hr-admin Onboard Jordan Lee…</text>
+
+  <!-- Arrow: input → router engine -->
+  <line x1="380" y1="108" x2="380" y2="140" stroke="#888" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- ── ROUTER ENGINE ── -->
+  <rect x="200" y="140" width="360" height="72" rx="8" fill="#1a1a1a" stroke="#FCD846" stroke-width="2" filter="url(#shadow)"/>
+  <text x="380" y="162" text-anchor="middle" fill="#FCD846" font-size="12" font-weight="700">🦞 Lemonade Router Engine</text>
+  <text x="380" y="178" text-anchor="middle" fill="#aaa" font-size="10">routing.router · type: llm</text>
+  <!-- LLM Classifier badge -->
+  <rect x="290" y="186" width="180" height="18" rx="4" fill="#F56565" fill-opacity="0.15" stroke="#F56565" stroke-width="1"/>
+  <text x="380" y="198" text-anchor="middle" fill="#F56565" font-size="9" font-weight="600">LLM ROUTER: Qwen3.5-9B-NoThinking</text>
+
+  <!-- Arrow: engine → decision diamond -->
+  <line x1="380" y1="212" x2="380" y2="248" stroke="#888" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- ── DECISION DIAMOND ── -->
+  <polygon points="380,248 480,285 380,322 280,285" fill="#25221B" stroke="#FCD846" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="380" y="279" text-anchor="middle" fill="#FCD846" font-size="10" font-weight="700">LLM Decision</text>
+  <text x="380" y="293" text-anchor="middle" fill="#aaa" font-size="9">PII detected?</text>
+
+  <!-- ── PROMPT CALLOUT ── -->
+  <rect x="530" y="250" width="210" height="72" rx="6" fill="#0a0a0a" stroke="#F56565" stroke-width="1" stroke-dasharray="4,2"/>
+  <text x="635" y="266" text-anchor="middle" fill="#F56565" font-size="9" font-weight="600">Router Prompt (abbreviated)</text>
+  <text x="540" y="280" fill="#888" font-size="8">Use LOCAL for PII: names, salaries,</text>
+  <text x="540" y="292" fill="#888" font-size="8">SSNs, emails, equity, bank accounts.</text>
+  <text x="540" y="304" fill="#888" font-size="8">Use CLOUD for all other requests.</text>
+  <text x="540" y="316" fill="#888" font-size="8">Default: LOCAL (privacy-first).</text>
+  <!-- Dotted connector from diamond to prompt -->
+  <line x1="480" y1="285" x2="530" y2="285" stroke="#F56565" stroke-width="1" stroke-dasharray="3,2"/>
+
+  <!-- ── LOCAL arrow (YES / PII) ── -->
+  <line x1="280" y1="285" x2="130" y2="285" stroke="#FCD846" stroke-width="2" marker-end="url(#arr-local)"/>
+  <text x="205" y="278" text-anchor="middle" fill="#FCD846" font-size="9" font-weight="600">YES — PII</text>
+
+  <!-- ── CLOUD arrow (NO / general) ── -->
+  <line x1="380" y1="322" x2="380" y2="390" stroke="#4a9eff" stroke-width="2" marker-end="url(#arr-cloud)"/>
+  <text x="395" y="360" fill="#4a9eff" font-size="9" font-weight="600">NO — general</text>
+
+  <!-- ── LOCAL MODEL BOX ── -->
+  <rect x="30" y="255" width="180" height="70" rx="8" fill="#1a1a1a" stroke="#FCD846" stroke-width="2" filter="url(#shadow)"/>
+  <text x="120" y="276" text-anchor="middle" fill="#FCD846" font-size="11" font-weight="700">🖥  LOCAL</text>
+  <text x="120" y="291" text-anchor="middle" fill="#ccc" font-size="10">Qwen3.5-9B-NoThinking</text>
+  <text x="120" y="305" text-anchor="middle" fill="#888" font-size="8">AMD hardware · zero egress</text>
+  <rect x="50" y="311" width="140" height="10" rx="3" fill="#FCD846" fill-opacity="0.12"/>
+  <text x="120" y="319" text-anchor="middle" fill="#FCD846" font-size="7">default_model fallback</text>
+
+  <!-- ── CLOUD MODEL BOX ── -->
+  <rect x="290" y="390" width="180" height="70" rx="8" fill="#0a1628" stroke="#4a9eff" stroke-width="2" filter="url(#shadow)"/>
+  <text x="380" y="411" text-anchor="middle" fill="#4a9eff" font-size="11" font-weight="700">☁  CLOUD</text>
+  <text x="380" y="426" text-anchor="middle" fill="#ccc" font-size="10">fireworks.kimi-k2p6</text>
+  <text x="380" y="440" text-anchor="middle" fill="#888" font-size="8">Fireworks · Kimi K2.6</text>
+  <rect x="310" y="447" width="140" height="10" rx="3" fill="#4a9eff" fill-opacity="0.12"/>
+  <text x="380" y="455" text-anchor="middle" fill="#4a9eff" font-size="7">general / complex queries</text>
+
+  <!-- ── OUTPUT ROW ── -->
+  <rect x="30" y="345" width="180" height="28" rx="5" fill="#25221B" stroke="#888" stroke-width="1"/>
+  <text x="120" y="357" text-anchor="middle" fill="#888" font-size="8" font-weight="600">outputs:</text>
+  <text x="120" y="368" text-anchor="middle" fill="#aaa" font-size="8">reason: pii-detected</text>
+
+  <!-- ── LEGEND ── -->
+  <rect x="30" y="468" width="700" height="42" rx="6" fill="#efebe1" stroke="#e2ddd1" stroke-width="1"/>
+  <text x="46" y="482" fill="#474747" font-size="9" font-weight="600">Legend:</text>
+  <rect x="100" y="472" width="10" height="10" rx="2" fill="#FCD846"/>
+  <text x="116" y="482" fill="#474747" font-size="9">Local / Private</text>
+  <rect x="200" y="472" width="10" height="10" rx="2" fill="#4a9eff"/>
+  <text x="216" y="482" fill="#474747" font-size="9">Cloud</text>
+  <rect x="270" y="472" width="10" height="10" rx="2" fill="#F56565"/>
+  <text x="286" y="482" fill="#474747" font-size="9">LLM Classifier</text>
+  <text x="46" y="502" fill="#6b6b6b" font-size="8">Router technique: routing.router — a single Qwen3.5-9B-NoThinking LLM reads the full request and picks the model. No rules. No keywords.</text>
+</svg>
